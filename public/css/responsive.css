@@ -1,0 +1,236 @@
+@media screen and (max-width:1800px){
+    span.rocketIcon {
+        height: 140px;
+        top: -50px;
+    }
+    span.bulbIcon {
+        height: 120px;
+        top: -50px;
+        left: 55%;
+        transform: translateX(-45%);
+    }
+    .imageWrapper-box img {
+        height: 500px;
+    }
+    span.coinIcon {
+        height: 120px;
+        bottom: 35%;
+        left: 0px;
+    }
+    .logWrapper-formContainer {
+        box-shadow: 14px 3px 20px rgb(236, 220, 245);
+        padding: 65px;
+        border-radius: 30px;
+        margin-top: -110px;
+    }
+    .logo img {
+        height: 190px;
+    }
+    .logo {
+        margin-bottom: 45px;
+    }
+    .form-group input {
+        height: 65px;
+        font-size: 18px;
+        padding: 15px 25px;
+        border-radius: 20px;
+        outline: none;
+    }
+    .form-group input::placeholder{
+        font-size: 18px;
+    }
+    form .row .col-12+.col-12:has(.form-group), .col-10 {
+        margin-top: 35px;
+    }
+    .forgotPass {
+        font-size: 18px;
+    }
+    .form-groupLink {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .custom-btn {
+        height: 65px;
+        font-size: 18px;
+    }
+    .login-wrapper{
+        padding-bottom: 80px;
+    }
+}
+
+@media screen and (max-width:1680px){
+    .logWrapper-formContainer {
+        padding: 60px;
+        border-radius: 30px;
+        margin-top: -110px;
+    }
+    .logo img {
+        height: 180px;
+    }
+    .logo {
+        margin-bottom: 40px;
+    }
+    .form-group input {
+        height: 60px;
+        font-size: 16px;
+        padding: 14px 20px;
+        border-radius: 35px;
+    }
+    .form-group input::placeholder{
+        font-size: 16px;
+    }
+    form .row .col-12+.col-12:has(.form-group), .col-10 {
+        margin-top: 30px;
+    }
+    .forgotPass {
+        font-size: 16px;
+    }
+    .form-groupLink {
+        margin-top: 17px;
+        margin-bottom: 17px;
+    }
+    .custom-btn {
+        height: 55px;
+        font-size: 16px;
+    }
+    span.rocketIcon {
+        height: 120px;
+        top: -40px;
+    }
+    span.bulbIcon {
+        height: 100px;
+        top: -45px;
+        left: 55%;
+        transform: translateX(-45%);
+    }
+    span.coinIcon {
+        height: 100px;
+        bottom: 35%;
+        left: 0px;
+    }
+    .imageWrapper-box img {
+        height: 450px;
+    }
+}
+
+@media screen and (max-width:1480px){
+    span.rocketIcon {
+        height: 100px;
+        top: -20px;
+    }
+    span.coinIcon {
+        height: 80px;
+        bottom: 35%;
+        left: 0px;
+    }
+    span.bulbIcon {
+        height: 80px;
+        top: -20px;
+        left: 55%;
+        transform: translateX(-45%);
+    }
+    .imageWrapper-box img {
+        height: 400px;
+    }
+    .logo img {
+        height: 150px;
+    }
+    .logo {
+        margin-bottom: 35px;
+    }
+    .form-group input {
+        height: 55px;
+        font-size: 14px;
+        padding: 10px 17px;
+        border-radius: 35px;
+    }
+    .form-group input::placeholder{
+        font-size: 14px;
+    }
+    form .row .col-12+.col-12:has(.form-group), .col-10 {
+        margin-top: 25px;
+    }
+    .forgotPass {
+        font-size: 15px;
+    }
+    .custom-btn {
+        height: 50px;
+        font-size: 15px;
+    }
+    .login-wrapper {
+        padding-block: 80px;
+    }
+    .logWrapper-formContainer {
+        padding: 50px;
+        border-radius: 30px;
+        margin-top: -110px;
+    }
+}
+
+@media screen and (max-width:1200px){
+    .login-wrapper {
+        padding-block: 70px;
+    }
+}
+
+@media screen and (max-width:1024px){
+    .container{
+        max-width:100% !important;
+    }
+}
+
+@media screen and (max-width:768px){
+    .col-12:has(.logoWrapper-cover) {
+        display: none;
+    }
+    section.login-wrapper > .container .row {
+        justify-content: center;
+    }
+    section.login-wrapper > .container .row .col-12 {
+        width: 70% !important;
+    }
+    .logWrapper-formContainer {
+        box-shadow: 0px 0px 20px rgb(236, 220, 245);
+        padding: 35px;
+        border-radius: 30px;
+        margin-top: 0px;
+    }
+    .login-wrapper {
+        padding-block: 50px;
+    }
+}
+
+@media screen and (max-width:676px){
+    section.login-wrapper > .container .row .col-12 {
+        width: 90% !important;
+    }
+    .logo {
+        margin-bottom: 30px;
+    }
+    .logo img {
+        height: 141px;
+    }
+    .forgotPass {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width:575px){
+    section.login-wrapper > .container .row .col-12 {
+        width: 100% !important;
+    }
+    .form-groupLink {
+        margin-top: 15px;
+        margin-bottom: 0px;
+    }
+}
+@media screen and (min-width:2000px){
+tbody tr td {
+    font-size: 16px;
+    
+}
+thead tr th {
+    font-size: 17px;
+    
+}
+}

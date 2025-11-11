@@ -1,0 +1,2733 @@
+/* Link Helvetica Now Display Font Family */
+@font-face {
+  font-family: "Helvetica Now Display";
+  font-weight: 300;
+  src: url(../Font-Family/HelveticaNowDisplay/HelveticaNowDisplay-Light.ttf);
+}
+
+@font-face {
+  font-family: "Helvetica Now Display";
+  font-weight: 400;
+  src: url(../Font-Family/HelveticaNowDisplay/HelveticaNowDisplay-Regular.ttf);
+}
+
+@font-face {
+  font-family: "Helvetica Now Display";
+  font-weight: 500;
+  src: url(../Font-Family/HelveticaNowDisplay/HelveticaNowDisplay-Medium.ttf);
+}
+
+@font-face {
+  font-family: "Helvetica Now Display";
+  font-weight: 700;
+  src: url(../Font-Family/HelveticaNowDisplay/HelveticaNowDisplay-Bold.ttf);
+}
+
+@font-face {
+  font-family: "Helvetica Now Display";
+  font-weight: 900;
+  src: url(../Font-Family/HelveticaNowDisplay/HelveticaNowDisplay-Black.ttf);
+}
+
+@font-face {
+  font-family: "Helvetica Now Display";
+  font-weight: 800;
+  src: url(../Font-Family/HelveticaNowDisplay/HelveticaNowDisplay-ExtraBold.ttf);
+}
+
+/* Link Helvetica Now Display Font Family */
+@font-face {
+  font-family: "Bropames";
+  src: url(../Font-Family/Bropames/Bropames.otf);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden !important;
+}
+a {
+  text-decoration: none;
+}
+
+body {
+  font-family: "Helvetica Now Display";
+  font-weight: 400;
+  font-style: normal;
+  font-size: 16px;
+  line-height: normal;
+  color: #040707;
+  background-color: #fff;
+}
+
+.container {
+  max-width: 84%;
+}
+
+/* Login Page Css Start */
+.login-wrapper {
+  padding-block: 100px;
+}
+.login-wrapper .container {
+  position: relative;
+  z-index: 9;
+}
+.login-wrapper .container::before {
+  content: "";
+  height: 100%;
+  width: 50%;
+  background-image: url(../images/circle-bg.png);
+  background-repeat: no-repeat;
+  background-position: center left;
+  background-size: contain;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: -1;
+}
+
+.logo img {
+  height: 200px;
+}
+
+.logo {
+  margin-bottom: 50px;
+}
+
+.form-group input {
+  background-color: #363535;
+  box-shadow: 6px 6px 10px 0px #d5d0d2;
+  height: 70px;
+  font-family: "Helvetica Now Display";
+  font-weight: 700;
+  font-size: 20px;
+  color: #ffffff;
+  padding: 18px 30px;
+  outline: none;
+  border-radius: 20px !important;
+}
+
+.form-group input::placeholder {
+  font-weight: 700;
+  font-size: 20px;
+  color: #ffffff;
+  text-transform: capitalize;
+}
+
+form .row .col-12 + .col-12:has(.form-group),
+.col-10 {
+  margin-top: 42px;
+}
+
+.forgotPass {
+  font-size: 20px;
+  font-style: normal;
+  color: #363535;
+  display: inline-block;
+  text-transform: capitalize;
+}
+.forgotPass:hover {
+  color: #363535;
+  text-decoration: underline;
+}
+.form-groupLink {
+  margin-top: 25px;
+  display: flex;
+  justify-content: end;
+  margin-bottom: 30px;
+}
+.custom-btn {
+  background-color: #139f01;
+  width: 100% !important;
+  height: 73px;
+  font-size: 20px;
+  color: #fff;
+  border: 0px;
+  border-radius: 35px;
+}
+.logWrapper-formContainer {
+  box-shadow: 14px 3px 20px rgb(236, 220, 245);
+  padding: 70px;
+  border-radius: 30px;
+  margin-top: -110px;
+}
+.imageWrapper-box img {
+  height: 600px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 234, 239, 1) 60%,
+    rgba(255, 255, 255, 1) 73%
+  );
+}
+.imageWrapper-box {
+  text-align: center;
+}
+.logoWrapper-cover {
+  position: relative;
+  padding-top: 80px;
+}
+span.rocketIcon {
+  display: inline-block;
+  height: 160px;
+  position: absolute;
+  top: -60px;
+  left: 0%;
+}
+span.bulbIcon {
+  display: inline-block;
+  position: absolute;
+  height: 130px;
+  top: -60px;
+  left: 55%;
+  transform: translateX(-45%);
+}
+span.coinIcon {
+  display: inline-block;
+  height: 130px;
+  position: absolute;
+  bottom: 35%;
+  left: 0px;
+}
+.logoWrapper-cover span img {
+  height: 100% !important;
+}
+
+/* global class start */
+.bgBlack {
+  background: #363535;
+}
+.bgSuccess {
+  background-color: #139f01;
+}
+.vh80 {
+  height: 80vh;
+}
+/* global class end */
+
+/* Main Layout Started*/
+.main_layout {
+  padding: 25px 25px 25px 0px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.section_layout {
+  width: 100%;
+  min-width: 1000px;
+  overflow-x: auto;
+  height: 100vh;
+  border-radius: 50px;
+  background-color: #ffffff;
+  padding: 45px 30px;
+  overflow-y: auto;
+}
+
+.section_layout::-webkit-scrollbar {
+  display: none;
+}
+/* Main Layout Ended*/
+
+/* sidebar started */
+.sidebarMain {
+  padding: 0px 16px 16px 8px;
+  min-width: 250px;
+  /* width: 18%; */
+  height: 100vh;
+  overflow-y: auto;
+  transition: all 0.3s ease; /* Smooth transition for width, padding */
+  position: fixed;
+  z-index: 1000;
+  background-color: #363535;
+  top: 0;
+}
+
+.miniSideBar {
+  padding: 0px 8px 8px 8px;
+  width: 80px;
+  min-width: 80px;
+  height: 100vh;
+  overflow-y: auto;
+  transition: all 0.3s ease; /* Smooth transition for width, padding */
+  position: fixed;
+  z-index: 1000;
+  background-color: #363535;
+  top: 0;
+}
+.sidebarMain::-webkit-scrollbar {
+  display: none;
+}
+.miniSideBar::-webkit-scrollbar {
+  display: none;
+}
+.logoGroup img:first-child {
+  height: 80px;
+}
+.navItemsContainer {
+  margin-top: 20px;
+}
+.navItemsContainer img {
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+.navItemsContainer p {
+  color: #fff;
+  margin-left: 14px;
+  font-family: poppins;
+  font-size: 14px;
+}
+.sideNavItem {
+  width: 100%;
+  height: 40px;
+  padding: 20px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  filter: drop-shadow(13.023px 10.927px 10.5px rgba(0, 0, 0, 0.34));
+  cursor: pointer;
+}
+/* .notificationDiv img{
+  height: 20px !important;
+  width: 20px;
+ 
+}
+.notificationDiv{
+  background: white;
+  position: "relative";
+  height: 40px !important;
+  width: 40px;
+  border-radius: 20px;
+  top:-100px;
+  left:40px
+} */
+/* Custom tooltip theme */
+.tippy-box[data-theme~="custom-tooltip"] {
+  background-color: white; /* Set the background color of the tooltip */
+  color: white; /* Text color */
+  border-radius: 6px; /* Rounded corners */
+  font-weight: 500;
+}
+
+.tippy-box[data-theme~="custom-tooltip"] .tippy-arrow {
+  color: white; /* Match the arrow color with the tooltip background */
+}
+/* sidebar ended */
+
+/* topnav started */
+.topNavMain {
+  width: 100%;
+  border-radius: 33px;
+  filter: drop-shadow(6.128px 5.142px 10.5px rgba(0, 0, 0, 0.19));
+}
+.topNavMain p {
+  text-align: center;
+
+  font-family: Poppins;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  padding: 11px;
+}
+.navItem {
+  border-radius: 27px;
+  cursor: pointer;
+}
+/* topnav ended */
+
+/* table started */
+
+.tableMain {
+  margin-top: 25px;
+}
+.tableNav {
+  display: flex;
+  scroll-behavior: smooth;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+.tableNav::-webkit-scrollbar {
+  height: 4px;
+}
+.borderRadius50All {
+  border-radius: 50px;
+}
+.borderRadius30All {
+  border-radius: 30px;
+}
+.borderRadius50exceptTopLeft {
+  border-radius: 0px 50px 50px 50px;
+}
+.borderRadius50expectTopRight {
+  border-radius: 50px 0px 0px 50px;
+}
+.tableNav::-webkit-scrollbar-thumb {
+  background-color: #c4c4c4;
+  border-radius: 4px;
+}
+
+.tableNav::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+.tableNavItem {
+  width: 214px !important;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  border-radius: 30px 30px 0px 0px;
+  align-items: center;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+.tableNavItem p {
+  font-size: 17px;
+  letter-spacing: 0px;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+}
+.selectedP {
+  border-bottom: 2px solid #000000;
+}
+.whiteBtn {
+  background-color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.19));
+}
+.whiteBtn p {
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+  font-size: 14px;
+}
+.whiteBtn p:last-child {
+  color: #139f01;
+}
+.marginY35 {
+  margin: 35px 0px;
+}
+th {
+  text-align: center;
+}
+td {
+  text-align: center;
+}
+tbody,
+td,
+tfoot,
+th,
+thead,
+tr {
+  border-color: inherit;
+  border-style: none !important;
+  border-width: 0;
+}
+thead tr th {
+  font-size: 13px;
+  letter-spacing: 0px;
+  font-weight: 400;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+  padding: 14px 0px !important;
+}
+
+tbody tr td {
+  font-size: 12px;
+  letter-spacing: 0px;
+
+  text-align: center;
+  padding: 35px 0px !important;
+
+  color: #000000;
+  font-weight: 500;
+  font-family: "Poppins";
+}
+.bookingTable tbody tr td {
+  padding: 30px 0px !important;
+}
+
+tbody {
+  margin-top: 20px !important;
+}
+tbody tr td select {
+  border: none;
+  padding: 8px;
+  font-weight: 400;
+  font-family: "Helvetica Now Display";
+  background-color: #363535;
+  border-radius: 6px;
+  color: white;
+  font-size: 15px;
+  margin-top: -4px;
+  outline: none;
+}
+.iconDiv img {
+  height: 20px;
+  margin: 0px 8px;
+}
+/* table ended */
+
+/* price categories started */
+.categoriesMainDiv {
+  margin-top: 25px;
+}
+.categoriesBox {
+  width: 18.5%;
+  min-width: 250px;
+  border-radius: 14px;
+  background-color: #68ad6c;
+}
+.locationSearchBtn input {
+  border: none;
+  outline: none;
+  width: 130px;
+}
+.locationSearchBtn img {
+  height: 20px;
+}
+.locationSearchBtn {
+  background-color: white;
+  padding: 10px;
+  filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.19));
+  border-radius: 8px;
+}
+.customSelect {
+  height: 24px !important;
+  background-color: white;
+  width: 24px !important;
+  margin-right: 10px;
+  border: 2px solid black;
+  border-radius: 4px;
+}
+.customSelect img {
+  height: 15px;
+}
+.provienceListMain {
+  padding: 20px;
+  border-radius: 18px;
+  background-color: #fff1f0;
+  margin-bottom: 25px;
+}
+.provienceItem {
+  filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.19));
+  border-radius: 8px;
+  background-color: white;
+  margin: 10px 0px;
+  padding: 12px;
+}
+.provienceItem img {
+  height: 20px;
+}
+.provienceItem p {
+  font-weight: 500;
+  font-size: 14px;
+}
+.commissionForm {
+  margin-top: 50px;
+}
+.commissionForm label {
+  color: white;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+}
+.commissionInput {
+  background: white;
+  padding: 12px 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+.commissionInput input {
+  border: none;
+  outline: none;
+  width: 80%;
+  font-size: 15px;
+}
+.commissionInput p {
+  font-size: 15px;
+  color: #010101;
+}
+.commissionStatusBox {
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 24px;
+  margin: 35px 0px;
+}
+.commissionStatusBox p {
+  margin: 0px 20px;
+  color: #010101;
+}
+
+.commissionStatusBox span {
+  font-weight: 600;
+  color: #139f01;
+  margin: 0px 20px;
+  font-family: "Helvetica Now Display";
+}
+.commissionBtnGroup {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.commissionBtnGroup button {
+  width: 60%;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 6px 0px;
+  color: #fff;
+  font-size: 12px;
+  background: #040707;
+  border: none;
+}
+.gtMainDiv {
+  margin-top: 25px;
+}
+.gtMainDiv p {
+  font-size: 21px;
+  letter-spacing: -1px;
+  color: #000000;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+.gtMainDiv h1 {
+  font-size: 50px;
+  letter-spacing: -1px;
+  color: #000000;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+.payoutMainDiv {
+  border-radius: 50px;
+  background-color: #f3f3f3;
+  padding: 50px;
+  margin-top: 25px;
+}
+.payoutEditorMain {
+  border-radius: 22px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #ffffff;
+  padding: 30px;
+}
+/* price categories end */
+
+/* dashboard start */
+.dashboardTopMain select {
+  border-radius: 10px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.06));
+  background-color: #363535;
+  color: white;
+  padding: 9px;
+  font-size: 12px;
+}
+.dashboardTopMain p {
+  font-size: 17px;
+  letter-spacing: -1px;
+  color: #010101;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+}
+.dashboardTopMain h6 {
+  font-size: 20px;
+  letter-spacing: -1px;
+  color: #010101;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+}
+.staticCard {
+  /* width: 225px;
+height: 126px; */
+  border-radius: 17px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #ffffff;
+}
+.staticCard p {
+  font-size: 13px;
+  color: #010101;
+  font-family: "Helvetica Now Display";
+}
+.staticCard span {
+  font-size: 11px;
+}
+.staticCard h5 {
+  font-size: 20px;
+  letter-spacing: -1px;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+/* dashboard end */
+
+/* price n city start */
+.statusBtn {
+  width: 100%;
+  background-color: white;
+  border-radius: 24px;
+  padding: 10px;
+}
+.statusBtn h5 {
+  font-size: 23px;
+  color: #139f01;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+.greenCircle {
+  height: 12px;
+  width: 12px;
+  background-color: #139f01;
+  border-radius: 50%;
+  box-shadow: 0px 0px 8px #139f01;
+}
+.redCircle {
+  height: 12px;
+  width: 12px;
+  background-color: #e4040a;
+  border-radius: 50%;
+  box-shadow: 0px 0px 8px #e4040a;
+}
+.priceCityIcon {
+  height: 100px;
+}
+.whiteIcon {
+  filter: brightness(0) invert(1);
+}
+.categoryHeadingDiv {
+  height: 120px;
+}
+.categoriesBox h1 {
+  font-size: 50px;
+  letter-spacing: -1px;
+  color: #ffffff;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+  margin-bottom: 0px;
+}
+.categoriesMessageBox {
+  width: 110%;
+  padding: 20px 0px 40px 20px;
+  margin: 30px 0px 30px -24px;
+  border-radius: 0px 24px 24px 0px;
+  filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.2));
+  background-color: #ececec;
+  opacity: 0;
+}
+.categoriesMessageBox p {
+  opacity: 0.569;
+  font-size: 14px;
+  line-height: 25px;
+  color: #000000;
+  font-family: "Helvetica Now Display";
+}
+.arrowDiv {
+  background-color: white;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  margin-top: -30px;
+}
+.arrowDiv img {
+  height: 7px;
+}
+.activeInactiveDiv {
+  background-color: #363535;
+  width: 80%;
+  padding: 10px 20px;
+  border-radius: 6px;
+  position: relative;
+  bottom: 50px;
+  margin-bottom: -50px;
+}
+.borderBottom {
+  height: 2px;
+  background-color: white;
+  margin: 6px 0px;
+}
+.activeInactiveDiv p {
+  text-align: center;
+  color: white;
+  font-family: "Helvetica Now Display";
+  font-size: 14px;
+  cursor: pointer;
+}
+.priceCityUl {
+  background-color: white;
+  border-radius: 6px;
+  padding: 10px 0px;
+  margin-top: 15px;
+}
+.priceCityUl li {
+  padding: 10px;
+  list-style: none;
+  cursor: pointer;
+}
+.priceCityUl li:hover {
+  background-color: gainsboro;
+}
+/* price n city end */
+
+/* temprory dasboard css */
+.bookingGraph {
+  border-radius: 24px;
+}
+.bookingGraph select {
+  border: none;
+  border-radius: 8px;
+  font-weight: "400";
+  padding: 2px 6px;
+  font-size: 14px;
+}
+.pieGraph {
+  background-color: #353535;
+  border-radius: 20px;
+  color: white;
+  height: 100%;
+}
+.pieGraph h6 {
+  color: white;
+}
+.pieGraph select {
+  border: none;
+  border-radius: 8px;
+  font-weight: "400";
+  padding: 2px 6px;
+  font-size: 14px;
+}
+.tasksRemainer {
+  background-color: #fff;
+  border-radius: 20px;
+  color: black;
+  height: 100%;
+}
+.btnGroup {
+  background-color: #353535;
+  border-radius: 20px;
+
+  color: #fff;
+}
+.toggleBtn {
+  width: 50%;
+  padding: 2px 0px;
+  border-radius: 20px;
+  text-align: center;
+}
+.activeToggle {
+  background: #139f01;
+}
+.outOfAreaText {
+  rotate: -90deg;
+  position: relative;
+  left: -20px;
+  top: 50px;
+  width: 80px;
+  font-weight: 500;
+  font-size: 13px;
+}
+.outAreaCard {
+  border-radius: 12px;
+}
+.upperCap {
+  font-size: 12px;
+  padding: 8px 0px;
+  margin: 12px 0px;
+  border-radius: 12px 12px 0px 0px;
+}
+
+.lowerCap {
+  background-color: #353535;
+  color: white;
+  font-size: 12px;
+  padding: 8px 0px;
+  border-radius: 0px 0px 12px 12px;
+}
+
+/* user table start */
+.searchBox {
+  background-color: #f9f9f9;
+  padding: 4px 0px;
+  border-radius: 10px;
+}
+.searchBox img {
+  height: 18px;
+  width: 18px;
+  margin: 7px 8px 7px 12px;
+}
+.searchBox input {
+  width: 100%;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  font-size: 13px;
+  background-color: #f9f9f9;
+}
+.filterBox {
+  background-color: #f9f9f9;
+  padding: 4px 0px;
+  border-radius: 10px;
+}
+.filterBox img {
+  height: 18px;
+  width: 18px;
+  margin: 7px 8px 7px 12px;
+}
+.filterBox select {
+  width: 100%;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  font-size: 13px;
+  background-color: #f9f9f9;
+}
+.showSelectDiv p {
+  color: #010101;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+}
+.showSelectDiv select {
+  height: 32px;
+  border: none;
+  outline: none;
+  border-radius: 6px;
+  font-size: 13px;
+  background-color: #f9f9f9;
+}
+.entriesText {
+  color: #010101;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+}
+.addUserBtn {
+  background-color: #7650e0;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.addUserBtn p {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+}
+.addUserBtn img {
+  height: 20px;
+  width: 20px;
+  filter: brightness(0) invert(1);
+}
+.driverTable tr td {
+  padding: 30px 0px 20px 0px !important;
+}
+.userHistoryPopUp h6 {
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #1b1a1a;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+  margin-top: -12px;
+}
+.userHistoryPopUp p {
+  font-size: 14px;
+  letter-spacing: -1px;
+  color: #000000;
+  font-family: "poppins";
+}
+.fundsPopUpDiv {
+  width: 369px;
+  padding: 20px 20px 20px 40px;
+  border-radius: 9px;
+  background-color: #f9fafc;
+  border: 1px solid #7650e0;
+}
+.fundsPopUpDiv h6 {
+  font-size: 18px;
+  letter-spacing: -1px;
+  color: #1b1a1a;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+.fundsPopUpDiv img {
+  height: 150px;
+}
+.balanceDiv {
+  width: 149px;
+  padding: 8px 0px;
+  border-radius: 8px;
+  background-color: #1a1919;
+  border: 1px solid #7650e0;
+  font-size: 18px;
+  color: #ffffff;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+}
+.fundsPopUpDiv input {
+  background-color: #f9fafc;
+  border: 1px solid #7650e0;
+  width: 149px;
+  height: 45px;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #000000;
+  font-family: "Marlin Soft Basic";
+  text-align: center;
+  margin: 0px 20px;
+}
+.fundsPopUpDiv span {
+  background-color: #f9fafc;
+  border: 1px solid #7650e0;
+  padding: 5px 15px;
+  border-radius: 8px;
+  font-size: 22px;
+  color: #000000;
+  font-family: "poppins";
+  text-align: center;
+  font-weight: bolder;
+}
+.fundsPopUpDiv p {
+  font-size: 18px;
+  color: #000000;
+  font-family: "poppins";
+}
+.purpleButton {
+  width: 130px;
+  height: 35px;
+  border-radius: 8px;
+  background-color: #7650e0;
+  border: 1px solid #7650e0;
+  font-size: 16px;
+  color: #ffffff;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+/* user table end */
+
+.row-8-cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Optional: Adjust gap between columns */
+}
+
+.col-custom-8 {
+  flex: 0 0 10%; /* Each column takes up 10% of the row width */
+  max-width: 12.5%;
+}
+
+/* driver start */
+.driverHorizontalNav {
+  width: 100%;
+}
+.driverPopUpBtn {
+  padding: 24px;
+  border-radius: 30px 0px 0px 30px;
+  /* background-color: red; */
+}
+.driverPopUpBtn button {
+  font-size: 16px;
+  letter-spacing: 0px;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+  padding: 14px;
+  background-color: #139f01;
+  color: #fff;
+  width: 100%;
+  border-radius: 16px;
+  border: none;
+  filter: drop-shadow(6.128px 5.142px 10.5px rgba(0, 0, 0, 0.19));
+}
+.driverPopVerificationRightMain {
+  background-color: #fff0e3;
+  width: 100%;
+  height: 100%;
+  padding: 50px;
+}
+.driverPopVerificationRightMain h5 {
+  font-size: 30px;
+  letter-spacing: -1px;
+  color: #000000;
+  font-weight: 700;
+  font-family: "Helvetica Now Display";
+  margin-bottom: 0px;
+  padding: 0px 20px 20px 20px;
+  border-bottom: 2px solid #363535;
+}
+.driverPopVerificationRightMain input {
+  border: none;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.06));
+}
+.driverPopVerificationRightMain label {
+  color: #010101;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+}
+.driverPopUpActionButton button {
+  margin-top: 50px;
+  font-size: 14px;
+  letter-spacing: 0px;
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+  padding: 10px;
+  background-color: #139f01;
+  color: #fff;
+  width: 100%;
+  border-radius: 20px;
+  border: none;
+  filter: drop-shadow(6.128px 5.142px 10.5px rgba(0, 0, 0, 0.19));
+}
+.cameraIcon {
+  height: 350px;
+  width: 350px;
+  background-color: #000000;
+  border-radius: 50%;
+  margin: 50px 0px 20px 0px;
+}
+.cameraIcon img {
+  filter: brightness(0) invert(1);
+}
+.driverApproveMainFooter p {
+  color: #010101;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+  margin-top: 16px;
+}
+.driverDetailsLabelInput label {
+  color: #010101;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+}
+.driverDetailsLabelInput input {
+  border: none;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.06));
+}
+.driverDetailsLabelInput select {
+  border: none;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.06));
+}
+.driverDetailsLabelInput button {
+  margin-top: 50px;
+  font-size: 14px;
+  letter-spacing: 0px;
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+  padding: 10px;
+  background-color: #139f01;
+  color: #fff;
+  width: 100%;
+  border-radius: 20px;
+  border: none;
+  filter: drop-shadow(6.128px 5.142px 10.5px rgba(0, 0, 0, 0.19));
+}
+.driverDocument tr td {
+  padding: 25px 0px !important;
+}
+.ratigBox {
+  background-color: #fdeee7;
+  border-radius: 24px;
+  padding: 24px;
+}
+.ratigBox h4 {
+  font-size: 22px;
+  font-family: "Helvetica Now Display";
+  font-weight: 500;
+}
+.ratingBlackBox {
+  height: 130px;
+  width: 130px;
+  border-radius: 50%;
+  background-color: #000000;
+  color: #fff;
+  font-size: 40px;
+  font-family: "Helvetica Now Display";
+  font-weight: 600;
+}
+.textSuccess {
+  color: #139f01;
+}
+.starBox i {
+  font-size: 35px;
+  margin: 0px 20px;
+  color: "#139F01";
+}
+.reviewBox {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+}
+.reviewBox i {
+  margin: 0px 4px;
+}
+.reviewBox img {
+  height: 50px;
+}
+.reviewBox p {
+  font-weight: 400;
+  color: #010101;
+  font-size: 14px;
+}
+.reviewBox span {
+  font-family: "Helvetica Now Display";
+  margin-left: 10px;
+}
+/* driver end */
+
+/* support start */
+.accordenBox {
+  border-radius: 9px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #ffffff;
+}
+.accordenBox h5 {
+  font-size: 21px;
+  letter-spacing: -1px;
+  color: #000000;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+.accordenBox select {
+  border-radius: 9px;
+  background-color: #363535;
+  padding: 8px 10px;
+  color: white;
+  font-size: 14px;
+}
+.accordenBox p {
+  font-size: 16px;
+  line-height: 21px;
+  color: #000000;
+  font-family: "Helvetica Now Display";
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+.accordenBox textarea {
+  border-radius: 9px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #ffffff;
+  border: none;
+}
+.accordenBoxbutton {
+  border-radius: 9px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #139f01;
+  border: none;
+  font-size: 12px;
+  width: 120px;
+  border: none;
+}
+.tcHeadind {
+  font-size: 24px;
+  letter-spacing: -1px;
+  line-height: 24px;
+  color: #363535;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+.supportForm label {
+  font-size: 18px;
+  letter-spacing: -1px;
+  color: #000000;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+  margin-bottom: 10px;
+}
+.supportForm input {
+  border-radius: 9px;
+  background-color: #eef2fe;
+  border: none;
+  padding: 12px;
+  margin-bottom: 20px;
+}
+.supportForm button {
+  color: white;
+  border-radius: 9px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #139f01;
+  width: 200px;
+  height: 40px;
+  border: none;
+  outline: none;
+  margin: 40px;
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: "Poppins";
+}
+.react-tel-input {
+  width: 100px !important;
+}
+/* support end */
+.bookingGroupTable tr td {
+  padding: 10px !important;
+}
+.marronButton {
+  width: 300px;
+  height: 40px;
+  border-radius: 9px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #ad003d;
+  border: none;
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: "Poppins";
+}
+.mannualSelectDiv {
+  width: 45px;
+  height: 40px;
+  border-radius: 9px;
+  filter: drop-shadow(3.774px 3.28px 6.5px rgba(0, 0, 0, 0.22));
+  background-color: #000000;
+}
+.mannualSelectDiv img {
+  filter: brightness(0) invert(1);
+}
+.missedActionButton {
+  width: 80px;
+  height: 35px;
+  border-radius: 9px;
+  filter: drop-shadow(3.774px 3.28px 6.5px rgba(0, 0, 0, 0.22));
+  background-color: #000000;
+  font-size: 14px;
+  letter-spacing: -1px;
+  color: #ff4d4d;
+  font-weight: 500;
+  font-family: "Poppins";
+  border: none;
+}
+
+/* chat box start */
+.chatBoxTopNav {
+  padding: 25px 30px;
+  border-radius: 27px;
+  background-color: #b8336a;
+}
+.labelBox {
+  border-radius: 9px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #ffffff;
+  padding: 12px;
+}
+.labelBox p {
+  opacity: 0.502;
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #000000;
+  font-weight: 500;
+  font-family: "Poppins";
+}
+.labelBox h6 {
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #000000;
+  font-weight: 500;
+  font-family: "Poppins";
+}
+.chatBoxDiv {
+  border-radius: 9px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #ffffff;
+  margin: 70px 30px 30px 30px;
+  padding: 24px;
+}
+.chatActionBtnGroup {
+  border-radius: 39px;
+  filter: drop-shadow(6.128px 5.142px 10.5px rgba(0, 0, 0, 0.19));
+  background-color: #ffffff;
+  position: relative;
+  top: -55px;
+  width: 70%;
+  height: 60px;
+  margin-bottom: -50px;
+}
+.chatDiv {
+  padding: 12px;
+  border-radius: 23px;
+  background-color: #024596;
+  width: 50%;
+}
+.chatDiv p {
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: "Poppins";
+}
+.chatDiv h6 {
+  font-size: 12px;
+  letter-spacing: 0px;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: "Poppins";
+}
+.chatContainer label {
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #010101;
+  font-weight: 500;
+  font-family: "Poppins";
+  margin: 8px;
+}
+.addMessageBox {
+  margin: 20px 30px;
+  height: 54px;
+  border-radius: 33px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #ffffff;
+  padding: 0px 20px;
+}
+.addMessageBox img {
+  height: 18px;
+}
+.addMessageBox input {
+  border-radius: 23px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #000000;
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: "Poppins";
+  width: 60%;
+  padding: 6px 12px;
+  border: none;
+}
+.addMessageBox input::placeholder {
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: "Poppins";
+}
+.addMessageBox select {
+  border-radius: 23px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #000000;
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: "Poppins";
+  width: 20%;
+  padding: 6px 12px;
+}
+.addMessageBox button {
+  border-radius: 23px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #139f01;
+  width: 10%;
+  padding: 6px 12px;
+  border: none;
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: "Poppins";
+}
+.leftArrorDiv {
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  background-color: #000000;
+}
+.leftArrorDiv img {
+  height: 16px;
+  filter: brightness(0) invert(1);
+}
+.chatActionBtnGroup button {
+  border-radius: 23px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #024596;
+  padding: 6px 24px;
+  border: none;
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: "Poppins";
+  margin: 0px 20px;
+}
+/* chat box end */
+
+/* booking dashboard start */
+.locationBoxButton {
+  padding: 6px 12px;
+  width: 250px;
+  background: #00437c;
+  border: none;
+  color: #fff;
+  border-radius: 9px;
+  word-wrap: break-word;
+  white-space: normal;
+  filter: drop-shadow(3.774px 3.28px 6.5px rgba(0, 0, 0, 0.22));
+}
+.locationBoxButton img {
+  filter: brightness(0) invert(1);
+}
+.countDiv {
+  font-size: 6px;
+  background-color: #139f01;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  position: relative;
+  top: -12.5px;
+  left: 4px;
+}
+.countDivSmall {
+  font-size: 6px;
+  background-color: #d64e03;
+  height: 7.5px;
+  width: 7.5px;
+  border-radius: 50%;
+  position: relative;
+  top: -14px;
+  left: 4.95px;
+}
+/* booking dashboard end */
+.whiteDivBtn {
+  border-radius: 9px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #ffffff;
+  opacity: 0.502;
+  font-size: 16px;
+  color: #000000;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+  padding: 10px;
+  margin-top: -10px;
+  margin: -10px 10px 0px 10px;
+  width: 150px;
+}
+.whiteDivBtn img {
+  height: 16px;
+  margin-top: -3px;
+}
+.driverQuickDepositeAction {
+  width: 100px;
+  /* height: 40px; */
+  border-radius: 9px;
+  filter: drop-shadow(0 0 10.5px rgba(0, 1, 1, 0.13));
+  background-color: #ffffff;
+  font-size: 16px;
+  letter-spacing: -1px;
+  color: #139f01;
+  font-weight: 500;
+  font-family: "Poppins";
+  margin-top: -10px;
+}
+.addColseBtn {
+  background-color: #ce032e;
+  padding: 8px 12px;
+  border-radius: 24px;
+  font-size: 18px;
+  font-family: poppins;
+  font-weight: bolder;
+  width: 75%;
+  margin-top: -25px;
+}
+
+.switchPopUpDiv input {
+  background-color: #fafafa;
+  border: 1px solid #eab66d;
+  width: 65%;
+  height: 38px;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #000000;
+  padding: 0px 10px;
+  opacity: 0.5;
+  /* font-family: "poppins"; */
+}
+.switchPopUpDiv span {
+  background-color: #f9fafc;
+  border: 1px solid #7650e0;
+  padding: 5px 15px;
+  border-radius: 8px;
+  font-size: 22px;
+  color: #000000;
+  font-family: "poppins";
+  text-align: center;
+  font-weight: bolder;
+}
+.switchPopUpDiv p {
+  font-size: 16px;
+  color: #000000;
+  font-family: "poppins";
+  opacity: 0.8;
+}
+
+.switchPopUpDiv {
+  padding: 20px 20px 20px 40px;
+  border-radius: 9px;
+  background-color: #f9fafc;
+  border: 1px solid #eab66d;
+}
+.switchPopUpDiv h6 {
+  font-size: 18px;
+  letter-spacing: -1px;
+  color: #1b1a1a;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+
+/* notification start */
+.notificationBox {
+  padding: 12px;
+  border-radius: 35px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  background-color: #7650e0;
+  margin-bottom: 24px;
+}
+.notificationBox img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+.notificationBox h6 {
+  font-size: 16px;
+  color: #ffffff;
+
+  font-family: "Helvetica Now Display";
+}
+.notificationBox p {
+  font-size: 13px;
+  color: #ffffff;
+  font-family: "poppins";
+}
+.notificationBox span {
+  font-size: 12px;
+  color: #ffffff;
+  font-family: "poppins";
+  /* margin-right: 20px; */
+}
+/* notification end */
+
+.noRecordFoundMain {
+  height: 75vh;
+  background-color: #353535;
+  border-radius: 20px;
+}
+.noRecordFoundInner {
+  width: 800px;
+  white-space: wrap;
+  text-align: center;
+}
+.noRecordFoundInner h1 {
+  margin-bottom: 80px;
+  font-size: 50px;
+  font-family: "Helvetica Now Display";
+}
+.noRecordFoundInner p {
+  font-family: "Helvetica Now Display";
+  font-size: 30px;
+}
+.notifyForm {
+  background-color: #fff;
+  border-radius: 24px;
+  padding: 32px 28px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+}
+.multiSelect {
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  z-index: 1000;
+  border: none;
+}
+.notifyForm input {
+  border: none;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  padding: 8.5px 12px;
+}
+.notifyForm textarea {
+  border: none;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.11));
+  padding: 8px 12px;
+}
+.sendBtn {
+  font-size: 14px;
+  letter-spacing: 0px;
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+  padding: 10px;
+  background-color: #139f01;
+  color: #fff;
+  width: 100px;
+  border-radius: 6px;
+  border: none;
+  filter: drop-shadow(6.128px 5.142px 10.5px rgba(0, 0, 0, 0.19));
+}
+.line-break {
+  word-wrap: break-word; /* or overflow-wrap: break-word; */
+  white-space: normal; /* Ensures that the line breaks at spaces or words */
+}
+
+.noDriverPopUp h6 {
+  font-size: 27px;
+  letter-spacing: -1px;
+  color: #d82c2a;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+.noDriverPopUp p {
+  width: 100%;
+  font-size: 20px;
+  line-height: 32px;
+  color: #1b1a1a;
+  font-family: poppins;
+  text-align: center;
+  word-wrap: break-word; /* or overflow-wrap: break-word; */
+  white-space: normal;
+}
+.noDriverPopUp button {
+  width: 45%;
+  height: 45px;
+  border-radius: 8px;
+  filter: drop-shadow(8.426px 7.071px 3.5px rgba(0, 0, 0, 0.2));
+  background-color: #7650e0;
+  border: 1px solid #7650e0;
+  font-size: 16px;
+  color: #ffffff;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+
+.manualSetPopup h3 {
+  font-size: 21px;
+  letter-spacing: -1px;
+  color: #000000;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+}
+.manualSetPopup button {
+  width: 100%;
+  height: 45px;
+  border-radius: 8px;
+  filter: drop-shadow(8.426px 7.071px 3.5px rgba(0, 0, 0, 0.2));
+  background-color: #0d7200;
+  border: none;
+  font-size: 16px;
+  color: #ffffff;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+.manualSetPopup select {
+  width: 100%;
+  height: 45px;
+  border-radius: 8px;
+  filter: drop-shadow(8.426px 7.071px 3.5px rgba(0, 0, 0, 0.2));
+
+  background-color: #01427c;
+
+  font-size: 16px;
+  color: #ffffff;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+.leftCardRoute {
+  width: 100%;
+  border-radius: 30px;
+  filter: drop-shadow(-7.913px -7.641px 8px rgba(255, 255, 255, 0.15));
+  filter: drop-shadow(21.887px 19.026px 8px rgba(0, 0, 0, 0.23));
+  background-color: #d64e03;
+  padding: 23px 28px;
+}
+.leftCardRoute p {
+  font-size: 14px;
+  letter-spacing: -1px;
+  color: #ffffff;
+  font-family: "poppins";
+  margin-bottom: 0px;
+}
+.leftCardRoute h3 {
+  font-size: 20px;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-weight: 600;
+  font-family: "poppins";
+  margin-bottom: 0px;
+}
+.groupIdBtn {
+  width: 200px;
+  height: 35px;
+  border-radius: 5px;
+  background-color: #f9f9fb;
+  font-size: 14px;
+  letter-spacing: -1px;
+  color: #000000;
+  font-weight: 500;
+  font-family: "Helvetica Now Display";
+}
+.groupIdBtnWithoutShadow {
+  width: 210px;
+  height: 44px;
+  border-radius: 13px;
+
+  background-color: #efeef4;
+  font-size: 20px;
+  letter-spacing: -1px;
+  color: #000000;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+}
+.assignDriverBtn {
+  width: 100%;
+  height: 50px;
+  border-radius: 12px;
+  filter: drop-shadow(9.539px 15.265px 8px rgba(0, 0, 0, 0.27));
+  background-color: #000000;
+  font-size: 20px;
+  color: #ffffff;
+  font-weight: bold;
+  font-family: "Helvetica Now Display";
+  border: none;
+}
+.assignDriverBtn img {
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+.halfTopCard {
+  width: 100%;
+  height: 100px;
+  border-radius: 31px 31px 0px 0px;
+  /* filter: drop-shadow(-2.877px -2.779px 8px rgba(255,255,255,0.32)); */
+  background-color: #789dbc;
+  position: relative;
+  padding-top: 12px;
+}
+.halfTopCard p {
+  margin-bottom: 0px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "poppins";
+}
+.halfTopCard img {
+  height: 20px;
+}
+
+.imgWhite {
+  filter: brightness(0) invert(1);
+}
+.indexCount {
+  position: relative;
+  top: -10px;
+  font-size: 8px;
+}
+.personalLocationTopForm input {
+  font-size: 16px;
+  padding: 8px;
+}
+.personalLocationTopForm span {
+  font-size: 16px;
+  color: gray;
+}
+.personalLocationTopForm p {
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.personalLocationTopForm h4 {
+  font-family: Helvetica, sans-serif;
+  font-weight: 500;
+}
+.financeMain h5 {
+  font-family: poppins;
+  font-size: 20px;
+}
+.financeMain h3 {
+  font-family: poppins;
+  font-size: 28px;
+}
+.financeMain span {
+  font-weight: 600;
+}
+.financeMain h6 {
+  font-family: poppins;
+  font-size: 18px;
+}
+.createBlogMain label {
+  font-family: poppins;
+  margin: 6px 0px;
+  font-size: 18px;
+}
+.sharingRouteButton {
+  border-radius: 7px;
+  background: #1c1c1c;
+  box-shadow: 2px 4px 4px 0px rgba(0, 0, 0, 0.12);
+  border: none;
+  padding: 7px 10px;
+  color: #f9f9fb !important;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.btnHeight25 {
+  height: 25px;
+  margin-bottom: 5px;
+}
+.etaItem p {
+  color: #1c1c1c !important;
+  font-family: Poppins !important;
+  font-size: 14px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: normal !important;
+  margin-bottom: 0px !important;
+}
+.etcItem h3 {
+  color: #1c1c1c !important;
+  font-family: Poppins !important;
+  font-size: 20px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: normal !important;
+  margin-bottom: 0px !important;
+}
+.callButton {
+  border-radius: 10px;
+  background: #1c1c1e;
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  display: flex;
+
+  height: 40px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.callButton span {
+  color: "white" !important;
+}
+.manualTopNav {
+  border-radius: 30px;
+  background: #353535;
+  padding: 18px 12px;
+}
+.manualTopNav p {
+  color: #fff;
+
+  font-family: poppins;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  margin-bottom: 4px;
+  word-break: break-word;
+  white-space: normal;
+  height: 50px;
+}
+.manualTopNav h3 {
+  color: #fff;
+  text-align: center;
+  font-family: poppins;
+  font-size: 35px;
+  font-style: normal;
+  font-weight: 700;
+  margin-bottom: 0px;
+}
+.manualAmountBox {
+  border-radius: 15px;
+  background: #3b82f6;
+  padding: 15px 20px;
+}
+.manualwhiteBtn {
+  border-radius: 15px;
+  background: #f7f7f7;
+  padding: 5px 16px;
+  height: 50px;
+  /* margin-bottom: 20px; */
+}
+.manualEnrouteBox {
+  padding: 18px;
+  border-radius: 30px;
+  background: #353535;
+}
+.manualInputDiv {
+  border-radius: 15px;
+  border: 0.5px solid #e5e5e5;
+  background: #f7f7f7;
+  box-shadow: 1px 2px 4px 0px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+}
+.manualInputDiv input {
+  border: none;
+  background-color: #f7f7f7;
+  outline: none;
+  width: 80%;
+}
+.manualInputDiv select {
+  border: none;
+  background-color: #f7f7f7;
+  outline: none;
+  width: 100%;
+}
+.manualInputDiv img {
+  height: 18px;
+  margin-right: 10px;
+}
+.manualTable thead tr th {
+  font-size: 13px;
+  letter-spacing: 0px;
+  font-weight: 400;
+  font-family: "Helvetica Now Display";
+  text-align: center;
+  padding: 7.5px !important;
+}
+.manualTable span {
+  position: relative;
+  top: -5px;
+}
+.manualDriverBox {
+  border-radius: 20px;
+  width: 420px;
+  background: #fff;
+  box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.12);
+}
+.manualDriverBox img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+.manualDriverBox p {
+  color: #1c1c1e;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin-bottom: 0px;
+}
+.manualDriverBox h5 {
+  color: #1c1c1c;
+  font-family: Poppins;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  margin-bottom: 0px;
+}
+.carImg {
+  height: 20px !important;
+  width: 20px !important;
+}
+.manualButtonGroup {
+  border-radius: 20px;
+  border: 1px solid #e5e5e5;
+  padding: 20px;
+  background: #fff;
+  margin-bottom: 20px;
+}
+.manualButtonGroup button {
+  border-radius: 10px;
+  background: #1c1c1c;
+  box-shadow: 1px 2px 4px 0px rgba(0, 0, 0, 0.12);
+  width: 80%;
+  height: 40px;
+  color: #fff;
+  font-family: Poppins;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border: none;
+  border: 1px solid #000;
+}
+.topPositionFixed {
+  position: absolute;
+  top: 100px;
+  width: 100%;
+}
+.completedPopup {
+  width: 858px;
+  padding: 25px;
+  border-radius: 30px;
+  border: 0.5px solid #e5e5e5;
+  background: #fff;
+  box-shadow: 1px 2px 10px 0px rgba(0, 0, 0, 0.12);
+  position: relative;
+  left: -100px;
+}
+.completedPopupDriverDetails {
+  border-radius: 20px;
+  border: 0.5px solid #e5e5e5;
+  background: #fff;
+  box-shadow: 1px 2px 10px 0px rgba(0, 0, 0, 0.12);
+  padding: 20px;
+  width: 100%;
+}
+.completedPopupDriverDetails p {
+  color: #1c1c1c;
+
+  font-family: Poppins;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 4px;
+}
+.completedPopupDriverDetails h5 {
+  color: #1c1c1c;
+
+  font-family: Poppins;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  margin-bottom: 4px;
+}
+.completedPopupDriverDetails img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+.completPopupTable {
+  box-shadow: 1px 2px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.completPopupTable tbody tr td {
+  padding: 12px !important;
+}
+.managepopupgroup {
+  border-radius: 30px;
+  background: #fff;
+  width: 950px;
+  padding: 30px;
+  position: relative;
+  left: -150px;
+}
+.managepopupgroupleft {
+  border-radius: 20px;
+  border: 1px solid #e5e5e5;
+  padding: 20px;
+}
+.managepopupgroupleft button {
+  border-radius: 5px !important;
+  /* background: #DD4132 !important; */
+  width: 120px;
+  height: 30px;
+  color: #fff;
+
+  font-family: Poppins !important;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500 !important;
+  line-height: normal;
+}
+.managepopupgroupleft p {
+  width: 100px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  margin-bottom: 0px !important;
+}
+.managepopupgroupleft select {
+  border-radius: 10px !important;
+  border: 0.5px solid #e5e5e5 !important;
+  background: #fff !important;
+  box-shadow: 1px 2px 4px 0px rgba(0, 0, 0, 0.12) !important;
+  color: black !important;
+  font-weight: 400;
+  padding: 0px 5px;
+  height: 45px;
+}
+.shiftButton {
+  height: 40px !important;
+  width: 100% !important;
+  font-size: 16px;
+  border-radius: 10px;
+}
+.refundDetailsPopup {
+  width: 440px;
+  border-radius: 17.857px;
+  background: #fff;
+  box-shadow: 1.19px 2.381px 11.905px 0px rgba(0, 0, 0, 0.12);
+}
+.refundHeading {
+  color: #1c1c1e;
+  font-family: poppins;
+  font-size: 19.048px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 30.744px; /* 161.404% */
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+  padding: 10px 20px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.cancelRefundBody {
+  padding: 25px 20px;
+}
+.cancelRefundBody span {
+  color: #6b6b6b;
+  font-family: poppins;
+  font-size: 14.286px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-transform: capitalize;
+  margin-bottom: 6px;
+}
+.cancelRefundBody b {
+  color: #1c1c1e;
+  font-family: poppins;
+  font-size: 14.286px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-transform: capitalize;
+  margin-bottom: 6px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+.refundDetailsBox {
+  background-color: #f7f7f6;
+}
+.refundDetailsBox i {
+  font-size: 6px;
+  text-align: center;
+}
+.refundDetailsBox p {
+  color: #1c1c1c;
+
+  font-family: Poppins;
+  font-size: 14.286px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 0px;
+}
+.refundDetailsBox h5 {
+  color: #1c1c1e;
+  font-family: poppins;
+  font-size: 16.667px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 30.744px; /* 184.462% */
+}
+.note {
+  color: #353535;
+  font-family: poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.refundDetailsBox h6 {
+  color: #1c1c1c;
+
+  font-family: Poppins;
+  font-size: 14.286px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin-bottom: 0px;
+}
+.cancelRefundButton button {
+  border-radius: 5.952px;
+  border: 1.042px solid hsl(240, 3%, 11%);
+  background: #fff;
+  color: #1c1c1e;
+  text-align: center;
+  font-family: poppins;
+  font-size: 14.286px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  width: 100px;
+  height: 35px;
+}
+.verticalCenter td {
+  vertical-align: middle !important;
+}
+.personalAcceptedDriverBox {
+  background-color: #353535;
+  border-radius: 15px;
+  padding: 15px !important;
+}
+.personalAcceptedDriverBox img {
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+}
+.driverIdBox {
+  border-radius: 5px;
+  background: #d0ff13;
+  color: #1c1c1e;
+  font-family: Poppins;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-align: center;
+  align-items: center;
+  height: 30px;
+}
+.personalAcceptedDriverBox h5 {
+  color: #fff;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  margin-bottom: 0px;
+}
+.outOfAreaCategoryBtn {
+  color: #fff;
+  text-align: center;
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border-radius: 5px;
+  background: #00a431;
+  padding: 5px 10px;
+  border: none;
+}
+.outOfArea tbody tr td {
+  padding: 15px 0px !important;
+  vertical-align: middle !important;
+}
+.manualAmountBoxForPersonal {
+  border-radius: 10px;
+  background: #d0ff13;
+  height: 50px;
+}
+.manualAmountBoxForPersonal h5 {
+  color: #1c1c1e;
+  font-family: poppins;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  margin-bottom: 0px;
+  margin-right: 20px;
+}
+.manualAmountBoxForPersonal h3 {
+  color: #1c1c1e;
+  text-align: center;
+  font-family: poppins;
+  font-size: 28px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin-top: 0px;
+}
+.retryBox {
+  border-radius: 10px;
+  background: #d0ff13;
+  box-shadow: 2px 4px 10px 0px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  padding: 5px;
+}
+.retryCounter {
+  border-radius: 25px;
+  background: #353535;
+  padding: 3px 5px;
+}
+.retryCounter span {
+  color: #fff;
+  font-family: Poppins;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.retryCounter img {
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  padding: 5px;
+  background-color: #d0ff13;
+}
+.retryBox button {
+  color: #fff;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  border-radius: 5px;
+  background: #353535;
+  border: none;
+  padding: 5px;
+  width: 100%;
+}
+.personalRouteBox {
+  border-radius: 20px;
+  background: #353535;
+  padding: 20px;
+}
+.personalRouteBox p {
+  color: #fff;
+  font-family: Poppins;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 0px;
+}
+.personalRouteBox h4 {
+  color: #fff;
+  font-family: Poppins;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+.personalRouteBox button {
+  border-radius: 5px;
+  background: #d0ff13;
+  color: #1c1c1e;
+  font-family: Poppins;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border: none;
+  padding: 8px;
+  width: 100%;
+}
+.personalManualTab tbody tr td {
+  padding: 10px !important;
+}
+.settingTable tbody tr td {
+  padding: 13px !important;
+  vertical-align: middle;
+}
+.settingTableBtn {
+  display: flex;
+  width: 100px;
+  height: 30px;
+  padding: 5px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  background: #353535;
+}
+.distanceBtn {
+  display: flex;
+  width: 100px;
+  height: 40px;
+  padding: 9px 14px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  background: #353535;
+  color: #fff;
+  text-align: center;
+  font-family: poppins;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+.borderRadius20All {
+  border-radius: 20px;
+}
+.addRoute {
+  display: flex;
+  width: 100px;
+  height: 40px;
+  padding: 9px 14px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  background: #353535;
+  box-shadow: 1px 2px 4px 0px rgba(0, 0, 0, 0.12);
+  color: #fff;
+  font-family: Poppins;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.retryContainer {
+  color: #1c1c1e;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.retryContainer input {
+  height: 30px;
+  font-size: 12px;
+  width: 140px;
+}
+.retryBtnGroup button {
+  display: flex;
+  width: 120px;
+  height: 30px;
+  padding: 14px;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  border-radius: 5px;
+  border: 0.5px solid #1c1c1e;
+  background: #fff;
+  color: #1c1c1e;
+  text-align: center;
+  font-family: poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.borderBlue {
+  border: 1px solid blue;
+}
+.viewShiftBtn img {
+  width: 25px;
+  height: 20.161px;
+  filter: brightness(0) invert(1);
+}
+.viewShiftBtn {
+  width: 140px;
+  height: 30px;
+  padding: 5px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  background: #353535;
+  color: #fff;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border: none;
+}
+.personalSettingLocationCard p {
+  color: #1c1c1e;
+
+  font-family: Poppins;
+  font-size: 12.308px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  margin-bottom: 0px;
+}
+.personalSettingLocationCard {
+  border-radius: 10px;
+  background: #fff;
+  padding: 5px 10px;
+  height: 60px;
+}
+.notificationBtn {
+  border-radius: 10px;
+  padding: 12px 12px;
+  background: #000;
+  box-shadow: 5px 5px 10px 0 rgba(0, 0, 0, 0.2);
+  border: none;
+  width: 100%;
+}
+.notificationBtn span {
+  color: #d0ff13;
+  text-align: center;
+  margin-left: 20px;
+  font-family: Poppins;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.notificationFormContent {
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: -1px -2px 4px 0 #6b6b6b;
+  padding: 25px;
+  position: relative;
+  top: -20px;
+  margin-bottom: -20px;
+}
+.categorySelectedDiv {
+  border-radius: 10px;
+  background: #353535;
+  padding: 12px;
+  font-size: 12px;
+  color: #fff;
+}
+.dateDiv {
+  border-radius: 10px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.25);
+  font-size: 12px;
+}
+.notificationFormContent input {
+  border-radius: 10px;
+  border: 0.5px solid #e5e5e5;
+  background: #fff;
+  padding: 12px;
+}
+.notificationFormContent textarea {
+  border-radius: 10px;
+  border: 0.5px solid #e5e5e5;
+  background: #fff;
+  padding: 12px;
+}
+.notificationFormActionBtn button {
+  width: 150px;
+  height: 40px;
+  padding: 0 15px;
+  border-radius: 10px;
+  border: 1px solid #000;
+  box-shadow: 1px 2px 4px 0 rgba(0, 0, 0, 0.12);
+  color: #1c1c1e;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.pnoneIconDiv img {
+  height: 540px;
+  width: 260px;
+}
+.imageUploadDiv {
+  border-radius: 15px;
+  border: 0.5px dashed #6b6b6b;
+  background: #fff;
+  padding: 20px 40px;
+}
+.imageUploadDiv p {
+  color: #6b6b6b;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin-bottom: 0px;
+}
+.imageUploadDiv p b {
+  color: #1c1c1e;
+}
+.imageUploadDiv span {
+  color: #6b6b6b;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.imageUploadDiv button {
+  border-radius: 5px;
+  background: #f7f7f7;
+  box-shadow: 5px 5px 10px 0 rgba(0, 0, 0, 0.2);
+  width: 160px;
+  color: #1c1c1e;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  height: 30px;
+}
+.phoneNotificationInnerContent {
+  position: relative;
+  top: -450px;
+  margin-bottom: -200px;
+  width: 225px;
+}
+.phoneNotificationInnerContent img {
+  height: 200px;
+  position: relative;
+  top: -20px;
+  border-radius: 20px;
+  margin-bottom: -100px;
+}
+.phoneNotificationInnerContent h5 {
+  font-size: 16px;
+}
+.phoneNotificationInnerContent p {
+  margin-bottom: 0px;
+  font-size: 14px;
+  word-wrap: break-word; /* line break karne ke liye */
+  word-break: break-word; /* long words ko bhi break karega */
+  white-space: normal; /* ensure line wrapping is allowed */
+}
+
+.closeDiv img {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  position: relative;
+  top: 60px;
+  background-color: #000;
+}
+.fundfManagementStaticsDiv p {
+  color: #1c1c1e;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.fundCount {
+  color: #1c1c1e !important;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 22px !important;
+  font-style: normal;
+  font-weight: 600 !important;
+  line-height: normal;
+  margin-left: 10px;
+}
+.fundInputBox {
+  border-radius: 10px;
+  border: 0.5px solid #e5e5e5;
+  background: #f7f7f7;
+  box-shadow: 1px 2px 4px 0 rgba(0, 0, 0, 0.12);
+  height: 40px;
+}
+.fundInputBox input {
+  border: none !important;
+  background-color: transparent !important;
+  outline: none !important;
+}
+.fundInputBox select {
+  border: none !important;
+  background-color: transparent !important;
+}
+.switchroutepopup {
+  border-radius: 15px;
+  
+  box-shadow: 1px 2px 10px 0 rgba(0, 0, 0, 0.12);
+ 
+}
+.switchroutepopupBody{
+ width: 330px !important;
+  padding: 70px 35px 35px 35px !important;
+  background: #fff !important;
+}
