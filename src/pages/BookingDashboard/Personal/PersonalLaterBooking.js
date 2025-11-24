@@ -7,7 +7,7 @@ import {
   getPersonalLaterListServ,
   assignPersonalDriverServ,
   manualPersonalDriverServ,
-  cancelPersonalServ
+  cancelPersonalServ,
 } from "../../../services/personalBookingServices";
 import { updateNotificationStatusServ } from "../../../services/notification.services";
 import Skeleton from "react-loading-skeleton";
@@ -38,7 +38,6 @@ function PersonalLaterBooking() {
     {
       name: "Analytics",
       path: "/personal-analytics-booking",
-     
     },
     {
       name: "Personal Later",
@@ -72,7 +71,7 @@ function PersonalLaterBooking() {
         );
       })?.length,
     },
-    
+
     {
       name: "Missed",
       path: "/personal-missed-booking",
@@ -231,46 +230,47 @@ function PersonalLaterBooking() {
       let response = await assignPersonalDriverServ({ booking_id: id });
       if (response?.data?.statusCode == "200") {
         handleGetListFunc();
-        toast.success(response?.data?.message)
+        toast.success(response?.data?.message);
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
     setAssignLoader(false);
   };
- const [manualLoader, setManualLoader] = useState(false);
+  const [manualLoader, setManualLoader] = useState(false);
   const manualDriverFunc = async (id) => {
     setManualLoader(id);
     try {
       let response = await manualPersonalDriverServ({ booking_id: id });
       if (response?.data?.statusCode == "200") {
         handleGetListFunc();
-        toast.success(response?.data?.message)
+        toast.success(response?.data?.message);
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
     setManualLoader(false);
-  }; 
+  };
   const [cancelLoader, setCancelLoader] = useState(false);
   const cancelBookingFunc = async (id) => {
-     const confirmed = window.confirm("Are you sure you want to cancel the booking?");
-    if(confirmed){
- setCancelLoader(id);
-    try {
-      let response = await cancelPersonalServ({ booking_id: id });
-      if (response?.data?.statusCode == "200") {
-        handleGetListFunc();
-        toast.success(response?.data?.message)
+    const confirmed = window.confirm(
+      "Are you sure you want to cancel the booking?"
+    );
+    if (confirmed) {
+      setCancelLoader(id);
+      try {
+        let response = await cancelPersonalServ({ booking_id: id });
+        if (response?.data?.statusCode == "200") {
+          handleGetListFunc();
+          toast.success(response?.data?.message);
+        }
+      } catch (error) {
+        toast.error(error?.response?.data?.message);
       }
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
+      setCancelLoader(false);
     }
-    setCancelLoader(false);
-    }
-   
-  }; 
-    const navItems = [
+  };
+  const navItems = [
     [
       {
         name: "Sharing Ride",
@@ -340,7 +340,7 @@ function PersonalLaterBooking() {
       },
     ],
   ];
-   return (
+  return (
     <div className="mainBody">
       <NewSidebar selectedItem="Booking Dashboard" />
       <div className="contentLayout">
@@ -371,16 +371,16 @@ function PersonalLaterBooking() {
                             <span className="mx-1">Sr. No</span>
                           </div>
                         </th>
-                        
+
                         <th scope="col">Booking ID</th>
                         <th scope="col">Username</th>
                         <th scope="col" style={{ width: "120px" }}>
                           <div>Pick Address</div>
                         </th>
-                       <th scope="col" style={{ width: "120px" }}>
+                        <th scope="col" style={{ width: "120px" }}>
                           <div>Drop Address</div>
                         </th>
-                        
+
                         <th scope="col">Booking Date & Time</th>
                         <th scope="col">Time Choice</th>
                         <th scope="col">Booking Placed</th>
@@ -458,27 +458,66 @@ function PersonalLaterBooking() {
 
                               <td>{value?.id}</td>
 
-                              <td>{value?.user_details?.first_name + " "+ value?.user_details?.last_name}</td>
-                              <td>
-                                {value?.source
-                                  ? `${value.source.substring(0, 15)}${
-                                      value.source.length > 15 ? "..." : ""
-                                    }`
-                                  : ""}
+                              <td className="text-center align-middle">
+                                <div
+                                  className="userNameDiv"
+                                  style={{
+                                    width: "100px",
+                                    textAlign: "center",
+                                    display: "inline-block",
+                                  }}
+                                >
+                                  <p className="mb-0 bgWhite text-dark radius3 pt-2 p-1">
+                                    {value?.user_details?.unique_id}
+                                  </p>
+
+                                  <p className="mb-0 text-light mt-3">
+                                    {value?.user_details?.first_name +
+                                      " " +
+                                      value?.user_details?.last_name}
+                                  </p>
+                                </div>
                               </td>
-                              <td>
-                                {value?.destination
-                                  ? `${value.destination.substring(0, 15)}${
-                                      value.destination.length > 15 ? "..." : ""
-                                    }`
-                                  : ""}
+
+                              <td
+                                className="text-start"
+                                style={{ whiteSpace: "normal" }}
+                              >
+                                {value?.source || ""}
                               </td>
-                              <td>
-                                {moment(value?.booking_date).format("DD MMM, YYYY")} (
-                                {moment(value?.booking_time, "HH:mm").format(
-                                  "hh:mm A"
-                                )}
-                                )
+
+                              <td
+                                className="text-start"
+                                style={{ whiteSpace: "normal" }}
+                              >
+                                {value?.destination || ""}
+                              </td>
+
+                              <td className="text-center align-middle">
+                                <div
+                                  style={{
+                                    backgroundColor: "#D9FF44",
+                                    padding: "10px 18px",
+                                    borderRadius: "5px",
+                                    display: "inline-block",
+                                    fontWeight: "600",
+                                    lineHeight: "1.3",
+                                  }}
+                                >
+                                  <div>
+                                    {moment(value?.booking_date).format(
+                                      "DD MMM, YYYY"
+                                    )}
+                                  </div>
+                                  <div>
+                                    (
+                                    {moment(
+                                      value?.booking_time,
+                                      "HH:mm"
+                                    ).format("hh:mm A")}
+                                    )
+                                  </div>
+                                </div>
                               </td>
 
                               <td>
@@ -488,17 +527,20 @@ function PersonalLaterBooking() {
                               </td>
                               <td>
                                 <div>
-                                  {moment(value?.created_at).format("DD/MM/YYYY")}
+                                  {moment(value?.created_at).format(
+                                    "DD/MM/YYYY"
+                                  )}
                                 </div>
                                 <div>
-                                  {moment(value?.created_at).format("hh:mm A")}
+                                  ({moment(value?.created_at).format("hh:mm A")}
+                                  )
                                 </div>
                               </td>
                               <td>
-                                <div >
+                                <div>
                                   <img
                                     src="/icons/eyeIcon.png"
-                                    style={{ height: "20px" }}
+                                    style={{ height: "30px" }}
                                   />
                                 </div>
                               </td>
@@ -508,149 +550,145 @@ function PersonalLaterBooking() {
                                   borderBottomRightRadius: "20px",
                                 }}
                               >
-                                {/* <div className="d-flex justify-content-center ">
+                                <div className="d-flex justify-content-center">
                                   <div style={{ marginTop: "0px" }}>
+                                    {/* Assign */}
                                     <div
                                       onClick={() =>
                                         assignLoader == value?.id
                                           ? {}
                                           : assignDriverFunc(value?.id)
                                       }
+                                      className="shadow d-flex justify-content-center align-items-center"
                                       style={{
                                         background: "#353535",
-                                        border: "none",
-                                        width: "90px",
+                                        color: "#D0FF13",
+                                        borderRadius: "5px",
+                                        height: "25px",
+                                        width: "80px",
+                                        marginBottom: "5px",
+                                        cursor: "pointer",
                                         opacity:
-                                          assignLoader == value?.id ? "0.5" : "1",
+                                          assignLoader == value?.id
+                                            ? "0.5"
+                                            : "1",
                                       }}
-                                      className="btn btn-primary shadow btnHeight25 d-flex justify-content-center align-items-center"
                                     >
-                                      <span
-                                        style={{
-                                          marginLeft: "6px",
-                                          color: "#D0FF13",
-                                          fontSize: "9px",
-                                        }}
-                                      >
-                                        {assignLoader == value?.id
-                                          ? "Assigning ..."
-                                          : "Assign"}{" "}
-                                      </span>
+                                      {assignLoader == value?.id
+                                        ? "Assigning..."
+                                        : "Assign"}
                                     </div>
 
+                                    {/* Manual */}
                                     <div
                                       onClick={() =>
                                         manualLoader == value?.id
                                           ? {}
                                           : manualDriverFunc(value?.id)
                                       }
+                                      className="shadow d-flex justify-content-center align-items-center"
                                       style={{
                                         background: "#353535",
-                                        border: "none",
-                                        width: "90px",
+                                        color: "#D0FF13",
+                                        borderRadius: "5px",
+                                        height: "25px",
+                                        width: "80px",
+                                        marginBottom: "5px",
+                                        cursor: "pointer",
                                         opacity:
-                                          manualLoader == value?.id ? "0.5" : "1",
+                                          manualLoader == value?.id
+                                            ? "0.5"
+                                            : "1",
                                       }}
-                                      className="btn btn-primary shadow btnHeight25 d-flex justify-content-center align-items-center"
                                     >
-                                      <span
-                                        style={{
-                                          marginLeft: "6px",
-                                          color: "#D0FF13",
-                                          fontSize: "9px",
-                                        }}
-                                      >
-                                       {manualLoader == value?.id
-                                          ? "Loading ..."
-                                          : "Manual"}{" "}
-                                      </span>
+                                      {manualLoader == value?.id
+                                        ? "Loading..."
+                                        : "Manual"}
                                     </div>
 
+                                    {/* Cancel */}
                                     <div
                                       onClick={() =>
                                         cancelLoader == value?.id
                                           ? {}
                                           : cancelBookingFunc(value?.id)
                                       }
+                                      className="shadow d-flex justify-content-center align-items-center"
                                       style={{
                                         background: "#353535",
-                                        border: "none",
-                                        width: "90px",
+                                        color: "#D0FF13",
+                                        borderRadius: "5px",
+                                        height: "25px",
+                                        width: "80px",
+                                        cursor: "pointer",
                                         opacity:
-                                          cancelLoader == value?.id ? "0.5" : "1",
+                                          cancelLoader == value?.id
+                                            ? "0.5"
+                                            : "1",
                                       }}
-                                      className="btn btn-primary shadow btnHeight25 d-flex justify-content-center align-items-center"
                                     >
-                                      <span
-                                        style={{
-                                          marginLeft: "6px",
-                                          color: "#D0FF13",
-                                          fontSize: "9px",
-                                        }}
-                                      >
-                                        {cancelLoader == value?.id
-                                          ? "Cancelling ..."
-                                          : "Cancel"}{" "}
-                                      </span>
+                                      {cancelLoader == value?.id
+                                        ? "Cancelling..."
+                                        : "Cancel"}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* <div className="d-flex justify-content-center">
+                                  <div>
+                                    <div
+                                      className="pt-2 pb-2 mx-2 shadow "
+                                      style={{
+                                        background: "#353535",
+                                        color: "#D0FF13",
+                                        borderRadius: "5px",
+                                        height: "25px",
+                                        width: "80px",
+                                        marginBottom: "5px",
+                                        cursor: "pointer",
+                                      }}
+                                      // onClick={() =>
+                                      //   setShowRoutePopupId(value?.group_id)
+                                      // }
+                                    >
+                                      Assign
+                                    </div>
+                                    <div
+                                      className="pt-2 pb-2 mx-2 shadow "
+                                      style={{
+                                        background: "#353535",
+                                        color: "#D0FF13",
+                                        borderRadius: "5px",
+                                        height: "25px",
+                                        width: "80px",
+                                        marginBottom: "5px",
+                                        cursor: "pointer",
+                                      }}
+                                      // onClick={() =>
+                                      //   setShowRoutePopupId(value?.group_id)
+                                      // }
+                                    >
+                                      Manual
+                                    </div>
+                                    <div
+                                      className="pt-2 pb-2 mx-2 shadow "
+                                      style={{
+                                        background: "#353535",
+                                        color: "#D0FF13",
+                                        borderRadius: "5px",
+                                        height: "25px",
+                                        width: "80px",
+
+                                        cursor: "pointer",
+                                      }}
+                                      // onClick={() =>
+                                      //   setShowRoutePopupId(value?.group_id)
+                                      // }
+                                    >
+                                      Cancel
                                     </div>
                                   </div>
                                 </div> */}
-                                <div className="d-flex justify-content-center">
-                                  <div>
-                                    <div
-                                            className="pt-1 pb-2 mx-2 shadow "
-                                            style={{
-                                              background: "#353535",
-                                              color: "#D0FF13",
-                                              borderRadius: "5px",
-                                              height: "25px",
-                                              width: "80px",
-                                              marginBottom: "5px",
-                                              cursor: "pointer",
-                                            }}
-                                            // onClick={() =>
-                                            //   setShowRoutePopupId(v?.group_id)
-                                            // }
-                                          >
-                                            Assign
-                                          </div>
-                                            <div
-                                            className="pt-1 pb-2 mx-2 shadow "
-                                            style={{
-                                              background: "#353535",
-                                              color: "#D0FF13",
-                                              borderRadius: "5px",
-                                              height: "25px",
-                                              width: "80px",
-                                              marginBottom: "5px",
-                                              cursor: "pointer",
-                                            }}
-                                            // onClick={() =>
-                                            //   setShowRoutePopupId(v?.group_id)
-                                            // }
-                                          >
-                                            Manual
-                                          </div>
-                                            <div
-                                            className="pt-1 pb-2 mx-2 shadow "
-                                            style={{
-                                              background: "#353535",
-                                              color: "#D0FF13",
-                                              borderRadius: "5px",
-                                              height: "25px",
-                                              width: "80px",
-                                              
-                                              cursor: "pointer",
-                                            }}
-                                            // onClick={() =>
-                                            //   setShowRoutePopupId(v?.group_id)
-                                            // }
-                                          >
-                                            Cancel
-                                          </div>
-                                  </div>
-                                </div>
-                                
                               </td>
                             </tr>
                           </tbody>
@@ -667,9 +705,95 @@ function PersonalLaterBooking() {
               )}
             </div>
           </div>
+          <CustomPagination
+            current_page={pageData?.current_page}
+            onPerPageChange={onPerPageChange}
+            last_page={pageData?.total_pages}
+            per_page={payload?.per_page}
+            onPageChange={onPageChange}
+          />
         </div>
       </div>
-      
+      {paymentDetailsPopup && (
+        <div
+          className="modal fade show d-flex align-items-center manualSetPopup  justify-content-center "
+          tabIndex="-1"
+        >
+          <div className="modal-dialog">
+            <div
+              className="modal-content"
+              style={{
+                borderRadius: "16px",
+                background: "#f7f7f5",
+                width: "364px",
+              }}
+            >
+              <div className="d-flex justify-content-between pt-4 pb-0 px-4">
+                <p>
+                  <u>Payment Details</u>
+                </p>
+                <i
+                  className="fa fa-close text-secondary"
+                  onClick={() => {
+                    setPaymentDetailsPopup(null);
+                  }}
+                ></i>
+              </div>
+              <hr className="mt-0" />
+              <div className="modal-body" style={{ fontFamily: "poppins" }}>
+                <div
+                  style={{
+                    wordWrap: "break-word",
+                    whiteSpace: "pre-wrap",
+                  }}
+                  className="d-flex justify-content-center w-100"
+                >
+                  <div className="w-100 px-2">
+                    <div className="d-flex justify-content-between px-2 mb-1">
+                      <p style={{ fontWeight: "400" }}>Booking Amount</p>
+                      <span style={{ fontWeight: "500" }}>
+                        ${paymentDetailsPopup?.booking_amount}
+                      </span>
+                    </div>
+
+                    <div className="d-flex justify-content-between px-2 mb-1">
+                      <p>Driver Earn</p>
+                      <span style={{ fontWeight: "500" }}>
+                        ${paymentDetailsPopup?.driver_earning}
+                      </span>
+                    </div>
+                    <div className="d-flex justify-content-between px-2 mb-1">
+                      <p>Admin Fee</p>
+                      <span style={{ fontWeight: "500" }}>
+                        ${paymentDetailsPopup?.admin_commission}
+                      </span>
+                    </div>
+                    <div className="d-flex justify-content-between px-2 mb-1">
+                      <p>Surge Amount</p>
+                      <span style={{ fontWeight: "500" }}>
+                        ${paymentDetailsPopup?.extra_charge}
+                      </span>
+                    </div>
+                    <div
+                      className="my-3"
+                      style={{ borderTop: "1px solid #B2B2B2" }}
+                    ></div>
+                    <div
+                      className="d-flex justify-content-between px-2 mb-1 pt-3"
+                      style={{ fontWeight: "500" }}
+                    >
+                      <p>Total Payment</p>
+                      <span>${paymentDetailsPopup?.total_trip_cost}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="d-flex justify-content-center"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {paymentDetailsPopup && <div className="modal-backdrop fade show"></div>}
     </div>
   );
   return (
@@ -804,7 +928,11 @@ function PersonalLaterBooking() {
 
                               <td>{v?.id}</td>
 
-                              <td>{v?.user_details?.first_name + " "+ v?.user_details?.last_name}</td>
+                              <td>
+                                {v?.user_details?.first_name +
+                                  " " +
+                                  v?.user_details?.last_name}
+                              </td>
                               <td>
                                 {v?.source
                                   ? `${v.source.substring(0, 15)}${
@@ -820,7 +948,8 @@ function PersonalLaterBooking() {
                                   : ""}
                               </td>
                               <td>
-                                {moment(v?.booking_date).format("DD MMM, YYYY")} (
+                                {moment(v?.booking_date).format("DD MMM, YYYY")}{" "}
+                                (
                                 {moment(v?.booking_time, "HH:mm").format(
                                   "hh:mm A"
                                 )}
@@ -906,7 +1035,7 @@ function PersonalLaterBooking() {
                                           fontSize: "9px",
                                         }}
                                       >
-                                       {manualLoader == v?.id
+                                        {manualLoader == v?.id
                                           ? "Loading ..."
                                           : "Manual"}{" "}
                                       </span>

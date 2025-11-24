@@ -394,6 +394,10 @@ import { updateNotificationStatusServ } from "../../../services/notification.ser
 import { getNavItems } from "../../../utils/TopNavItemData/bookingDashboard";
 import Pagination from "../../../components/Pagination";
 import { Image_Base_Url } from "../../../utils/api_base_url_configration";
+import NewSidebar from "../../../components/NewSidebar";
+import CustomTopNav from "../../../components/CustomTopNav";
+import SecondaryTopNav from "../../../components/SecondaryTopNav";
+import CustomPagination from "../../../components/CustomPazination";
 function PersonalEnrouteBooking() {
   const { setGlobalState, globalState } = useGlobalState();
   const [payload, setPayload] = useState({
@@ -471,6 +475,76 @@ function PersonalEnrouteBooking() {
         return v.category == "personal_booking_canceled" && v?.is_read == 0;
       })?.length,
     },
+  ];
+  const navItems = [
+    [
+      {
+        name: "Sharing Ride",
+        path: "/sharing-group-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "new_booking" ||
+              v?.category == "new_route_created" ||
+              v?.category == "booking_accepted" ||
+              v?.category == "booking_rejected" ||
+              v?.category == "booking_missed" ||
+              v?.category == "booking_ride_started" ||
+              v?.category == "booking_arrived" ||
+              v?.category == "booking_pickup_started" ||
+              v?.category == "booking_drop_started" ||
+              v?.category == "booking_completed" ||
+              v?.category == "booking_canceled" ||
+              v?.category == "booking_ride_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Personal Ride",
+        path: "/personal-later-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "personal_new_booking" ||
+              v?.category == "personal_booking_accepted" ||
+              v?.category == "personal_booking_ride_canceled" ||
+              v?.category == "personal_booking_missed" ||
+              v?.category == "personal_booking_ride_started" ||
+              v?.category == "personal_booking_completed" ||
+              v?.category == "personal_booking_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Family Ride",
+        path: "/family-ride",
+      },
+    ],
+    [
+      {
+        name: "Driver's Availability",
+        path: "/availability-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_availability" && v?.is_read == 0;
+        })?.length,
+      },
+      {
+        name: "Driver's Route",
+        path: "/route-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_share_route" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
+    [
+      {
+        name: "Out Of Area",
+        path: "/out-of-area",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "out_of_area" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
   ];
   const [list, setList] = useState([]);
   const [showSkelton, setShowSkelton] = useState(false);
@@ -613,6 +687,362 @@ function PersonalEnrouteBooking() {
       </div>
     );
   };
+  return (
+    <div className="mainBody">
+      <NewSidebar selectedItem="Booking Dashboard" />
+      <div className="contentLayout">
+        <div className="bgWhite borderRadius30 p-4 minHeight100vh">
+          <div className="sticky-top bgWhite">
+            <CustomTopNav navItems={navItems} selectedNav="Personal Ride" />
+            <SecondaryTopNav
+              navItems={tableNav}
+              selectedNav="Enroute"
+              navBg="#E5E5E5"
+              navColor="#1C1C1C"
+              selectedNavBg="#353535"
+              selectedNavColor="#fff"
+            />
+          </div>
+          <div className="tableOuterContainer bgDark mt-4">
+          {showSkelton
+            ? [1, 2, 3, 4, 5, 6, 7, 8, 9]?.map((v, i) => {
+                return (
+                  <div
+                    className={"tableBody py-4 my-4 px-4 borderRadius50All"}
+                    style={{ background: "#363435" }}
+                  >
+                    <div className="row" style={{ borderRadius: "24px" }}>
+                      <div className="col-md-8">
+                        <div>
+                          <Skeleton height={440} width="100%" />
+                        </div>
+                      </div>
+                      <div className="col-md-4">
+                        <div>
+                          <Skeleton height={440} width="100%" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            : list?.map((value, i) => {
+                return (
+                  <div
+                    className={"tableBody py-4 my-4 px-4 borderRadius30All"}
+                    style={{ background: "#363435" }}
+                  >
+                    <div className=" row " style={{ borderRadius: "24px" }}>
+                      <div className="col-md-8">
+                        <div
+                          className="leftCardRoute d-flex align-items-center w-100"
+                          style={{
+                            background: "#D0FF13",
+                            height: "300px",
+                            borderRadius: "20px",
+                          }}
+                        >
+                          <div className="w-100 ">
+                            <div className="row">
+                              <div className="col-5">
+                                <div className="row d-flex align-items-center ">
+                                  <div
+                                    className="d-flex groupIdBtn  justify-content-center w-100  mb-3 align-items-center"
+                                    style={{
+                                      filter: "none",
+                                      background: "#363435",
+                                    }}
+                                  >
+                                    <div
+                                      className="d-flex justify-content-center w-100 px-4"
+                                      style={{ color: "white" }}
+                                    >
+                                      <div>Booking ID :- </div>
+                                      <div className="ms-1">{value?.id}</div>
+                                    </div>
+                                  </div>
+                                  <div className="mb-3">
+                                    <p style={{ color: "#000" }}>Username</p>
+                                    <h3 style={{ color: "#000" }}>
+                                      {value?.user_details?.first_name +
+                                        " " +
+                                        value?.user_details?.last_name}
+                                    </h3>
+                                  </div>
+                                  <div className="mb-3">
+                                    <p style={{ color: "#000" }}>
+                                      Booking Date & Time
+                                    </p>
+                                    <h3 style={{ color: "#000" }}>
+                                      {moment(value?.booking_date).format(
+                                        "DD MMM, YYYY"
+                                      )}{" "}
+                                      (
+                                      {moment(
+                                        value?.booking_time,
+                                        "HH:mm"
+                                      ).format("hh:mm A")}
+                                      )
+                                    </h3>
+                                  </div>
+                                  <div className="mb-3">
+                                    <p style={{ color: "#000" }}>
+                                      Current Status
+                                    </p>
+                                    <h3 style={{ color: "#000" }}>
+                                      {value?.current_status}
+                                    </h3>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="col-7">
+                                <div className="mb-3">
+                                  <p style={{ color: "#000" }}>Source</p>
+                                  <h3 style={{ color: "#000" }}>
+                                    {value?.source?.length > 30
+                                      ? value?.source?.substring(0, 25) + "..."
+                                      : value?.source}
+                                  </h3>
+                                </div>
+                                <div className="mb-3">
+                                  <p style={{ color: "#000" }}>Destination</p>
+                                  <h3 style={{ color: "#000" }}>
+                                    {value?.destination?.length > 30
+                                      ? value?.destination?.substring(0, 25) +
+                                        "..."
+                                      : value?.destination}
+                                  </h3>
+                                </div>
+                                <div className="mb-3 row">
+                                  <div className=" col-6">
+                                    <p style={{ color: "#000" }}>Time Choice</p>
+                                    <h3 style={{ color: "#000" }}>
+                                      {value?.time_choice == "pickupat"
+                                        ? "Pick Up"
+                                        : "Drop Off"}
+                                    </h3>
+                                  </div>
+                                  <div className=" col-6">
+                                    <p style={{ color: "#000" }}>Pickup Time</p>
+                                    <h3 style={{ color: "#000" }}>
+                                      {moment(
+                                        value?.pickup_time,
+                                        "HH:mm"
+                                      ).format("hh:mm A")}
+                                    </h3>
+                                  </div>
+                                </div>
+                                <div className="row mb-3">
+                                  <div className="col-6">
+                                    <p style={{ color: "#000" }}>
+                                      Confirm Time
+                                    </p>
+                                    <h3 style={{ color: "#000" }}>
+                                      {moment(value?.confirm_time).format(
+                                        "DD MMM YYYY"
+                                      )}
+                                    </h3>
+                                  </div>
+                                  <div className=" col-6">
+                                    <p style={{ color: "#000" }}>Payment</p>
+                                    <img
+                                      onClick={() =>
+                                        setPaymentDetailsPopup(value)
+                                      }
+                                      src="/icons/eyeIcon.png"
+                                      style={{ height: "20px" }}
+                                    />
+                                  </div>
+                                </div>
+                               
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-md-4">
+                        <div
+                          className="leftCardRoute d-flex align-items-center w-100"
+                          style={{
+                            background: "#fff",
+                            height: "300px",
+                            borderRadius: "20px",
+                            padding: "20px",
+                          }}
+                        >
+                          <div className="w-100 ">
+                            <div className="personalAcceptedDriverBox p-2 d-flex align-items-center">
+                              <div>
+                                <img
+                                  src={
+                                    Image_Base_Url +
+                                    value?.driver_details?.image
+                                  }
+                                />
+                              </div>
+                              <div className="ms-3">
+                                <div className="driverIdBox d-flex justify-content-center mb-2">
+                                  <span>
+                                    Driver ID :- {value?.driver_details?.id}
+                                  </span>
+                                </div>
+                                <h5>
+                                  {value?.driver_details?.first_name +
+                                    " " +
+                                    value?.driver_details?.last_name}
+                                </h5>
+                              </div>
+                            </div>
+                            <div className="row my-3">
+                              <div className="col-6">
+                                <div className="">
+                                  <p style={{ color: "#000" }}>
+                                    {value?.driver_details?.vehicle_name +
+                                      " (" +
+                                      value?.driver_details?.vehicle_colour +
+                                      ")"}
+                                  </p>
+                                  <h3 style={{ color: "#000" }}>
+                                    {value?.driver_details?.vehicle_no}
+                                  </h3>
+                                </div>
+                              </div>
+                              <div className="col-6">
+                                <div className="">
+                                  <p style={{ color: "#000" }}>Driver Review</p>
+                                  <h3 style={{ color: "#000" }}>
+                                    {renderStarFunc(
+                                      value?.driver_average_rating
+                                    )}
+                                  </h3>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              className="callButton"
+                              onClick={() => alert("Coming soon")}
+                            >
+                              <img
+                                src="https://cdn-icons-png.flaticon.com/128/597/597177.png"
+                                style={{
+                                  height: "20px",
+                                  filter: "brightness(0) invert(1)",
+                                }}
+                              />
+                              <span
+                                style={{
+                                  color: "white",
+                                  fontSize: "14px",
+                                  fontFamily: "poppins",
+                                }}
+                              >
+                                Call Now
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+          {list?.length == 0 && !showSkelton && <NoRecordFound theme="dark" />}
+        </div>
+        <CustomPagination
+            current_page={pageData?.current_page}
+            onPerPageChange={onPerPageChange}
+            last_page={pageData?.total_pages}
+            per_page={payload?.per_page}
+            onPageChange={onPageChange}
+          />
+        {paymentDetailsPopup && (
+          <div
+            className="modal fade show d-flex align-items-center manualSetPopup  justify-content-center "
+            tabIndex="-1"
+          >
+            <div className="modal-dialog">
+              <div
+                className="modal-content"
+                style={{
+                  borderRadius: "16px",
+                  background: "#f7f7f5",
+                  width: "364px",
+                }}
+              >
+                <div className="d-flex justify-content-between pt-4 pb-0 px-4">
+                  <p>
+                    <u>Payment Details</u>
+                  </p>
+                  <i
+                    className="fa fa-close text-secondary"
+                    onClick={() => {
+                      setPaymentDetailsPopup(null);
+                    }}
+                  ></i>
+                </div>
+                <hr className="mt-0" />
+                <div className="modal-body" style={{ fontFamily: "poppins" }}>
+                  <div
+                    style={{
+                      wordWrap: "break-word",
+                      whiteSpace: "pre-wrap",
+                    }}
+                    className="d-flex justify-content-center w-100"
+                  >
+                    <div className="w-100 px-2">
+                      <div className="d-flex justify-content-between px-2 mb-1">
+                        <p style={{ fontWeight: "400" }}>Booking Amount</p>
+                        <span style={{ fontWeight: "500" }}>
+                          ${paymentDetailsPopup?.total_trip_cost}
+                        </span>
+                      </div>
+
+                      <div className="d-flex justify-content-between px-2 mb-1">
+                        <p>Driver Earn</p>
+                        <span style={{ fontWeight: "500" }}>
+                          ${paymentDetailsPopup?.driver_earning}
+                        </span>
+                      </div>
+                      <div className="d-flex justify-content-between px-2 mb-1">
+                        <p>Admin Fee</p>
+                        <span style={{ fontWeight: "500" }}>
+                          ${paymentDetailsPopup?.admin_commission}
+                        </span>
+                      </div>
+                      <div className="d-flex justify-content-between px-2 mb-1">
+                        <p>Surge Amount</p>
+                        <span style={{ fontWeight: "500" }}>
+                          ${paymentDetailsPopup?.extra_charge}
+                        </span>
+                      </div>
+                      <div
+                        className="my-3"
+                        style={{ borderTop: "1px solid #B2B2B2" }}
+                      ></div>
+                      <div
+                        className="d-flex justify-content-between px-2 mb-1 pt-3"
+                        style={{ fontWeight: "500" }}
+                      >
+                        <p>Total Payment</p>
+                        <span>${paymentDetailsPopup?.total_trip_cost}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="d-flex justify-content-center"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {paymentDetailsPopup && (
+          <div className="modal-backdrop fade show"></div>
+        )}
+        </div>
+      </div>
+      
+    </div>
+  );
   return (
     <div className="main_layout  bgBlack d-flex">
       {/* sidebar started */}

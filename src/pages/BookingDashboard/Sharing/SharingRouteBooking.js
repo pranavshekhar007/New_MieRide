@@ -327,13 +327,12 @@ function SharingRouteBooking() {
       }
       setSubmitLoaderId("");
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message
-          ? error?.response?.data?.message
-          : "Internal Server Error"
-      );
+      setPopupData({
+        id,
+        message:
+          "Unfortunately, we couldn’t find a driver matching the availability for this booking group. Would you like to move this group to manual processing?",
+      });
       setSubmitLoaderId("");
-      setPopupData({ id: id });
     }
   };
   const [manualPopupDetails, setManualPopupDetails] = useState(null);
@@ -372,7 +371,9 @@ function SharingRouteBooking() {
   const assignBookingToExistingGroup = async () => {
     setMoveBtnLoader(true);
     try {
-      let response = await mergeBookingToExistingGroupServ(manualAssignFormData);
+      let response = await mergeBookingToExistingGroupServ(
+        manualAssignFormData
+      );
       if (response?.data?.statusCode == "200") {
         toast.success(response?.data?.message);
         handleGetListFunc();
@@ -708,18 +709,27 @@ function SharingRouteBooking() {
                             </div>
                           </div>
                           <div className="col-8">
-                            {value?.pickup_points?.map((v, i) => {
-                              return (
-                                <LocationTicket
-                                  i={i}
-                                  v={v}
-                                  key={i}
-                                  value={value}
-                                  userDetailsPopup={userDetailsPopup}
-                                  // setUserDetailsPopup={setUserDetailsPopup}
-                                />
-                              );
-                            })}
+                            {/* PICKUP POINTS */}
+                            {value?.pickup_points?.map((v, i) => (
+                              <LocationTicket
+                                key={`pickup-${i}`}
+                                i={i}
+                                v={v}
+                                value={value}
+                                type="pickup"
+                              />
+                            ))}
+
+                            {/* DROPOFF POINTS */}
+                            {value?.dropoff_points?.map((v, i) => (
+                              <LocationTicket
+                                key={`drop-${i}`}
+                                i={value?.pickup_points?.length + i}
+                                v={v}
+                                value={value}
+                                type="dropoff"
+                              />
+                            ))}
                           </div>
                         </div>
                       </div>
@@ -741,56 +751,108 @@ function SharingRouteBooking() {
       </div>
       {paymentDetailsPopup && (
         <div
-          className="modal fade show d-flex align-items-center   justify-content-center "
+          className="modal fade show d-flex align-items-center justify-content-center"
           tabIndex="-1"
         >
           <div className="modal-dialog">
-            <div className="modal-content paymentPopup">
+            <div className="modal-content paymentReceiptPopup">
               <div className="modal-body p-0">
-                <div
-                  style={{
-                    wordWrap: "break-word",
-                    whiteSpace: "pre-wrap",
-                  }}
-                  className="d-flex justify-content-center w-100"
-                >
-                  <div className="w-100">
-                    <div className="px-2">
-                      <div className="d-flex justify-content-between align-items-center paymentPopupLine mb-4">
-                        <p>No. of Person </p>
-                        <h5>{paymentDetailsPopup?.number_of_person || 1}</h5>
-                      </div>
-                      <div className="d-flex justify-content-between align-items-center paymentPopupLine mb-4">
-                        <p>Booking Amount</p>
-                        <h5> ${paymentDetailsPopup?.total_trip_cost}</h5>
-                      </div>
-                      <div className="d-flex justify-content-between align-items-center paymentPopupLine mb-4">
-                        <p>Surge Amount</p>
-                        <h5> ${paymentDetailsPopup?.total_extra_charge}</h5>
-                      </div>
+                <div className="text-center mb-4">
+                  <h3 className="popupTitle">Payment Receipt – Sharing Ride</h3>
+                </div>
 
-                      <div className="d-flex justify-content-between align-items-center paymentPopupLine mb-4">
-                        <p>Admin Fee</p>
-                        <h5>${paymentDetailsPopup?.total_admin_commission}</h5>
-                      </div>
-                      <div className="d-flex justify-content-between align-items-center paymentPopupLine ">
-                        <p>Driver Earn</p>
-                        <h5>${paymentDetailsPopup?.total_driver_earning}</h5>
-                      </div>
-                    </div>
-                    <div className="borderLine"></div>
-                    <div className="d-flex justify-content-between align-items-center paymentPopupLine ">
-                      <h5>Total Payment</h5>
-                      <h4>${paymentDetailsPopup?.total_trip_cost}</h4>
-                    </div>
-                    <button>Paid via wallet</button>
-                    <div className="d-flex justify-content-center">
-                      <img
-                        className=""
-                        src="/imagefolder/popUpCloseIcon.png"
-                        onClick={() => setPaymentDetailsPopup(null)}
-                      />
-                    </div>
+                <div className="px-3">
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>No. of Person</p>
+                    <h5>{paymentDetailsPopup?.total_number_of_people || 1}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>Booking Amount per Person</p>
+                    <h5>
+                      $
+                      {(paymentDetailsPopup?.total_trip_cost || 0) /
+                        (paymentDetailsPopup?.total_number_of_people || 1)}
+                    </h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>HST (13%)</p>
+                    <h5>{"N/A"}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine totalLine">
+                    <p className="fw-bold">Total Amount</p>
+                    <h5 className="fw-bold">
+                      ${(paymentDetailsPopup?.total_trip_cost).toFixed(2)}
+                    </h5>
+                  </div>
+
+                  <hr />
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>Driver Commission</p>
+                    <h5>${paymentDetailsPopup?.total_driver_earning || 0}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>Driver HST (13%)</p>
+                    <h5>{"N/A"}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>Admin Commission</p>
+                    <h5>${paymentDetailsPopup?.total_admin_commission || 0}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>Admin HST (13%)</p>
+                    <h5>{"N/A"}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine discountLine">
+                    <p>Bonus Amount</p>
+                    <h5>${paymentDetailsPopup?.tip_amount || 0}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine discountLine">
+                    <p>
+                      Chaupehra Sahib <span>(50% Off)</span>
+                    </p>
+                    <h5>
+                      $
+                      {(paymentDetailsPopup?.total_location_discount).toFixed(
+                        2
+                      )}
+                    </h5>
+                  </div>
+
+                  <hr />
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine finalLine">
+                    <h4>Final Paid to Driver</h4>
+                    <h4>
+                      $
+                      {(paymentDetailsPopup?.total_driver_earning || 0) +
+                        (paymentDetailsPopup?.tip_amount || 0)}{" "}
+                      {/* <span className="hstText">
+                        +(HST $
+                        {(
+                          paymentDetailsPopup?.total_driver_earning * 0.13
+                        ).toFixed(2)}
+                        )
+                      </span> */}
+                    </h4>
+                  </div>
+
+                  <button className="payButton">Paid via Wallet</button>
+
+                  <div className="d-flex justify-content-center">
+                    <img
+                      className=""
+                      src="/imagefolder/popUpCloseIcon.png"
+                      onClick={() => setPaymentDetailsPopup(null)}
+                    />
                   </div>
                 </div>
               </div>
@@ -800,265 +862,309 @@ function SharingRouteBooking() {
       )}
       {paymentDetailsPopup && <div className="modal-backdrop fade show"></div>}
       {manualPopupDetails && (
-  <div
-    className="modal fade show d-flex align-items-center justify-content-center"
-    tabIndex="-1"
-  >
-    <div className="modal-dialog">
-      <div className="modal-content managepopupgroup">
-        <div className="modal-body p-0">
-          <div className="row m-0 p-0">
-            {/* ---------- Left Section (Bookings List) ---------- */}
-            <div className="col-8 m-0 p-0">
-              <div className="managepopupgroupleft me-3">
-                {manualPopupDetails?.pickup_points?.map((v, i) => (
-                  <div
-                    key={i}
-                    className="d-flex justify-content-between align-items-center py-2 managePopUpTable"
-                    style={{
-                      background:
-                        selectedBooking == v?.booking.id ? "#353535" : "#F7F7F7",
-                    }}
-                    onClick={() => fetchGroupId(v?.booking.id)}
-                  >
-                    <div className="px-3">
-                      <button
-                        style={{
-                          background:
-                            selectedBooking == v?.booking.id ? "#D0FF13" : "#000",
-                          color:
-                            selectedBooking == v?.booking.id ? "#000" : "#D0FF13",
-                        }}
-                      >
-                        Booking ID : {v?.booking.id}
-                      </button>
-                    </div>
+        <div
+          className="modal fade show d-flex align-items-center justify-content-center"
+          tabIndex="-1"
+        >
+          <div className="modal-dialog">
+            <div className="modal-content managepopupgroup">
+              <div className="modal-body p-0">
+                <div className="row m-0 p-0">
+                  {/* ---------- Left Section (Bookings List) ---------- */}
+                  <div className="col-8 m-0 p-0">
+                    <div className="managepopupgroupleft me-3">
+                      {manualPopupDetails?.pickup_points?.map((v, i) => (
+                        <div
+                          key={i}
+                          className="d-flex justify-content-between align-items-center py-2 managePopUpTable"
+                          style={{
+                            background:
+                              selectedBooking == v?.booking.id
+                                ? "#353535"
+                                : "#F7F7F7",
+                          }}
+                          onClick={() => fetchGroupId(v?.booking.id)}
+                        >
+                          <div className="px-3">
+                            <button
+                              style={{
+                                background:
+                                  selectedBooking == v?.booking.id
+                                    ? "#D0FF13"
+                                    : "#000",
+                                color:
+                                  selectedBooking == v?.booking.id
+                                    ? "#000"
+                                    : "#D0FF13",
+                              }}
+                            >
+                              Booking ID : {v?.booking.id}
+                            </button>
+                          </div>
 
-                    <div className="d-flex align-items-center px-3">
-                      <img src="/imagefolder/locationGreenIcon.png" />
-                      <p
-                        className="ms-2"
-                        style={{
-                          color:
-                            selectedBooking == v?.booking?.id ? "#fff" : "#1C1C1C",
-                        }}
-                      >
-                        {v?.booking?.source}
-                      </p>
-                    </div>
+                          <div className="d-flex align-items-center px-3">
+                            <img src="/imagefolder/locationGreenIcon.png" />
+                            <p
+                              className="ms-2"
+                              style={{
+                                color:
+                                  selectedBooking == v?.booking?.id
+                                    ? "#fff"
+                                    : "#1C1C1C",
+                              }}
+                            >
+                              {v?.booking?.source}
+                            </p>
+                          </div>
 
-                    <div className="d-flex align-items-center">
-                      <img src="/imagefolder/locationRedIcon.png" />
-                      <p
-                        className="ms-2"
-                        style={{
-                          color:
-                            selectedBooking == v?.booking?.id ? "#fff" : "#1C1C1C",
-                        }}
-                      >
-                        {v?.booking?.destination}
-                      </p>
+                          <div className="d-flex align-items-center">
+                            <img src="/imagefolder/locationRedIcon.png" />
+                            <p
+                              className="ms-2"
+                              style={{
+                                color:
+                                  selectedBooking == v?.booking?.id
+                                    ? "#fff"
+                                    : "#1C1C1C",
+                              }}
+                            >
+                              {v?.booking?.destination}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
+
+                  {/* ---------- Right Section (Group Selection + Actions) ---------- */}
+                  <div className="col-4 m-0 p-0">
+                    <div className="managepopupgroupleft ms-2">
+                      {/* 🔸 Radio + Select Group Option */}
+                      <div className="d-flex align-items-center mb-3">
+                        <input
+                          type="radio"
+                          name="groupInputType"
+                          disabled={!selectedBooking}
+                          checked={
+                            selectedBooking &&
+                            isSelectedInputSelect === "select"
+                          }
+                          onChange={() => {
+                            if (!selectedBooking) return;
+                            setIsSelectedInputSelect("select");
+                            setManualAssignFormData({
+                              ...manualAssignFormData,
+                              group_id: "",
+                            });
+                          }}
+                        />
+
+                        <select
+                          className="ms-2 form-select"
+                          disabled={
+                            !selectedBooking ||
+                            isSelectedInputSelect !== "select"
+                          }
+                          style={{
+                            opacity:
+                              !selectedBooking ||
+                              isSelectedInputSelect !== "select"
+                                ? "0.5"
+                                : "1",
+                            background: "#F7F7F7",
+                            borderRadius: "10px",
+                            height: "40px",
+                          }}
+                          onChange={(e) =>
+                            setManualAssignFormData({
+                              ...manualAssignFormData,
+                              group_id: e.target.value,
+                            })
+                          }
+                        >
+                          <option value="">Select Group ID</option>
+                          {groupList?.map((v, i) => (
+                            <option key={i} value={v?.group_id}>
+                              {v?.group_id}
+                            </option>
+                          ))}
+                          {alreadrExistGroupList?.map((v, i) => (
+                            <option
+                              key={`exist-${i}`}
+                              style={{ background: "orange" }}
+                              value={v?.group_id}
+                            >
+                              {v?.group_id} (Enroute Group)
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* 🔸 Radio + Manual Input Option */}
+                      <div className="d-flex align-items-center">
+                        <input
+                          type="radio"
+                          name="groupInputType"
+                          disabled={!selectedBooking}
+                          checked={
+                            selectedBooking &&
+                            isSelectedInputSelect === "manual"
+                          }
+                          onChange={() => {
+                            if (!selectedBooking) return;
+                            setIsSelectedInputSelect("manual");
+                          }}
+                        />
+
+                        <input
+                          type="number"
+                          className="ms-2 form-control"
+                          placeholder="Enter Group ID manually"
+                          disabled={
+                            !selectedBooking ||
+                            isSelectedInputSelect !== "manual"
+                          }
+                          style={{
+                            background: "#F7F7F7",
+                            borderRadius: "10px",
+                            height: "40px",
+                          }}
+                          min="1"
+                          value={
+                            isSelectedInputSelect === "manual"
+                              ? manualAssignFormData?.group_id
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const value = Number(e.target.value);
+                            if (value > 0) {
+                              setManualAssignFormData({
+                                ...manualAssignFormData,
+                                group_id: value,
+                              });
+                            } else if (e.target.value === "") {
+                              setManualAssignFormData({
+                                ...manualAssignFormData,
+                                group_id: "",
+                              });
+                            }
+                          }}
+                        />
+                      </div>
+
+                      {/* 🔸 Shift Button */}
+                      <div className="mt-4">
+                        {selectedBooking &&
+                        manualAssignFormData?.group_id &&
+                        manualAssignFormData.booking_id ? (
+                          <button
+                            className="shiftButton w-100"
+                            style={{ background: "#D0FF13", color: "#000" }}
+                            onClick={
+                              !moveBtnLoader && assignBookingToExistingGroup
+                            }
+                          >
+                            {moveBtnLoader ? "Shifting ..." : "Shift"}
+                          </button>
+                        ) : (
+                          <button
+                            className="shiftButton w-100"
+                            disabled
+                            style={{
+                              background: "#D0FF13",
+                              opacity: "0.5",
+                              color: "#000",
+                              cursor: "not-allowed",
+                            }}
+                          >
+                            Shift
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 🔸 Unlink / Cancel Buttons */}
+                    <div className="managepopupgroupleft mt-4 ms-2">
+                      <div className="mb-3">
+                        <button
+                          className="shiftButton"
+                          disabled={!selectedBooking || unLinkLoader}
+                          style={{
+                            opacity: !selectedBooking || unLinkLoader ? 0.5 : 1,
+                            color: "#D0FF13",
+                            backgroundColor: "#353535",
+                            cursor: !selectedBooking
+                              ? "not-allowed"
+                              : "pointer",
+                          }}
+                          onClick={() => selectedBooking && handleUnlinkFunc()}
+                        >
+                          {unLinkLoader ? "Unlinking ..." : "Unlink"}
+                        </button>
+                      </div>
+
+                      <div>
+                        <button
+                          className="shiftButton"
+                          disabled={!selectedBooking || cancelLoader}
+                          style={{
+                            opacity: !selectedBooking || cancelLoader ? 0.5 : 1,
+                            color: "#D0FF13",
+                            backgroundColor: "#353535",
+                            cursor: !selectedBooking
+                              ? "not-allowed"
+                              : "pointer",
+                          }}
+                          onClick={() => selectedBooking && handleCancelFunc()}
+                        >
+                          {cancelLoader ? "Cancelling ..." : "Cancel"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ---------- Close Button ---------- */}
+                <div className="d-flex justify-content-center mt-5">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/660/660252.png"
+                    style={{ height: "50px", cursor: "pointer" }}
+                    onClick={() => {
+                      setManualPopupDetails(null);
+                      setSelectedBooking(null);
+                    }}
+                  />
+                </div>
               </div>
             </div>
-
-            {/* ---------- Right Section (Group Selection + Actions) ---------- */}
-            <div className="col-4 m-0 p-0">
-              <div className="managepopupgroupleft ms-2">
-                {/* 🔸 Radio + Select Group Option */}
-                <div className="d-flex align-items-center mb-3">
-                  <input
-                    type="radio"
-                    name="groupInputType"
-                    disabled={!selectedBooking}
-                    checked={
-                      selectedBooking && isSelectedInputSelect === "select"
-                    }
-                    onChange={() => {
-                      if (!selectedBooking) return;
-                      setIsSelectedInputSelect("select");
-                      setManualAssignFormData({
-                        ...manualAssignFormData,
-                        group_id: "",
-                      });
-                    }}
-                  />
-
-                  <select
-                    className="ms-2 form-select"
-                    disabled={
-                      !selectedBooking || isSelectedInputSelect !== "select"
-                    }
-                    style={{
-                      opacity:
-                        !selectedBooking || isSelectedInputSelect !== "select"
-                          ? "0.5"
-                          : "1",
-                      background: "#F7F7F7",
-                      borderRadius: "10px",
-                      height: "40px",
-                    }}
-                    onChange={(e) =>
-                      setManualAssignFormData({
-                        ...manualAssignFormData,
-                        group_id: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="">Select Group ID</option>
-                    {groupList?.map((v, i) => (
-                      <option key={i} value={v?.group_id}>
-                        {v?.group_id}
-                      </option>
-                    ))}
-                    {alreadrExistGroupList?.map((v, i) => (
-                      <option
-                        key={`exist-${i}`}
-                        style={{ background: "orange" }}
-                        value={v?.group_id}
-                      >
-                        {v?.group_id} (Enroute Group)
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* 🔸 Radio + Manual Input Option */}
-                <div className="d-flex align-items-center">
-                  <input
-                    type="radio"
-                    name="groupInputType"
-                    disabled={!selectedBooking}
-                    checked={
-                      selectedBooking && isSelectedInputSelect === "manual"
-                    }
-                    onChange={() => {
-                      if (!selectedBooking) return;
-                      setIsSelectedInputSelect("manual");
-                    }}
-                  />
-
-                  <input
-                    type="number"
-                    className="ms-2 form-control"
-                    placeholder="Enter Group ID manually"
-                    disabled={
-                      !selectedBooking || isSelectedInputSelect !== "manual"
-                    }
-                    style={{
-                      background: "#F7F7F7",
-                      borderRadius: "10px",
-                      height: "40px",
-                    }}
-                    min="1"
-                    value={
-                      isSelectedInputSelect === "manual"
-                        ? manualAssignFormData?.group_id
-                        : ""
-                    }
-                    onChange={(e) => {
-                      const value = Number(e.target.value);
-                      if (value > 0) {
-                        setManualAssignFormData({
-                          ...manualAssignFormData,
-                          group_id: value,
-                        });
-                      } else if (e.target.value === "") {
-                        setManualAssignFormData({
-                          ...manualAssignFormData,
-                          group_id: "",
-                        });
-                      }
-                    }}
-                  />
-                </div>
-
-                {/* 🔸 Shift Button */}
-                <div className="mt-4">
-                  {selectedBooking &&
-                  manualAssignFormData?.group_id &&
-                  manualAssignFormData.booking_id ? (
-                    <button
-                      className="shiftButton w-100"
-                      style={{ background: "#D0FF13", color: "#000" }}
-                      onClick={!moveBtnLoader && assignBookingToExistingGroup}
-                    >
-                      {moveBtnLoader ? "Shifting ..." : "Shift"}
-                    </button>
-                  ) : (
-                    <button
-                      className="shiftButton w-100"
-                      disabled
-                      style={{
-                        background: "#D0FF13",
-                        opacity: "0.5",
-                        color: "#000",
-                        cursor: "not-allowed",
-                      }}
-                    >
-                      Shift
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* 🔸 Unlink / Cancel Buttons */}
-              <div className="managepopupgroupleft mt-4 ms-2">
-                <div className="mb-3">
-                  <button
-                    className="shiftButton"
-                    disabled={!selectedBooking || unLinkLoader}
-                    style={{
-                      opacity: !selectedBooking || unLinkLoader ? 0.5 : 1,
-                      color: "#D0FF13",
-                      backgroundColor: "#353535",
-                      cursor: !selectedBooking ? "not-allowed" : "pointer",
-                    }}
-                    onClick={() => selectedBooking && handleUnlinkFunc()}
-                  >
-                    {unLinkLoader ? "Unlinking ..." : "Unlink"}
-                  </button>
-                </div>
-
-                <div>
-                  <button
-                    className="shiftButton"
-                    disabled={!selectedBooking || cancelLoader}
-                    style={{
-                      opacity: !selectedBooking || cancelLoader ? 0.5 : 1,
-                      color: "#D0FF13",
-                      backgroundColor: "#353535",
-                      cursor: !selectedBooking ? "not-allowed" : "pointer",
-                    }}
-                    onClick={() => selectedBooking && handleCancelFunc()}
-                  >
-                    {cancelLoader ? "Cancelling ..." : "Cancel"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ---------- Close Button ---------- */}
-          <div className="d-flex justify-content-center mt-5">
-            <img
-              src="https://cdn-icons-png.flaticon.com/128/660/660252.png"
-              style={{ height: "50px", cursor: "pointer" }}
-              onClick={() => {
-                setManualPopupDetails(null);
-                setSelectedBooking(null);
-              }}
-            />
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
-{manualPopupDetails && <div className="modal-backdrop fade show"></div>}
+      )}
+      {manualPopupDetails && <div className="modal-backdrop fade show"></div>}
+      {popupData && (
+        <div className="noDriverPopupContainer">
+          <div className="noDriverPopup">
+            <h2>No Driver Matches Found</h2>
+            <p>{popupData.message}</p>
 
+            <div className="popupBtnRow">
+              <button
+                className="popupBlackBtn"
+                onClick={() => addGroupToManualFunc(popupData.id)}
+              >
+                Move To Manual
+              </button>
+
+              <button
+                className="popupBlackBtn"
+                onClick={() => setPopupData(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
   return (

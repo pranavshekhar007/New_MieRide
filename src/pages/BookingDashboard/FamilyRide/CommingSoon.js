@@ -7,7 +7,7 @@ import {
   getPersonalLaterListServ,
   assignPersonalDriverServ,
   manualPersonalDriverServ,
-  cancelPersonalServ
+  cancelPersonalServ 
 } from "../../../services/personalBookingServices";
 import { updateNotificationStatusServ } from "../../../services/notification.services";
 import Skeleton from "react-loading-skeleton";

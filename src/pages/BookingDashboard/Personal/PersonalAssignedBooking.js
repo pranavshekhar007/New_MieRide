@@ -21,6 +21,8 @@ import NewSidebar from "../../../components/NewSidebar";
 import CustomTopNav from "../../../components/CustomTopNav";
 import SecondaryTopNav from "../../../components/SecondaryTopNav";
 import CustomPagination from "../../../components/CustomPazination";
+import AssignedTimer from "../../../components/AssignedTimer";
+import PersonalBookingTicket from "../../../components/PersonalBookingTicket";
 function PersonalAssignedBooking() {
   const { setGlobalState, globalState } = useGlobalState();
   const [payload, setPayload] = useState({
@@ -289,6 +291,19 @@ function PersonalAssignedBooking() {
     });
   };
 
+  const handleViewMore = (id) => {
+    setList((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, isOpen: true } : item))
+    );
+  };
+
+  // View Less
+  const handleViewLess = (id) => {
+    setList((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, isOpen: false } : item))
+    );
+  };
+
   return (
     <div className="mainBody">
       <NewSidebar selectedItem="Booking Dashboard" />
@@ -330,365 +345,279 @@ function PersonalAssignedBooking() {
                   );
                 })
               : list?.map((value, i) => {
-                  return (
-                    <div
-                      className={"tableBody py-4 my-4 px-4 borderRadius30All"}
-                      style={{
-                        background:
-                          value?.time_prefrence == "instant"
-                            ? "#363435"
-                            : "#fff",
-                        border: "0.5px solid #E5E5E5",
-                      }}
-                    >
-                      <div className=" row " style={{ borderRadius: "24px" }}>
-                        <div className="col-md-5">
-                          <div
-                            className="leftCardRoute d-flex align-items-center w-100"
-                            style={{
-                              background:
-                                value?.time_prefrence == "instant"
-                                  ? "#D0FF13"
-                                  : "#353535",
-                              height: "420px",
-                              borderRadius: "20px",
-                              filter: "none",
-                            }}
-                          >
-                            <div className="w-100 ">
-                              <div className="row d-flex align-items-center mb-4">
-                                <div className="col-6">
-                                  <div className="d-flex justify-content-center">
-                                    <div
-                                      className="d-flex groupIdBtn  justify-content-center w-100  align-items-center"
-                                      style={{
-                                        filter: "none",
-                                        background:
-                                          value?.time_prefrence == "instant"
-                                            ? "#000"
-                                            : "#fff",
-                                      }}
-                                    >
-                                      <div
-                                        className="d-flex justify-content-center w-100 px-4"
-                                        style={{
-                                          color:
-                                            value?.time_prefrence == "instant"
-                                              ? "#fff"
-                                              : "#000",
-                                        }}
-                                      >
-                                        <div>Booking ID :- </div>
-                                        <div className="ms-1">{value?.id}</div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-6">
-                                  <p
-                                    style={{
-                                      color:
-                                        value?.time_prefrence == "instant"
-                                          ? "#000"
-                                          : "#fff",
-                                    }}
-                                  >
-                                    Username
-                                  </p>
-                                  <h3
-                                    style={{
-                                      color:
-                                        value?.time_prefrence == "instant"
-                                          ? "#000"
-                                          : "#fff",
-                                    }}
-                                  >
-                                    {value?.user_details?.first_name +
-                                      " " +
-                                      value?.user_details?.last_name}
-                                  </h3>
-                                </div>
+                  if (!value?.isOpen) {
+                    return (
+                      <table
+                        className={
+                          "table " + (i + 1 != list?.length ? " mb-4" : " mb-0")
+                        }
+                      >
+                        <tbody className="bgWhite w-100 routeMinTBody">
+                          <tr>
+                            <td style={{ borderRadius: "15px 0px 0px 15px" }}>
+                              <div className="groupBtn ms-3">
+                                <p>Booking ID :- {value?.id}</p>
                               </div>
+                            </td>
+                            <td>
+                              <div style={{ width: "180px" }}>
+                                <h5>Source City</h5>
+                                <h6>{value?.source}</h6>
+                              </div>
+                            </td>
+                            <td>
+                              <div style={{ width: "180px" }}>
+                                <h5>Destination City</h5>
+                                <h6>{value?.destination}</h6>
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                <h5>Booking Date</h5>
+                                <h6>
+                                  {moment(value?.first_pickup_date).format(
+                                    "DD MMM, YYYY"
+                                  )}
+                                </h6>
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                <h5>Vehicle Size</h5>
+                                <h6>
+                                  {value?.assigned_drivers?.[0]?.vehicle_size}
+                                </h6>
+                              </div>
+                            </td>
 
-                              <div className="row">
-                                <div className="col-12 ">
-                                  <div className="mb-3">
-                                    <p
+                            <td>
+                              <div>
+                                <h6
+                                  style={{
+                                    background:
+                                      value?.time_prefrence?.toLowerCase() ===
+                                      "instant"
+                                        ? "#D0FF13"
+                                        : "#1C1C1C",
+                                    color:
+                                      value?.time_prefrence?.toLowerCase() ===
+                                      "instant"
+                                        ? "#000000"
+                                        : "#D0FF13",
+                                    padding: "14px 20px 6px 20px",
+                                    borderRadius: "10px",
+                                    fontWeight: "600",
+                                    fontSize: "16px",
+                                    textAlign: "center",
+                                    width: "110px",
+                                    height: "40px",
+                                  }}
+                                >
+                                  {value?.time_prefrence
+                                    ? value?.time_prefrence
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      value?.time_prefrence.slice(1)
+                                    : "--"}
+                                </h6>
+                              </div>
+                            </td>
+                            <td style={{ borderRadius: "0px 15px 15px 0px" }}>
+                              <div
+                                className="d-flex justify-content-end me-3"
+                                onClick={() => handleViewMore(value.id)}
+                                style={{ cursor: "pointer" }}
+                              >
+                                <span className="mx-2">View More</span>
+                                <img src="/imagefolder/downArrow.png" />
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    );
+                  } else {
+                    return (
+                      <div
+                        className="routeMain"
+                        style={{
+                          marginBottom:
+                            i + 1 != list?.length ? " 20px" : " 0px",
+                        }}
+                      >
+                        <div className="d-flex justify-content-between align-items-center routeTopNav">
+                          <div className="groupBtn">
+                            <p>Booking ID :- {value?.id}</p>
+                          </div>
+                          <div
+                            onClick={() => handleViewLess(value.id)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <span className="mx-2">View Less</span>
+                            <img src="/imagefolder/upArrow.png" />
+                          </div>
+                        </div>
+                        <div className="row mt-4">
+                          <div className="row col-4 m-0 p-0">
+                            <div>
+                              <div
+                                className="routeLeftCard mb-4"
+                                style={{ position: "relative" }}
+                              >
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    right: "-1px",
+                                    top: "50%",
+                                    transform:
+                                      "translateY(-50%) rotate(180deg)",
+                                    background: "#353535",
+                                    color: "#fff",
+                                    padding: "40px 8px",
+                                    borderRadius: "0px 8px 8px 0px",
+                                    writingMode: "vertical-rl",
+                                    textOrientation: "mixed",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  {value?.time_prefrence === "instant"
+                                    ? "Instant"
+                                    : "Later"}
+                                </div>
+
+                                <div className="d-flex justify-content-between">
+                                  <div className="mb-3 text-center">
+                                    <div
+                                      className="userNameDiv"
                                       style={{
-                                        color:
-                                          value?.time_prefrence == "instant"
-                                            ? "#000"
-                                            : "#fff",
+                                        width: "130px",
+                                        textAlign: "center",
+                                        background: "#353535",
+                                        color: "#fff",
+                                        borderRadius: "6px",
+                                        padding: "6px 8px",
                                       }}
                                     >
-                                      Source
-                                    </p>
-                                    <h3
-                                      style={{
-                                        color:
-                                          value?.time_prefrence == "instant"
-                                            ? "#000"
-                                            : "#fff",
-                                      }}
-                                    >
-                                      {value?.source?.length > 20
-                                        ? value?.source?.substring(0, 25) +
-                                          "..."
-                                        : value?.source}
-                                    </h3>
-                                  </div>
-                                  <div className="mb-3">
-                                    <p
-                                      style={{
-                                        color:
-                                          value?.time_prefrence == "instant"
-                                            ? "#000"
-                                            : "#fff",
-                                      }}
-                                    >
-                                      Destination
-                                    </p>
-                                    <h3
-                                      style={{
-                                        color:
-                                          value?.time_prefrence == "instant"
-                                            ? "#000"
-                                            : "#fff",
-                                      }}
-                                    >
-                                      {value?.destination?.length > 20
-                                        ? value?.destination?.substring(0, 25)
-                                        : value?.destination}
-                                    </h3>
-                                  </div>
-                                  <div className="mb-3">
-                                    <p
-                                      style={{
-                                        color:
-                                          value?.time_prefrence == "instant"
-                                            ? "#000"
-                                            : "#fff",
-                                      }}
-                                    >
-                                      Booking Date & Time
-                                    </p>
-                                    <h3
-                                      style={{
-                                        color:
-                                          value?.time_prefrence == "instant"
-                                            ? "#000"
-                                            : "#fff",
-                                      }}
-                                    >
-                                      {moment(value?.booking_date).format(
-                                        "DD MMM, YYYY"
-                                      )}{" "}
-                                      (
-                                      {moment(
-                                        value?.booking_time,
-                                        "HH:mm"
-                                      ).format("hh:mm A")}
-                                      )
-                                    </h3>
-                                  </div>
-                                  <div className="row">
-                                    <div className="col-6">
                                       <p
+                                        className="mb-0 bgWhite text-dark radius3 p-1"
                                         style={{
-                                          color:
-                                            value?.time_prefrence == "instant"
-                                              ? "#000"
-                                              : "#fff",
+                                          fontSize: "12px",
+                                          fontWeight: 600,
                                         }}
                                       >
-                                        Payment
+                                        ID: {value?.user_details?.unique_id}
                                       </p>
-                                      <img
-                                        onClick={() =>
-                                          setPaymentDetailsPopup(value)
-                                        }
-                                        src="/icons/eyeIcon.png"
-                                        style={{
-                                          height: "20px",
-                                          filter:
-                                            value?.time_prefrence == "instant"
-                                              ? "brightness(1) invert(0)"
-                                              : "brightness(0) invert(1)",
-                                        }}
-                                      />
-                                    </div>
-                                    <div className="col-6">
                                       <p
+                                        className="mb-0 text-white mt-1"
                                         style={{
-                                          color:
-                                            value?.time_prefrence == "instant"
-                                              ? "#000"
-                                              : "#fff",
+                                          fontSize: "14px",
+                                          fontWeight: 600,
                                         }}
                                       >
-                                        Time Choice
+                                        {value?.user_details?.first_name}{" "}
+                                        {value?.user_details?.last_name}
                                       </p>
-                                      <h3
-                                        style={{
-                                          color:
-                                            value?.time_prefrence == "instant"
-                                              ? "#000"
-                                              : "#fff",
-                                        }}
-                                      >
-                                        {value?.time_choice == "pickupat"
-                                          ? "Pick Up"
-                                          : "Drop Off"}
-                                      </h3>
                                     </div>
                                   </div>
-                                  {/* <div className="mb-3">
-                                  <p style={{ color: "#000" }}>
-                                    First Pickup Time
-                                  </p>
-                                  <h3 style={{ color: "#000" }}>
+                                  <div className="mb-4 pe-5">
+                                    <p
+                                      style={{
+                                        paddingBottom: "10px",
+                                      }}
+                                    >
+                                      Vehicle Size
+                                    </p>
+                                    <h5>
+                                      {
+                                        value?.assigned_drivers?.[0]
+                                          ?.vehicle_size
+                                      }
+                                    </h5>
+                                  </div>
+                                </div>
+
+                                <div className="mb-4">
+                                  <p>Source</p>
+                                  <h5>{value?.source || "N/A"}</h5>
+                                </div>
+                                <div className="mb-4">
+                                  <p>Destination</p>
+                                  <h5>{value?.destination || "N/A"}</h5>
+                                </div>
+                                <div className="mb-4">
+                                  <p>Booking Date & Time</p>
+                                  <h5>
+                                    {moment(value?.booking_date).format(
+                                      "DD MMM, YYYY"
+                                    )}{" "}
+                                    (
                                     {moment(
-                                      value?.first_pickup_time,
+                                      value?.booking_time,
                                       "HH:mm"
                                     ).format("hh:mm A")}
-                                  </h3>
-                                </div> */}
+                                    )
+                                  </h5>
+                                </div>
+
+                                <div className="mb-4">
+                                  <p>Total Route Time</p>
+                                  <h5>
+                                    {moment
+                                      .duration(
+                                        value?.total_trip_time,
+                                        "minutes"
+                                      )
+                                      .hours()}{" "}
+                                    hr{" "}
+                                    {moment
+                                      .duration(
+                                        value?.total_trip_time,
+                                        "minutes"
+                                      )
+                                      .minutes()}{" "}
+                                    min
+                                  </h5>
+                                </div>
+                                <div className="d-flex gap-3">
+                                  <button
+                                    onClick={() =>
+                                      setPaymentDetailsPopup(value)
+                                    }
+                                  >
+                                    <img
+                                      src="/imagefolder/eyeIcon.png"
+                                      style={{
+                                        filter: "brightness(0) invert(1)",
+                                        marginRight: "10px",
+                                      }}
+                                    />
+                                    Payment
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      alert("Cancel Assign Clicked")
+                                    }
+                                  >
+                                    Cancel Assign
+                                  </button>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
 
-                        <div
-                          className="col-md-7"
-                          style={{
-                            marginBottom: `${
-                              value?.pickup_points?.length +
-                              value?.dropoff_points?.length * -50
-                            }px`,
-                          }}
-                        >
-                          <div>
-                            {value?.assigned_drivers?.map((v, i) => {
-                              return (
-                                <div
-                                  className="halfTopCard"
-                                  style={{
-                                    top: `-${i * 30}px`,
-                                    background:
-                                      i % 2 != 0
-                                        ? "#000"
-                                        : value?.time_prefrence != "instant"
-                                        ? "#6B6B6B"
-                                        : "#fff",
-                                    borderRadius:
-                                      i == value?.assigned_drivers?.length - 1
-                                        ? "31px"
-                                        : "31px 31px 0px 0px",
-                                    color:
-                                      i % 2 != 0
-                                        ? "#fff"
-                                        : value?.time_prefrence != "instant"
-                                        ? "#fff"
-                                        : "#000",
-                                  }}
-                                >
-                                  <div className="d-flex justify-content-between px-4">
-                                    <div className="d-flex align-items-center w-100 row mx-0">
-                                      <p className="col-1 mb-auto">{i + 1}.</p>
-                                      <div className="col-5">
-                                        <div className="d-flex align-items-centeer">
-                                          <img
-                                            src={Image_Base_Url + v?.image}
-                                            style={{
-                                              height: "50px",
-                                              width: "50px",
-                                              borderRadius: "50%",
-                                            }}
-                                          />
-                                          <div className="ms-3">
-                                            <p>Driver ID : {v?.id}</p>
-                                            <h5>{v?.first_name}</h5>
-                                          </div>
-                                        </div>
-                                      </div>
-
-                                      <div className="row col-6">
-                                        <div className="col-6 d-flex justify-content-center mb-auto">
-                                          <div
-                                            className="d-flex align-items-center justify-content-center w-100 p-1"
-                                            style={{
-                                              borderRadius: "4px",
-                                              background:
-                                                i % 2 != 0
-                                                  ? "white"
-                                                  : value?.time_prefrence !=
-                                                    "instant"
-                                                  ? "#fff"
-                                                  : "#000",
-                                            }}
-                                          >
-                                            <img
-                                              style={{
-                                                filter:
-                                                  i % 2 == 0
-                                                    ? value?.time_prefrence !=
-                                                      "instant"
-                                                      ? "brightness(1) invert(0)"
-                                                      : "brightness(0) invert(1)"
-                                                    : "brightness(1) invert(0)",
-                                              }}
-                                              src="https://cdn-icons-png.flaticon.com/128/89/89102.png"
-                                            />
-                                            <p
-                                              className="ms-1"
-                                              style={{
-                                                color:
-                                                  i % 2 == 0
-                                                    ? value?.time_prefrence !=
-                                                      "instant"
-                                                      ? "#000"
-                                                      : "#fff"
-                                                    : "black",
-                                              }}
-                                            >
-                                              {v?.vehicle_no}
-                                            </p>
-                                          </div>
-                                        </div>
-                                        <div className="col-4  mb-auto">
-                                          <p
-                                            style={{
-                                              margin: 0,
-                                              overflowWrap: "break-word",
-                                              wordBreak: "break-word",
-                                              whiteSpace: "normal",
-                                            }}
-                                          >
-                                            {v?.vehicle_size}
-                                          </p>
-                                        </div>
-
-                                        <div className="col-2 d-flex justify-content-end">
-                                          <img
-                                            src={
-                                              v?.status == "assigned"
-                                                ? "https://cdn-icons-png.flaticon.com/128/14035/14035695.png"
-                                                : "https://cdn-icons-png.flaticon.com/128/1828/1828666.png"
-                                            }
-                                          />
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              );
-                            })}
+                          <div className="col-8">
+                            {value?.assigned_drivers?.map((driver, index) => (
+                              <PersonalBookingTicket
+                                key={index}
+                                i={index}
+                                driver={driver}
+                              />
+                            ))}
                           </div>
                         </div>
                       </div>
-                    </div>
-                  );
+                    );
+                  }
                 })}
             {list?.length == 0 && !showSkelton && (
               <NoRecordFound theme="dark" />
@@ -709,74 +638,84 @@ function PersonalAssignedBooking() {
           tabIndex="-1"
         >
           <div className="modal-dialog">
-            <div
-              className="modal-content"
-              style={{
-                borderRadius: "16px",
-                background: "#f7f7f5",
-                width: "364px",
-              }}
-            >
-              <div className="d-flex justify-content-between pt-4 pb-0 px-4">
-                <p>
-                  <u>Payment Details</u>
-                </p>
-                <i
-                  className="fa fa-close text-secondary"
-                  onClick={() => {
-                    setPaymentDetailsPopup(null);
-                  }}
-                ></i>
-              </div>
-              <hr className="mt-0" />
-              <div className="modal-body" style={{ fontFamily: "poppins" }}>
-                <div
-                  style={{
-                    wordWrap: "break-word",
-                    whiteSpace: "pre-wrap",
-                  }}
-                  className="d-flex justify-content-center w-100"
-                >
-                  <div className="w-100 px-2">
-                    <div className="d-flex justify-content-between px-2 mb-1">
-                      <p style={{ fontWeight: "400" }}>Booking Amount</p>
-                      <span style={{ fontWeight: "500" }}>
-                        ${paymentDetailsPopup?.total_trip_cost}
-                      </span>
-                    </div>
+            <div className="modal-content paymentReceiptPopup">
+              <div className="modal-body p-0">
+                <div className="text-center mb-4">
+                  <h3 className="popupTitle">Payment Receipt – Persona Ride</h3>
+                </div>
 
-                    <div className="d-flex justify-content-between px-2 mb-1">
-                      <p>Driver Earn</p>
-                      <span style={{ fontWeight: "500" }}>
-                        ${paymentDetailsPopup?.driver_earning}
-                      </span>
-                    </div>
-                    <div className="d-flex justify-content-between px-2 mb-1">
-                      <p>Admin Fee</p>
-                      <span style={{ fontWeight: "500" }}>
-                        ${paymentDetailsPopup?.admin_commission}
-                      </span>
-                    </div>
-                    <div className="d-flex justify-content-between px-2 mb-1">
-                      <p>Surge Amount</p>
-                      <span style={{ fontWeight: "500" }}>
-                        ${paymentDetailsPopup?.extra_charge}
-                      </span>
-                    </div>
-                    <div
-                      className="my-3"
-                      style={{ borderTop: "1px solid #B2B2B2" }}
-                    ></div>
-                    <div
-                      className="d-flex justify-content-between px-2 mb-1 pt-3"
-                      style={{ fontWeight: "500" }}
-                    >
-                      <p>Total Payment</p>
-                      <span>${paymentDetailsPopup?.total_trip_cost}</span>
-                    </div>
+                <div className="px-3">
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>Booking</p>
+                    <h5>${paymentDetailsPopup?.total_trip_cost}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>HST (13%)</p>
+                    <h5>{"N/A"}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine totalLine">
+                    <p className="fw-bold">Total Amount</p>
+                    <h5 className="fw-bold">
+                      ${paymentDetailsPopup?.total_trip_cost}
+                    </h5>
+                  </div>
+
+                  <hr />
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>Driver Commission</p>
+                    <h5>${paymentDetailsPopup?.driver_earning || 0}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>Driver HST (13%)</p>
+                    <h5>{"N/A"}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>Admin Commission</p>
+                    <h5>${paymentDetailsPopup?.admin_commission || 0}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                    <p>Admin HST (13%)</p>
+                    <h5>{"N/A"}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine discountLine">
+                    <p>Bonus Amount</p>
+                    <h5>${paymentDetailsPopup?.tip_amount || 0}</h5>
+                  </div>
+                  <hr />
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine finalLine">
+                    <h4>Final Paid to Driver</h4>
+                    <h4>
+                      $
+                      {Number(paymentDetailsPopup?.total_trip_cost || 0) +
+                        Number(paymentDetailsPopup?.tip_amount || 0)}
+                      {/* <span className="hstText">
+                        +(HST $
+                        {(
+                          paymentDetailsPopup?.total_driver_earning * 0.13
+                        ).toFixed(2)}
+                        )
+                      </span> */}
+                    </h4>
+                  </div>
+
+                  <button className="payButton">Paid via Wallet Pay</button>
+
+                  <div className="d-flex justify-content-center">
+                    <img
+                      className=""
+                      src="/imagefolder/popUpCloseIcon.png"
+                      onClick={() => setPaymentDetailsPopup(null)}
+                    />
                   </div>
                 </div>
-                <div className="d-flex justify-content-center"></div>
               </div>
             </div>
           </div>

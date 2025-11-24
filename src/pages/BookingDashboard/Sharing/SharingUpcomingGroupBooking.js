@@ -868,7 +868,7 @@ function SharingUpcomingGroupBooking() {
                                       onClick={() => setUserDetailsPopup(v)}
                                     >
                                       <p className="mb-0 bgWhite text-dark radius3">
-                                        ID:{v?.user_details?.id}
+                                        {v?.user_details?.unique_id}
                                       </p>
                                       <p className="mb-0 text-light">
                                         {v?.user_details?.first_name}

@@ -9,6 +9,7 @@ import OneSignal from "react-onesignal";
 import BlogList from "./pages/Blog/BlogList";
 import BlogRoutes from "./routes/BlogRoutes";
 import BroadcastRoutes from "./routes/BroadcastRoutes";
+import PartialAdminRoutes from "./routes/PartialAdminRoutes";
 // import OneSignal from "react-onesignal";
 
 function App() {
@@ -67,9 +68,12 @@ function App() {
         return <AuthenticatedRoutes />;
       } else if (globalState?.user?.is_mierideuser) {
         return <BlogRoutes />;
+      } else if (globalState?.user?.is_broadcastuser && globalState?.user?.email == "zoya@gmail.com") {
+       return <PartialAdminRoutes/>
       } else if (globalState?.user?.is_broadcastuser) {
-       return <BroadcastRoutes/>
-      }
+        return <BroadcastRoutes/>
+       }
+
     } else {
       return <UnAuthenticatedRoutes />;
     }

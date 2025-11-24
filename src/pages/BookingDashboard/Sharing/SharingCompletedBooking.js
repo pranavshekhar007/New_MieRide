@@ -993,25 +993,19 @@ function SharingCompletedBooking() {
                           </div>
                           <div className="driverBoxCompleteItem">
                             <span>Booking Amount per Person</span>
-                            <p>${popupDetails?.total_trip_cost}</p>
+                            <p>
+                              $
+                              {(popupDetails?.total_trip_cost || 0) /
+                                (popupDetails?.total_number_of_people || 1)}
+                            </p>
                           </div>
                           <div className="driverBoxCompleteItem">
                             <span>HST (13%)</span>
-                            <p>
-                              $
-                              {(popupDetails?.total_trip_cost * 0.13).toFixed(
-                                2
-                              )}
-                            </p>
+                            <p>{"N/A"}</p>
                           </div>
                           <div className="driverBoxCompleteItem borderBottom pb-2">
                             <b>Total Amount</b>
-                            <p>
-                              $
-                              {(popupDetails?.total_trip_cost * 1.13).toFixed(
-                                2
-                              )}
-                            </p>
+                            <p>${(popupDetails?.total_trip_cost).toFixed(2)}</p>
                           </div>
 
                           <div className="driverBoxCompleteItem pt-2">
@@ -1020,12 +1014,7 @@ function SharingCompletedBooking() {
                           </div>
                           <div className="driverBoxCompleteItem">
                             <span>Driver HST (13%)</span>
-                            <p>
-                              $
-                              {(
-                                popupDetails?.total_driver_earning * 0.13
-                              ).toFixed(2)}
-                            </p>
+                            <p>{"N/A"}</p>
                           </div>
                           <div className="driverBoxCompleteItem">
                             <span>Admin Commission</span>
@@ -1033,27 +1022,32 @@ function SharingCompletedBooking() {
                           </div>
                           <div className="driverBoxCompleteItem pb-2">
                             <span>Admin HST (13%)</span>
-                            <p>
-                              $
-                              {(
-                                popupDetails?.total_admin_commission * 0.13
-                              ).toFixed(2)}
-                            </p>
+                            <p>{"N/A"}</p>
                           </div>
                           <div className="driverBoxCompleteItem borderBottom py-2">
                             <b>Bonus Amount</b>
-                            <p>${popupDetails?.bonus_amount || 0}</p>
+                            <p>${popupDetails?.tip_amount || 0}</p>
                           </div>
                           <div className="driverBoxCompleteItem borderBottom py-2">
                             <b>Chaupehra Sahib (50% Off)</b>
                             <p>
                               $
-                              {(popupDetails?.total_trip_cost * 0.5).toFixed(2)}
+                              {(popupDetails?.total_location_discount).toFixed(
+                                2
+                              )}
                             </p>
                           </div>
                           <div className="driverBoxCompleteItem mt-2">
                             <b>Final Paid to Driver</b>
-                            <p>${popupDetails?.amount_paid_to_driver}</p>
+                            <p>
+                              $
+                              {(
+                                (Number(
+                                  popupDetails?.amount_paid_to_driver
+                                ) || 0) +
+                                (Number(popupDetails?.tip_amount) || 0)
+                              ).toFixed(2)}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1325,49 +1319,42 @@ function SharingCompletedBooking() {
                           <div className="d-flex justify-content-between align-items-center px-4 py-1">
                             <p>No. of Person</p>
                             <h5>
-                              {completeReceiptPopup?.total_number_of_people}
+                              {completeReceiptPopup?.total_number_of_people ||
+                                1}
                             </h5>
                           </div>
                           <div className="d-flex justify-content-between align-items-center px-4 py-1">
                             <p>Booking Amount per Person</p>
-                            <h5>${completeReceiptPopup?.total_trip_cost}</h5>
+                            <h5>
+                              $
+                              {(completeReceiptPopup?.total_trip_cost || 0) /
+                                (completeReceiptPopup?.total_number_of_people ||
+                                  1)}
+                            </h5>
                           </div>
                           <div className="d-flex justify-content-between align-items-center px-4 py-1">
                             <p>HST (13%)</p>
-                            <h5>
-                              $
-                              {(
-                                completeReceiptPopup?.total_trip_cost * 0.13
-                              ).toFixed(2)}
-                            </h5>
+                            <h5>{"N/A"}</h5>
                           </div>
                           <div
                             className="d-flex justify-content-between align-items-center px-4 py-1"
                             style={{ borderBottom: "0.5px solid #E5E5E5" }}
                           >
                             <p style={{ fontWeight: "700" }}>Total Amount</p>
-                            <h5>
-                              $
-                              {(
-                                completeReceiptPopup?.total_trip_cost * 1.13
-                              ).toFixed(2)}
-                            </h5>
+                            <h5>${completeReceiptPopup?.total_trip_cost}</h5>
                           </div>
                           <div className="d-flex justify-content-between align-items-center px-4 py-1 pt-2">
                             <p>Driver Commission</p>
                             <h5>
-                              ${completeReceiptPopup?.total_driver_earning}
+                              $
+                              {(completeReceiptPopup?.total_driver_earning).toFixed(
+                                2
+                              )}
                             </h5>
                           </div>
                           <div className="d-flex justify-content-between align-items-center px-4 py-1">
                             <p>Driver HST (13%)</p>
-                            <h5>
-                              $
-                              {(
-                                completeReceiptPopup?.total_driver_earning *
-                                0.13
-                              ).toFixed(2)}
-                            </h5>
+                            <h5>{"N/A"}</h5>
                           </div>
                           <div className="d-flex justify-content-between align-items-center px-4 py-1">
                             <p>Admin Commission</p>
@@ -1380,17 +1367,11 @@ function SharingCompletedBooking() {
                             style={{ borderBottom: "0.5px solid #E5E5E5" }}
                           >
                             <p>Admin HST (13%)</p>
-                            <h5>
-                              $
-                              {(
-                                completeReceiptPopup?.total_admin_commission *
-                                0.13
-                              ).toFixed(2)}
-                            </h5>
+                            <h5>{"N/A"}</h5>
                           </div>
                           <div className="d-flex justify-content-between align-items-center px-4 py-1 pt-2">
                             <p>Bonus Amount</p>
-                            <h5>${completeReceiptPopup?.bonus_amount || 0}</h5>
+                            <h5>${completeReceiptPopup?.tip_amount || 0}</h5>
                           </div>
                           <div
                             className="d-flex justify-content-between align-items-center px-4 py-1 pt-2"
@@ -1402,7 +1383,13 @@ function SharingCompletedBooking() {
                           <div className="d-flex justify-content-between align-items-center px-4 py-1 pt-2">
                             <p>Final Paid to Driver</p>
                             <h5>
-                              ${completeReceiptPopup?.amount_paid_to_driver}
+                              $
+                              {(
+                                (Number(
+                                  completeReceiptPopup?.amount_paid_to_driver
+                                ) || 0) +
+                                (Number(completeReceiptPopup?.tip_amount) || 0)
+                              ).toFixed(2)}
                             </h5>
                           </div>
                         </div>

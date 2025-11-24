@@ -777,7 +777,7 @@ function SharingGroupBooking() {
                                       onClick={() => setUserDetailsPopup(v)}
                                     >
                                       <p className="mb-0 bgWhite text-dark radius3">
-                                        ID:{v?.user_details?.id}
+                                        {v?.user_details?.unique_id}
                                       </p>
                                       <p className="mb-0 text-light">
                                         {v?.user_details?.first_name}
@@ -1266,7 +1266,7 @@ function SharingGroupBooking() {
                       <div className="d-flex justify-content-between">
                         <p>Coupon Discount</p>
                         <p style={{ fontWeight: "700", fontSize: "18px" }}>
-                          {paymentDetailsPopup?.coupon_amount}
+                          {paymentDetailsPopup?.coupon_amount || 0}
                         </p>
                       </div>
                       <div className="d-flex justify-content-between">
@@ -1295,240 +1295,276 @@ function SharingGroupBooking() {
       )}
       {paymentDetailsPopup && <div className="modal-backdrop fade show"></div>}
       {manualPopupDetails && (
-        <div
-          className="modal fade show d-flex align-items-center   justify-content-center "
-          tabIndex="-1"
-        >
-          <div className="modal-dialog">
-            <div className="modal-content managepopupgroup">
-              <div className="modal-body p-0">
-                <div className="row m-0 p-0">
-                  <div className="col-8 m-0 p-0">
-                    <div className="managepopupgroupleft me-3">
-                      {manualPopupDetails?.map((v, i) => {
-                        return (
-                          <div
-                            className="d-flex justify-content-between align-items-center  py-2 managePopUpTable"
-                            style={{
-                              background:
-                                selectedBooking == v?.id
-                                  ? "#353535"
-                                  : "#F7F7F7",
-                            }}
-                            onClick={() => {
-                              fetchGroupId(v.id);
-                            }}
-                          >
-                            <div className="px-3">
-                              <button
-                                style={{
-                                  background:
-                                    selectedBooking == v?.id
-                                      ? "#D0FF13"
-                                      : "#000",
-                                  color:
-                                    selectedBooking == v?.id
-                                      ? "#000"
-                                      : "#D0FF13",
-                                }}
-                              >
-                                Booking ID : {v?.id}
-                              </button>
-                            </div>
-                            <div className="d-flex align-items-center px-3">
-                              <img src="/imagefolder/locationGreenIcon.png" />
-                              <p
-                                className="ms-2"
-                                style={{
-                                  color:
-                                    selectedBooking == v?.id
-                                      ? "#fff"
-                                      : "#1C1C1C",
-                                }}
-                              >
-                                {v?.source}
-                              </p>
-                            </div>
-                            <div className="d-flex align-items-center">
-                              <img src="/imagefolder/locationRedIcon.png" />
-                              <p
-                                className="ms-2"
-                                style={{
-                                  color:
-                                    selectedBooking == v?.id
-                                      ? "#fff"
-                                      : "#1C1C1C",
-                                }}
-                              >
-                                {v?.destination}
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      })}
+  <div
+    className="modal fade show d-flex align-items-center justify-content-center"
+    tabIndex="-1"
+  >
+    <div className="modal-dialog">
+      <div className="modal-content managepopupgroup">
+        <div className="modal-body p-0">
+          <div className="row m-0 p-0">
+            {/* ---------- LEFT SIDE (Booking List) ---------- */}
+            <div className="col-8 m-0 p-0">
+              <div className="managepopupgroupleft me-3">
+                {manualPopupDetails?.map((v, i) => (
+                  <div
+                    key={i}
+                    className="d-flex justify-content-between align-items-center py-2 managePopUpTable"
+                    style={{
+                      background:
+                        selectedBooking === v?.id ? "#353535" : "#F7F7F7",
+                    }}
+                    onClick={() => fetchGroupId(v?.id)}
+                  >
+                    <div className="px-3">
+                      <button
+                        style={{
+                          background:
+                            selectedBooking === v?.id ? "#D0FF13" : "#000",
+                          color:
+                            selectedBooking === v?.id ? "#000" : "#D0FF13",
+                        }}
+                      >
+                        Booking ID : {v?.id}
+                      </button>
+                    </div>
+
+                    <div className="d-flex align-items-center px-3">
+                      <img src="/imagefolder/locationGreenIcon.png" alt="" />
+                      <p
+                        className="ms-2"
+                        style={{
+                          color:
+                            selectedBooking === v?.id ? "#fff" : "#1C1C1C",
+                        }}
+                      >
+                        {v?.source}
+                      </p>
+                    </div>
+
+                    <div className="d-flex align-items-center">
+                      <img src="/imagefolder/locationRedIcon.png" alt="" />
+                      <p
+                        className="ms-2"
+                        style={{
+                          color:
+                            selectedBooking === v?.id ? "#fff" : "#1C1C1C",
+                        }}
+                      >
+                        {v?.destination}
+                      </p>
                     </div>
                   </div>
-                  <div className="col-4 m-0 p-0">
-                    <div className="managepopupgroupleft ms-2">
-                      <div className="d-flex">
-                        <input
-                          type="radio"
-                          name="groupInputType"
-                          checked={isSelectedInputSelect === "select"}
-                          onChange={() => {
-                            setIsSelectedInputSelect("select");
-                            setManualAssignFormData({
-                              ...manualAssignFormData,
-                              group_id: "",
-                            });
-                          }}
-                        />
-                        <select
-                          className="ms-2 form-select"
-                          disabled={isSelectedInputSelect !== "select"}
-                          style={{
-                            opacity:
-                              isSelectedInputSelect === "select" ? "1" : "0.5",
-                            background: "#F7F7F7",
-                            borderRadius: "10px",
-                            height: "40px",
-                          }}
-                          onChange={(e) =>
-                            setManualAssignFormData({
-                              ...manualAssignFormData,
-                              group_id: e.target.value,
-                            })
-                          }
-                        >
-                          <option value="">Select Group ID</option>
-                          {groupList?.map((v, i) => (
-                            <option key={i} value={v?.group_id}>
-                              {v?.group_id}
-                            </option>
-                          ))}
-                          {alreadrExistGroupList?.map((v, i) => (
-                            <option
-                              key={`exist-${i}`}
-                              style={{ background: "orange" }}
-                              value={v?.group_id}
-                            >
-                              {v?.group_id} (Enroute Group)
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                ))}
+              </div>
+            </div>
 
-                      <div className="d-flex mt-3">
-                        <input
-                          type="radio"
-                          name="groupInputType"
-                          checked={isSelectedInputSelect === "manual"}
-                          onChange={() => setIsSelectedInputSelect("manual")}
-                        />
-                        <input
-                          type="number"
-                          className="ms-2 form-control"
-                          placeholder="Enter Group ID manually"
-                          disabled={isSelectedInputSelect !== "manual"}
-                          style={{
-                            background: "#F7F7F7",
-                            borderRadius: "10px",
-                            height: "40px",
-                          }}
-                          value={
-                            isSelectedInputSelect == "manual"
-                              ? manualAssignFormData?.group_id
-                              : ""
-                          }
-                          onChange={(e) =>
-                            setManualAssignFormData({
-                              ...manualAssignFormData,
-                              group_id: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-
-                      <div className="d-flex mt-4">
-                        <div className="w-100 ">
-                          {manualAssignFormData.booking_id &&
-                          manualAssignFormData?.group_id ? (
-                            <button
-                              className="shiftButton w-100"
-                              style={{ background: "#D0FF13", color: "#000" }}
-                              onClick={
-                                !moveBtnLoader && assignBookingToExistingGroup
-                              }
-                            >
-                              {moveBtnLoader ? "Shifting ..." : "Shift"}{" "}
-                            </button>
-                          ) : (
-                            <button
-                              className="shiftButton w-100"
-                              style={{
-                                background: "#D0FF13",
-                                opacity: "0.5",
-                                color: "#000",
-                              }}
-                            >
-                              Shift
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="managepopupgroupleft mt-4 ms-2">
-                      <div className="mb-3">
-                        <button
-                          className="shiftButton"
-                          style={{
-                            opacity: selectedBooking ? "1" : 0.5,
-                            color: "#D0FF13",
-                            backgroundColor: "#353535",
-                          }}
-                          onClick={() => {
-                            setShowUnlinkPopup(true);
-                            setManualPopupDetails(null);
-                          }}
-                        >
-                          Unlink
-                        </button>
-                      </div>
-                      <div className="">
-                        <button
-                          className="shiftButton"
-                          style={{
-                            opacity: selectedBooking ? "1" : 0.5,
-                            color: "#D0FF13",
-                            backgroundColor: "#353535",
-                          }}
-                          onClick={() => {
-                            setShowCancelPopup(true);
-                            setManualPopupDetails(null);
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="d-flex justify-content-center mt-5">
-                  <img
-                    src="https://cdn-icons-png.flaticon.com/128/660/660252.png"
-                    style={{ height: "50px" }}
-                    onClick={() => {
-                      setManualPopupDetails(null);
-                      setSelectedBooking(null);
+            {/* ---------- RIGHT SIDE (Actions) ---------- */}
+            <div className="col-4 m-0 p-0">
+              <div className="managepopupgroupleft ms-2">
+                {/* 🔸 Select Group ID Option */}
+                <div className="d-flex">
+                  <input
+                    type="radio"
+                    name="groupInputType"
+                    disabled={!selectedBooking}
+                    checked={
+                      selectedBooking && isSelectedInputSelect === "select"
+                    }
+                    onChange={() => {
+                      if (!selectedBooking) return;
+                      setIsSelectedInputSelect("select");
+                      setManualAssignFormData({
+                        ...manualAssignFormData,
+                        group_id: "",
+                      });
                     }}
                   />
+
+                  <select
+                    className="ms-2 form-select"
+                    disabled={
+                      !selectedBooking || isSelectedInputSelect !== "select"
+                    }
+                    style={{
+                      opacity:
+                        !selectedBooking ||
+                        isSelectedInputSelect !== "select"
+                          ? "0.5"
+                          : "1",
+                      background: "#F7F7F7",
+                      borderRadius: "10px",
+                      height: "40px",
+                    }}
+                    onChange={(e) =>
+                      setManualAssignFormData({
+                        ...manualAssignFormData,
+                        group_id: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Select Group ID</option>
+                    {groupList?.map((v, i) => (
+                      <option key={i} value={v?.group_id}>
+                        {v?.group_id}
+                      </option>
+                    ))}
+                    {alreadrExistGroupList?.map((v, i) => (
+                      <option
+                        key={`exist-${i}`}
+                        style={{ background: "orange" }}
+                        value={v?.group_id}
+                      >
+                        {v?.group_id} (Enroute Group)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 🔸 Manual Group ID Option */}
+                <div className="d-flex mt-3">
+                  <input
+                    type="radio"
+                    name="groupInputType"
+                    disabled={!selectedBooking}
+                    checked={
+                      selectedBooking && isSelectedInputSelect === "manual"
+                    }
+                    onChange={() => {
+                      if (!selectedBooking) return;
+                      setIsSelectedInputSelect("manual");
+                    }}
+                  />
+                  <input
+                    type="number"
+                    className="ms-2 form-control"
+                    placeholder="Enter Group ID manually"
+                    disabled={
+                      !selectedBooking || isSelectedInputSelect !== "manual"
+                    }
+                    style={{
+                      background: "#F7F7F7",
+                      borderRadius: "10px",
+                      height: "40px",
+                    }}
+                    value={
+                      isSelectedInputSelect === "manual"
+                        ? manualAssignFormData?.group_id
+                        : ""
+                    }
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (val > 0) {
+                        setManualAssignFormData({
+                          ...manualAssignFormData,
+                          group_id: val,
+                        });
+                      } else if (e.target.value === "") {
+                        setManualAssignFormData({
+                          ...manualAssignFormData,
+                          group_id: "",
+                        });
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* 🔸 Shift Button */}
+                <div className="d-flex mt-4">
+                  <div className="w-100">
+                    {selectedBooking &&
+                    manualAssignFormData?.group_id &&
+                    manualAssignFormData?.booking_id ? (
+                      <button
+                        className="shiftButton w-100"
+                        style={{ background: "#D0FF13", color: "#000" }}
+                        onClick={
+                          !moveBtnLoader && assignBookingToExistingGroup
+                        }
+                      >
+                        {moveBtnLoader ? "Shifting ..." : "Shift"}
+                      </button>
+                    ) : (
+                      <button
+                        className="shiftButton w-100"
+                        disabled
+                        style={{
+                          background: "#D0FF13",
+                          opacity: "0.5",
+                          color: "#000",
+                          cursor: "not-allowed",
+                        }}
+                      >
+                        Shift
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* 🔸 Unlink & Cancel Buttons */}
+              <div className="managepopupgroupleft mt-4 ms-2">
+                <div className="mb-3">
+                  <button
+                    className="shiftButton"
+                    disabled={!selectedBooking}
+                    style={{
+                      opacity: !selectedBooking ? "0.5" : "1",
+                      color: "#D0FF13",
+                      backgroundColor: "#353535",
+                      cursor: !selectedBooking ? "not-allowed" : "pointer",
+                    }}
+                    onClick={() => {
+                      if (!selectedBooking) return;
+                      setShowUnlinkPopup(true);
+                      setManualPopupDetails(null);
+                    }}
+                  >
+                    Unlink
+                  </button>
+                </div>
+
+                <div>
+                  <button
+                    className="shiftButton"
+                    disabled={!selectedBooking}
+                    style={{
+                      opacity: !selectedBooking ? "0.5" : "1",
+                      color: "#D0FF13",
+                      backgroundColor: "#353535",
+                      cursor: !selectedBooking ? "not-allowed" : "pointer",
+                    }}
+                    onClick={() => {
+                      if (!selectedBooking) return;
+                      setShowCancelPopup(true);
+                      setManualPopupDetails(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* ---------- Close Button ---------- */}
+          <div className="d-flex justify-content-center mt-5">
+            <img
+              src="https://cdn-icons-png.flaticon.com/128/660/660252.png"
+              style={{ height: "50px", cursor: "pointer" }}
+              onClick={() => {
+                setManualPopupDetails(null);
+                setSelectedBooking(null);
+              }}
+            />
+          </div>
         </div>
-      )}
-      {manualPopupDetails && <div className="modal-backdrop fade show"></div>}
+      </div>
+    </div>
+  </div>
+)}
+{manualPopupDetails && <div className="modal-backdrop fade show"></div>}
+
       {tipForm.show && (
         <div
           className="modal fade show d-flex align-items-center   justify-content-center "

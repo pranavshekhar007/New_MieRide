@@ -732,16 +732,27 @@ function SharingAcceptedBooking() {
                             </div>
                           </div>
                           <div className="col-8">
-                            {value?.pickup_points?.map((v, i) => {
-                              return (
-                                <LocationTicket
-                                  i={i}
-                                  v={v}
-                                  key={i}
-                                  value={value}
-                                />
-                              );
-                            })}
+                            {/* PICKUP POINTS */}
+                            {value?.pickup_points?.map((v, i) => (
+                              <LocationTicket
+                                key={`pickup-${i}`}
+                                i={i}
+                                v={v}
+                                value={value}
+                                type="pickup"
+                              />
+                            ))}
+
+                            {/* DROPOFF POINTS */}
+                            {value?.dropoff_points?.map((v, i) => (
+                              <LocationTicket
+                                key={`drop-${i}`}
+                                i={value?.pickup_points?.length + i} 
+                                v={v}
+                                value={value}
+                                type="dropoff"
+                              />
+                            ))}
                           </div>
                         </div>
                       </div>
@@ -779,22 +790,22 @@ function SharingAcceptedBooking() {
 
                   <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
                     <p>Booking Amount per Person</p>
-                    <h5>${paymentDetailsPopup?.total_trip_cost || 0}</h5>
+                    <h5>
+                      $
+                      {(paymentDetailsPopup?.total_trip_cost || 0) /
+                        (paymentDetailsPopup?.total_number_of_people || 1)}
+                    </h5>
                   </div>
 
                   <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
                     <p>HST (13%)</p>
-                    <h5>
-                      $
-                      {(paymentDetailsPopup?.total_trip_cost * 0.13).toFixed(2)}
-                    </h5>
+                    <h5>{"N/A"}</h5>
                   </div>
 
                   <div className="d-flex justify-content-between align-items-center mb-3 popupLine totalLine">
                     <p className="fw-bold">Total Amount</p>
                     <h5 className="fw-bold">
-                      $
-                      {(paymentDetailsPopup?.total_trip_cost * 1.13).toFixed(2)}
+                      ${(paymentDetailsPopup?.total_trip_cost).toFixed(2)}
                     </h5>
                   </div>
 
@@ -807,12 +818,7 @@ function SharingAcceptedBooking() {
 
                   <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
                     <p>Driver HST (13%)</p>
-                    <h5>
-                      $
-                      {(
-                        paymentDetailsPopup?.total_driver_earning * 0.13
-                      ).toFixed(2)}
-                    </h5>
+                    <h5>{"N/A"}</h5>
                   </div>
 
                   <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
@@ -822,12 +828,12 @@ function SharingAcceptedBooking() {
 
                   <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
                     <p>Admin HST (13%)</p>
-                    <h5>
-                      $
-                      {(
-                        paymentDetailsPopup?.total_admin_commission * 0.13
-                      ).toFixed(2)}
-                    </h5>
+                    <h5>{"N/A"}</h5>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-3 popupLine discountLine">
+                    <p>Bonus Amount</p>
+                    <h5>${paymentDetailsPopup?.tip_amount}</h5>
                   </div>
 
                   <div className="d-flex justify-content-between align-items-center mb-3 popupLine discountLine">
@@ -836,9 +842,9 @@ function SharingAcceptedBooking() {
                     </p>
                     <h5>
                       $
-                      {(
-                        paymentDetailsPopup?.total_trip_cost * 0.5 || 0
-                      ).toFixed(2)}
+                      {(paymentDetailsPopup?.total_location_discount).toFixed(
+                        2
+                      )}
                     </h5>
                   </div>
 
@@ -848,28 +854,27 @@ function SharingAcceptedBooking() {
                     <h4>Final Paid to Driver</h4>
                     <h4>
                       $
-                      {(paymentDetailsPopup?.total_driver_earning || 0).toFixed(
-                        2
-                      )}{" "}
-                      <span className="hstText">
+                      {(paymentDetailsPopup?.total_driver_earning || 0) +
+                        (paymentDetailsPopup?.tip_amount || 0)}{" "}
+                      {/* <span className="hstText">
                         +(HST $
                         {(
                           paymentDetailsPopup?.total_driver_earning * 0.13
                         ).toFixed(2)}
                         )
-                      </span>
+                      </span> */}
                     </h4>
                   </div>
 
                   <button className="payButton">Paid via Apple Pay</button>
 
                   <div className="d-flex justify-content-center">
-                      <img
-                        className=""
-                        src="/imagefolder/popUpCloseIcon.png"
-                        onClick={() => setPaymentDetailsPopup(null)}
-                      />
-                    </div>
+                    <img
+                      className=""
+                      src="/imagefolder/popUpCloseIcon.png"
+                      onClick={() => setPaymentDetailsPopup(null)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

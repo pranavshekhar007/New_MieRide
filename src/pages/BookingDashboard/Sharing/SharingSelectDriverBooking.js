@@ -24,7 +24,64 @@ import NoRecordFound from "../../../components/NoRecordFound";
 import NewSidebar from "../../../components/NewSidebar";
 import SecondaryTopNav from "../../../components/SecondaryTopNav";
 import CustomPagination from "../../../components/CustomPazination";
+import { scheduleSharingBookingForAssignServ } from "../../../services/scheduleAttempts";
 function SharingSelectDriverBooking() {
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [isSchedulePopupOpen, setIsSchedulePopupOpen] = useState(false);
+
+  const [scheduleAttempts, setScheduleAttempts] = useState([]);
+  const [isScheduleSaved, setIsScheduleSaved] = useState(false);
+
+  const [isViewMode, setIsViewMode] = useState(false);
+  const [isFinalScheduleDone, setIsFinalScheduleDone] = useState(false);
+
+  const increaseAttempt = () => {
+    if (!isScheduleEnabled) return;
+    if (attemptCount >= 4) {
+      toast.error("Maximum 4 attempts allowed.");
+      return;
+    }
+    setAttemptCount(attemptCount + 1);
+  };
+
+  const decreaseAttempt = () => {
+    if (!isScheduleEnabled || attemptCount === 0) return;
+    setAttemptCount(attemptCount - 1);
+  };
+
+  const handleOpenSchedulePopup = () => {
+    if (!isScheduleEnabled) {
+      toast.error("Enable schedule first.");
+      return;
+    }
+
+    if (attemptCount <= 0) {
+      toast.error("Please select minimum 1 attempt.");
+      return;
+    }
+
+    if (scheduleAttempts.length > 0) {
+      setIsSchedulePopupOpen(true);
+      return;
+    }
+    
+    let temp = [];
+    let now = moment();
+    const limit = Math.min(attemptCount, 4);
+
+    for (let i = 0; i < limit; i++) {
+      temp.push({
+        attempt: i + 1,
+        date: now.format("DD MMM, YYYY"),
+        time: now.format("hh:mm A"),
+      });
+      now = now.add(5, "minutes");
+    }
+
+    setScheduleAttempts(temp);
+    setIsSchedulePopupOpen(true);
+  };
+
   const [formData, setFormData] = useState({
     booking_route_id: "",
     driver_ids: [],
@@ -34,7 +91,7 @@ function SharingSelectDriverBooking() {
 
   const [payload, setPayload] = useState({
     page_no: 1,
-    per_page: 1,
+    per_page: 10,
     search_key: "",
   });
 
@@ -83,6 +140,33 @@ function SharingSelectDriverBooking() {
       let response = await getRouteByGroupIdServ({ group_id: params.id });
       if (response?.data?.statusCode == "200") {
         setDetails(response?.data?.data);
+
+        const tip = response?.data?.data?.routeDetails?.tip_amount ?? 0;
+
+        if (tip > 0) {
+          setIsExtraChargeEnabled(true);
+          setCustomAmount(tip);
+          setSelectedValue("XX");
+        }
+        const scheduled = response?.data?.data?.scheduledAssignments || [];
+        if (scheduled.length > 0) {
+          setIsScheduleEnabled(true);
+          setIsFinalScheduleDone(true);
+          setIsScheduleSaved(true);
+          setIsViewMode(true);
+
+          // Convert API attempts into popup format
+          const formatted = scheduled.map((item, idx) => ({
+            attempt: idx + 1,
+            date: moment(item.run_at).format("DD MMM, YYYY"),
+            time: moment(item.run_at).format("hh:mm A"),
+          }));
+          const safeCount = Math.min(scheduled.length, 4);
+
+          setAttemptCount(safeCount);
+          setScheduleAttempts(formatted.slice(0, 4));
+        }
+
         setFormData({
           driver_ids: [],
           tip_amount: "",
@@ -178,11 +262,34 @@ function SharingSelectDriverBooking() {
   const handleSubmitDriverSelectFunc = async () => {
     const selectedFormData = new FormData();
     selectedFormData?.append("booking_route_id", formData?.booking_route_id);
-    selectedFormData?.append("tip_amount", formData?.tip_amount);
-    selectedFormData?.append(
-      "increased_pickup_time",
-      formData?.increased_pickup_time
-    );
+    // ---------------------- EXTRA CHARGE CALCULATION ----------------------
+    let finalTipAmount = 0;
+    const totalTripAmount =
+      parseFloat(details?.routeDetails?.total_trip_amount) || 0;
+
+    if (isExtraChargeEnabled) {
+      if (selectedValue.endsWith("%")) {
+        // % calculation
+        const percent = parseFloat(selectedValue.replace("%", ""));
+        finalTipAmount = ((percent / 100) * totalTripAmount).toFixed(2);
+      } else if (customAmount) {
+        // manual amount
+        finalTipAmount = parseFloat(customAmount).toFixed(2);
+      }
+    } else {
+      // Extra charge disabled
+      finalTipAmount = 0;
+    }
+
+    // ---------------------- PICKUP TIME CALCULATION ----------------------
+    let finalPickupTime = "";
+    if (isPickupTimeEnabled && pickupTime > 0) {
+      finalPickupTime = pickupTime;
+    }
+
+    // Put BOTH values in formData BEFORE sending
+    selectedFormData.append("tip_amount", finalTipAmount);
+    selectedFormData.append("increased_pickup_time", finalPickupTime);
     formData?.driver_ids?.forEach((id) => {
       selectedFormData.append("driver_ids[]", id);
     });
@@ -242,28 +349,75 @@ function SharingSelectDriverBooking() {
 
   const [isExtraChargeEnabled, setIsExtraChargeEnabled] = useState(false);
   const [isPickupTimeEnabled, setIsPickupTimeEnabled] = useState(false);
-   const [pickupTime, setPickupTime] = useState("");
+  const [pickupTime, setPickupTime] = useState("");
   const [isScheduleEnabled, setIsScheduleEnabled] = useState(false);
 
-    // ---- New Route Popup States ----
-    const [routePopupDetails, setRoutePopupDetails] = useState(null);
-    const [routePopupLoader, setRoutePopupLoader] = useState(false);
-  
-    // Function to open Route Popup and fetch data dynamically
-    const openRoutePopup = async () => {
-      setRoutePopupLoader(true);
-      try {
-        const response = await getRouteByGroupIdServ({ group_id: params.id });
-        if (response?.data?.statusCode === "200") {
-          setRoutePopupDetails(response?.data?.data); // Store entire response
-        } else {
-          toast.error(response?.data?.message || "Failed to fetch route details");
-        }
-      } catch (error) {
-        toast.error("Something went wrong while fetching route details");
+  // ---- New Route Popup States ----
+  const [routePopupDetails, setRoutePopupDetails] = useState(null);
+  const [routePopupLoader, setRoutePopupLoader] = useState(false);
+
+  // Function to open Route Popup and fetch data dynamically
+  const openRoutePopup = async () => {
+    setRoutePopupLoader(true);
+    try {
+      const response = await getRouteByGroupIdServ({ group_id: params.id });
+      if (response?.data?.statusCode === "200") {
+        setRoutePopupDetails(response?.data?.data); // Store entire response
+      } else {
+        toast.error(response?.data?.message || "Failed to fetch route details");
       }
-      setRoutePopupLoader(false);
-    };
+    } catch (error) {
+      toast.error("Something went wrong while fetching route details");
+    }
+    setRoutePopupLoader(false);
+  };
+
+  const handleFinalScheduleSubmit = async () => {
+    if (!isScheduleSaved) {
+      toast.error("Please set schedule attempts first.");
+      return;
+    }
+
+    const retryTimesForAPI = scheduleAttempts.map((a) =>
+      moment(`${a.date} ${a.time}`, "DD MMM, YYYY hh:mm A").format(
+        "YYYY-MM-DD HH:mm:ss"
+      )
+    );
+
+    const selectedFormData = new FormData();
+    selectedFormData.append("booking_route_id", formData.booking_route_id);
+    selectedFormData.append("tip_amount", formData.tip_amount);
+    selectedFormData.append(
+      "increased_pickup_time",
+      formData.increased_pickup_time
+    );
+
+    retryTimesForAPI.forEach((time, index) => {
+      selectedFormData.append(`retry_times[${index}]`, time);
+    });
+
+    formData.driver_ids.forEach((id, index) => {
+      selectedFormData.append(`driver_ids[${index}]`, id);
+    });
+
+    try {
+      let response = await scheduleSharingBookingForAssignServ(
+        selectedFormData
+      );
+
+      if (response?.data?.statusCode === "200") {
+        toast.success("Attempts scheduled successfully!");
+        setIsFinalScheduleDone(true);
+        setIsScheduleSaved(true);
+        setIsViewMode(true);
+        navigate("/sharing-manual-booking");
+      } else {
+        toast.error(response?.data?.message || "Failed to schedule attempts");
+      }
+    } catch (error) {
+      toast.error("Internal Server Error");
+    }
+  };
 
   return (
     <div className="mainBody">
@@ -329,15 +483,26 @@ function SharingSelectDriverBooking() {
                 {routePopupLoader ? "Loading..." : "Route"}
               </button>
 
-              {isScheduleEnabled ? (
+              {isFinalScheduleDone ? (
+                // Scheduled already → show Submit
                 <button
                   className="bgSuccess textDark"
                   style={{ width: "180px" }}
-                  onClick={() => toast.info("Schedule feature coming soon")}
+                  onClick={handleSubmitDriverSelectFunc}
+                >
+                  Submit
+                </button>
+              ) : isScheduleEnabled ? (
+                // User manually enabling schedule now
+                <button
+                  className="bgSuccess textDark"
+                  style={{ width: "180px" }}
+                  onClick={handleFinalScheduleSubmit}
                 >
                   Schedule
                 </button>
               ) : (
+                // Default — Submit
                 <button
                   className="bgSuccess textDark"
                   style={{ width: "180px" }}
@@ -462,18 +627,51 @@ function SharingSelectDriverBooking() {
                       type="checkbox"
                       className="scheduleCheckbox"
                       checked={isScheduleEnabled}
+                      disabled={isFinalScheduleDone}
                       onChange={(e) => setIsScheduleEnabled(e.target.checked)}
                     />
                     <span>Schedule</span>
                   </label>
 
                   <div className="counter">
-                    <button className="counterBtn">−</button>
-                    <span className="counterValue">00</span>
-                    <button className="counterBtn">+</button>
+                    <button
+                      className="counterBtn"
+                      onClick={decreaseAttempt}
+                      disabled={isFinalScheduleDone}
+                    >
+                      −
+                    </button>
+
+                    <span className="counterValue">
+                      {attemptCount < 10 ? `0${attemptCount}` : attemptCount}
+                    </span>
+
+                    <button
+                      className="counterBtn"
+                      onClick={increaseAttempt}
+                      disabled={isFinalScheduleDone || attemptCount >= 4}
+                    >
+                      +
+                    </button>
                   </div>
 
-                  <button className="selectTimeBtn">Select Time</button>
+                  <button
+                    className="selectTimeBtn"
+                    disabled={!isScheduleEnabled}
+                    onClick={() => {
+                      if (isFinalScheduleDone) {
+                        // After API success → View Schedule read-only
+                        setIsViewMode(true);
+                        setIsSchedulePopupOpen(true);
+                      } else {
+                        // Before API → Editable popup
+                        setIsViewMode(false);
+                        handleOpenSchedulePopup();
+                      }
+                    }}
+                  >
+                    {isFinalScheduleDone ? "View Schedule" : "Select Time"}
+                  </button>
                 </div>
               </div>
             </div>
@@ -678,7 +876,7 @@ function SharingSelectDriverBooking() {
           </div>
         </div>
       </div>
-        {/* {routePopupDetails && (
+      {/* {routePopupDetails && (
         <div
           className="modal fade show d-flex align-items-center justify-content-center"
           tabIndex="-1"
@@ -824,158 +1022,264 @@ function SharingSelectDriverBooking() {
       )}
       
       {routePopupDetails && <div className="modal-backdrop fade show"></div>} */}
-      
-            {routePopupDetails && (
-              <div
-                className="modal fade show d-flex align-items-center justify-content-center"
-                tabIndex="-1"
-              >
-                <div className="modal-dialog">
-                  <div className="modal-content managepopupgroup">
-                    <div className="modal-body p-0">
-                      <div className="row m-0 p-0 justify-content-center">
-                        {/* ---------- Single Column (Full Width like Manual Left Side) ---------- */}
-                        <div className="col-10 m-0 p-0">
-                          <div className="managepopupgroupleft">
-                            {routePopupDetails?.routeDetails?.pickup_points?.length >
-                            0 ? (
-                              routePopupDetails?.routeDetails?.pickup_points?.map(
-                                (v, i) => (
-                                  <div
-                                    key={i}
-                                    className="d-flex justify-content-between align-items-center py-2 managePopUpTable"
+
+      {routePopupDetails && (
+        <div
+          className="modal fade show d-flex align-items-center justify-content-center"
+          tabIndex="-1"
+        >
+          <div className="modal-dialog">
+            <div className="modal-content managepopupgroup">
+              <div className="modal-body p-0">
+                <div className="row m-0 p-0 justify-content-center">
+                  {/* ---------- Single Column (Full Width like Manual Left Side) ---------- */}
+                  <div className="col-10 m-0 p-0">
+                    <div className="managepopupgroupleft">
+                      {routePopupDetails?.routeDetails?.pickup_points?.length >
+                      0 ? (
+                        routePopupDetails?.routeDetails?.pickup_points?.map(
+                          (v, i) => (
+                            <div
+                              key={i}
+                              className="d-flex justify-content-between align-items-center py-2 managePopUpTable"
+                              style={{
+                                background: "#F7F7F7",
+                                borderRadius: "10px",
+                                marginBottom: "10px",
+                                padding: "10px 15px",
+                                minHeight: "60px",
+                              }}
+                            >
+                              {/* ---------- Booking ID ---------- */}
+                              <div className="px-2">
+                                <button
+                                  style={{
+                                    background: "#000",
+                                    color: "#D0FF13",
+                                    border: "none",
+                                    width: "120px",
+                                    height: "30px",
+                                    borderRadius: "5px",
+                                    fontFamily: "Poppins",
+                                    fontSize: "12px",
+                                    fontWeight: "500",
+                                  }}
+                                >
+                                  Booking ID : {v?.booking_id || `#${i + 1}`}
+                                </button>
+                              </div>
+
+                              {/* ---------- Pickup Point (Full Address) ---------- */}
+                              <div
+                                className="d-flex align-items-start px-2 flex-grow-1"
+                                style={{
+                                  flexDirection: "column",
+                                  maxWidth: "35%",
+                                }}
+                              >
+                                <div className="d-flex align-items-center mb-1">
+                                  <img
+                                    src="/imagefolder/locationGreenIcon.png"
+                                    alt="pickup"
+                                    style={{ width: "14px", height: "14px" }}
+                                  />
+                                  <p
+                                    className="ms-2 mb-0"
                                     style={{
-                                      background: "#F7F7F7",
-                                      borderRadius: "10px",
-                                      marginBottom: "10px",
-                                      padding: "10px 15px",
-                                      minHeight: "60px",
+                                      color: "#1C1C1C",
+                                      fontSize: "12px",
+                                      fontFamily: "Nexa",
+                                      fontWeight: "400",
+                                      wordBreak: "break-word",
+                                      whiteSpace: "normal",
                                     }}
                                   >
-                                    {/* ---------- Booking ID ---------- */}
-                                    <div className="px-2">
-                                      <button
-                                        style={{
-                                          background: "#000",
-                                          color: "#D0FF13",
-                                          border: "none",
-                                          width: "120px",
-                                          height: "30px",
-                                          borderRadius: "5px",
-                                          fontFamily: "Poppins",
-                                          fontSize: "12px",
-                                          fontWeight: "500",
-                                        }}
-                                      >
-                                        Booking ID : {v?.booking_id || `#${i + 1}`}
-                                      </button>
-                                    </div>
-      
-                                    {/* ---------- Pickup Point (Full Address) ---------- */}
-                                    <div
-                                      className="d-flex align-items-start px-2 flex-grow-1"
-                                      style={{
-                                        flexDirection: "column",
-                                        maxWidth: "35%",
-                                      }}
-                                    >
-                                      <div className="d-flex align-items-center mb-1">
-                                        <img
-                                          src="/imagefolder/locationGreenIcon.png"
-                                          alt="pickup"
-                                          style={{ width: "14px", height: "14px" }}
-                                        />
-                                        <p
-                                          className="ms-2 mb-0"
-                                          style={{
-                                            color: "#1C1C1C",
-                                            fontSize: "12px",
-                                            fontFamily: "Nexa",
-                                            fontWeight: "400",
-                                            wordBreak: "break-word",
-                                            whiteSpace: "normal",
-                                          }}
-                                        >
-                                          {v?.place_name || "N/A"}
-                                        </p>
-                                      </div>
-                                    </div>
-      
-                                    {/* ---------- Dropoff Point (Full Address) ---------- */}
-                                    <div
-                                      className="d-flex align-items-start px-2 flex-grow-1"
-                                      style={{
-                                        flexDirection: "column",
-                                        maxWidth: "35%",
-                                      }}
-                                    >
-                                      <div className="d-flex align-items-center mb-1">
-                                        <img
-                                          src="/imagefolder/locationRedIcon.png"
-                                          alt="drop"
-                                          style={{ width: "14px", height: "14px" }}
-                                        />
-                                        <p
-                                          className="ms-2 mb-0"
-                                          style={{
-                                            color: "#1C1C1C",
-                                            fontSize: "12px",
-                                            fontFamily: "Nexa",
-                                            fontWeight: "400",
-                                            wordBreak: "break-word",
-                                            whiteSpace: "normal",
-                                          }}
-                                        >
-                                          {routePopupDetails?.routeDetails
-                                            ?.dropoff_points?.[i]?.place_name ||
-                                            "N/A"}
-                                        </p>
-                                      </div>
-                                    </div>
-      
-                                    {/* ---------- Booking Time ---------- */}
-                                    <div className="text-end px-2">
-                                      <span
-                                        style={{
-                                          fontSize: "12px",
-                                          color: "#6b6b6b",
-                                          fontFamily: "Nexa",
-                                          whiteSpace: "nowrap",
-                                        }}
-                                      >
-                                        {moment(v?.booking_time, "HH:mm").format(
-                                          "hh:mm A"
-                                        )}
-                                      </span>
-                                    </div>
-                                  </div>
-                                )
-                              )
-                            ) : (
-                              <p className="text-center text-muted py-3 mb-0">
-                                No pickup points found
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-      
-                      {/* ---------- Close Button ---------- */}
-                      <div className="d-flex justify-content-center mt-5">
-                        <img
-                          src="https://cdn-icons-png.flaticon.com/128/660/660252.png"
-                          style={{ height: "50px", cursor: "pointer" }}
-                          alt="close"
-                          onClick={() => setRoutePopupDetails(null)}
-                        />
-                      </div>
+                                    {v?.place_name || "N/A"}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* ---------- Dropoff Point (Full Address) ---------- */}
+                              <div
+                                className="d-flex align-items-start px-2 flex-grow-1"
+                                style={{
+                                  flexDirection: "column",
+                                  maxWidth: "35%",
+                                }}
+                              >
+                                <div className="d-flex align-items-center mb-1">
+                                  <img
+                                    src="/imagefolder/locationRedIcon.png"
+                                    alt="drop"
+                                    style={{ width: "14px", height: "14px" }}
+                                  />
+                                  <p
+                                    className="ms-2 mb-0"
+                                    style={{
+                                      color: "#1C1C1C",
+                                      fontSize: "12px",
+                                      fontFamily: "Nexa",
+                                      fontWeight: "400",
+                                      wordBreak: "break-word",
+                                      whiteSpace: "normal",
+                                    }}
+                                  >
+                                    {routePopupDetails?.routeDetails
+                                      ?.dropoff_points?.[i]?.place_name ||
+                                      "N/A"}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* ---------- Booking Time ---------- */}
+                              <div className="text-end px-2">
+                                <span
+                                  style={{
+                                    fontSize: "12px",
+                                    color: "#6b6b6b",
+                                    fontFamily: "Nexa",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {moment(v?.booking_time, "HH:mm").format(
+                                    "hh:mm A"
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          )
+                        )
+                      ) : (
+                        <p className="text-center text-muted py-3 mb-0">
+                          No pickup points found
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
+
+                {/* ---------- Close Button ---------- */}
+                <div className="d-flex justify-content-center mt-5">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/660/660252.png"
+                    style={{ height: "50px", cursor: "pointer" }}
+                    alt="close"
+                    onClick={() => setRoutePopupDetails(null)}
+                  />
+                </div>
               </div>
-            )}
-      
-            {routePopupDetails && <div className="modal-backdrop fade show"></div>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {routePopupDetails && <div className="modal-backdrop fade show"></div>}
+      {isSchedulePopupOpen && (
+        <>
+          <div
+            className="modal fade show d-flex align-items-center justify-content-center confirmPickupModal"
+            tabIndex="-1"
+          >
+            <div className="modal-dialog">
+              <div className="modal-content schedulePopupContent">
+                {/* ------ HEADER ------ */}
+                <div className="schedulePopupHeader">
+                  <h5>
+                    {isViewMode ? "Schedule Attempts" : "Schedule Attempts"}
+                  </h5>
+                </div>
+
+                {/* ------ BODY ------ */}
+                <div className="schedulePopupBody">
+                  <div className="scheduleTableWrapper">
+                    <table className="schedulePopupTable">
+                      <thead>
+                        <tr>
+                          <th style={{ borderTopLeftRadius: "15px" }}>
+                            Retry Attempt
+                          </th>
+                          <th>Date</th>
+                          <th style={{ borderTopRightRadius: "15px" }}>Time</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {scheduleAttempts.map((row, index) => (
+                          <tr key={index}>
+                            <td>Attempt {row.attempt}</td>
+
+                            {/* --- REAL DATE PICKER --- */}
+                            <td>
+                              <input
+                                type="date"
+                                className="scheduleInput"
+                                readOnly={isViewMode}
+                                value={moment(row.date, "DD MMM, YYYY").format(
+                                  "YYYY-MM-DD"
+                                )}
+                                onChange={(e) => {
+                                  if (isViewMode) return;
+                                  const updated = [...scheduleAttempts];
+                                  updated[index].date = moment(
+                                    e.target.value
+                                  ).format("DD MMM, YYYY");
+                                  setScheduleAttempts(updated);
+                                }}
+                              />
+                            </td>
+
+                            {/* --- REAL TIME PICKER --- */}
+                            <td>
+                              <input
+                                type="time"
+                                className="scheduleInput"
+                                readOnly={isViewMode}
+                                value={moment(row.time, "hh:mm A").format(
+                                  "HH:mm"
+                                )}
+                                onChange={(e) => {
+                                  if (isViewMode) return;
+                                  const updated = [...scheduleAttempts];
+                                  updated[index].time = moment(
+                                    e.target.value,
+                                    "HH:mm"
+                                  ).format("hh:mm A");
+                                  setScheduleAttempts(updated);
+                                }}
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {/* ------ ACTION BUTTONS ------ */}
+                  <div className="schedulePopupActions">
+                    <button
+                      className="cancelBtn"
+                      onClick={() => setIsSchedulePopupOpen(false)}
+                    >
+                      {isViewMode ? "Cancel" : "Cancel"}
+                    </button>
+
+                    <button
+                      className="confirmBtn"
+                      onClick={() => {
+                        setIsScheduleSaved(true);
+                        setIsSchedulePopupOpen(false);
+                      }}
+                    >
+                      Schedule
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="modal-backdrop fade show"></div>
+        </>
+      )}
     </div>
   );
   return (

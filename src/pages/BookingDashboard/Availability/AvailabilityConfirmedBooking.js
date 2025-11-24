@@ -15,6 +15,10 @@ import moment from "moment";
 import "react-toastify/dist/ReactToastify.css";
 import { updateNotificationStatusServ } from "../../../services/notification.services";
 import { getNavItems } from "../../../utils/TopNavItemData/bookingDashboard";
+import NewSidebar from "../../../components/NewSidebar";
+import CustomTopNav from "../../../components/CustomTopNav";
+import SecondaryTopNav from "../../../components/SecondaryTopNav";
+import { Image_Base_Url } from "../../../utils/api_base_url_configration";
 function AvailabilityConfirmedBooking() {
   const { setGlobalState, globalState } = useGlobalState();
 
@@ -27,6 +31,76 @@ function AvailabilityConfirmedBooking() {
       name: "Cancelled",
       path: "/availability-cancelled",
     },
+  ];
+  const navItems = [
+    [
+      {
+        name: "Sharing Ride",
+        path: "/sharing-group-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "new_booking" ||
+              v?.category == "new_route_created" ||
+              v?.category == "booking_accepted" ||
+              v?.category == "booking_rejected" ||
+              v?.category == "booking_missed" ||
+              v?.category == "booking_ride_started" ||
+              v?.category == "booking_arrived" ||
+              v?.category == "booking_pickup_started" ||
+              v?.category == "booking_drop_started" ||
+              v?.category == "booking_completed" ||
+              v?.category == "booking_canceled" ||
+              v?.category == "booking_ride_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Personal Ride",
+        path: "/personal-later-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "personal_new_booking" ||
+              v?.category == "personal_booking_accepted" ||
+              v?.category == "personal_booking_ride_canceled" ||
+              v?.category == "personal_booking_missed" ||
+              v?.category == "personal_booking_ride_started" ||
+              v?.category == "personal_booking_completed" ||
+              v?.category == "personal_booking_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Family Ride",
+        path: "/family-ride",
+      },
+    ],
+    [
+      {
+        name: "Driver's Availability",
+        path: "/availability-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_availability" && v?.is_read == 0;
+        })?.length,
+      },
+      {
+        name: "Driver's Route",
+        path: "/route-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_share_route" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
+    [
+      {
+        name: "Out Of Area",
+        path: "/out-of-area",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "out_of_area" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
   ];
   const [showSkelton, setShowSkelton] = useState(false);
   const [availabilityList, setAvailabilityList] = useState([]);
@@ -80,6 +154,437 @@ function AvailabilityConfirmedBooking() {
       });
   });
   const [popupDetails, setPopupDetails] = useState(null);
+  const [shiftPopup, setShiftPopup] = useState(null);
+  const [driverPopup, setDriverPopup] = useState(null);
+  const [deletePopup, setDeletePopup] = useState(null);
+
+  return (
+    <div className="mainBody">
+      <NewSidebar selectedItem="Booking Dashboard" />
+      <div className="contentLayout">
+        <div className="bgWhite borderRadius30 p-4 minHeight100vh">
+          <div className="sticky-top bgWhite">
+            <CustomTopNav
+              navItems={navItems}
+              selectedNav="Driver's Availability"
+            />
+            {/* <SecondaryTopNav
+              navItems={tableNav}
+              selectedNav="Completed"
+              navBg="#E5E5E5"
+              navColor="#1C1C1C"
+              selectedNavBg="#353535"
+              selectedNavColor="#fff"
+            /> */}
+          </div>
+          <div className="tableOuterContainer bgDark mt-4">
+            <div>
+              <table className="table mb-0">
+                <thead>
+                  <tr>
+                    <th
+                      scope="col"
+                      style={{ borderRadius: "24px 0px 0px 24px" }}
+                    >
+                      <div className="d-flex justify-content-center ms-2">
+                        <span className="mx-2">Sr. No</span>
+                      </div>
+                    </th>
+
+                    <th scope="col">Request ID</th>
+                    <th scope="col">Driver Name</th>
+                    <th scope="col">Vehicle Number</th>
+                    <th scope="col">Source City</th>
+                    <th scope="col">Ride Date</th>
+                    <th scope="col">Shift Availability</th>
+
+                    <th
+                      scope="col"
+                      style={{ borderRadius: "0px 24px 24px 0px" }}
+                    >
+                      <span className="me-3">Action</span>
+                    </th>
+                  </tr>
+                </thead>
+                <div className="pt-4"></div>
+                <tbody>
+                  {showSkelton
+                    ? [1, 2, 3, 4, 5, 6, 7, 8, 9].map((v, i) => (
+                        <tr key={i}>
+                          <td>
+                            <Skeleton width={50} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                        </tr>
+                      ))
+                    : availabilityList?.map((v, i) => (
+                        <React.Fragment key={i}>
+                          <tr className="bgWhite">
+                            {/* Left rounded corners */}
+                            <td
+                              scope="row"
+                              style={{
+                                borderTopLeftRadius: "24px",
+                                borderBottomLeftRadius: "24px",
+                              }}
+                            >
+                              {i + 1}
+                            </td>
+
+                            <td>{v?.id}</td>
+
+                            <td className="text-dark">
+                              {v?.driver_details?.first_name}{" "}
+                              {v?.driver_details?.last_name}
+                            </td>
+
+                            {/* Vehicle Number button matching style */}
+                            <td className="text-center">
+                              <div
+                                className="d-flex align-items-center justify-content-center"
+                                style={{
+                                  background: "#3A3A3A",
+                                  borderRadius: "5px",
+                                  padding: "8px 18px",
+                                  color: "white",
+                                  width: "120px",
+                                  fontFamily: "Nexa",
+                                  margin: "0 auto",
+                                }}
+                              >
+                                <img
+                                  src="https://cdn-icons-png.flaticon.com/128/89/89102.png"
+                                  style={{
+                                    height: "22px",
+                                    marginRight: "10px",
+                                    filter: "invert(1)",
+                                  }}
+                                />
+                                <span
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: "700",
+                                    letterSpacing: "1px",
+                                  }}
+                                >
+                                  {v?.driver_details?.vehicle_no}
+                                </span>
+                              </div>
+                            </td>
+
+                            <td className="text-center fontDesign">
+                              {v?.start_city}
+                            </td>
+
+                            <td>
+                              <div>
+                                {moment(v?.start_date).format("DD MMM, YYYY")}
+                              </div>
+                            </td>
+
+                            {/* View Shift column using reference eye-icon style */}
+                            <td className="text-center">
+                              <div
+                                onClick={() => setShiftPopup(v)}
+                                className="d-flex align-items-center justify-content-center"
+                                style={{
+                                  background: "#3A3A3A",
+                                  borderRadius: "5px",
+                                  padding: "8px 22px",
+                                  cursor: "pointer",
+                                  display: "inline-flex",
+                                  color: "white",
+                                  margin: "0 auto",
+                                  fontSize: "16px",
+                                  letterSpacing: "0.2px",
+                                  width: "100px",
+                                }}
+                              >
+                                <img
+                                  src="/imagefolder/eyeIcon.png"
+                                  style={{
+                                    height: "22px",
+                                    marginRight: "10px",
+                                    filter: "invert(1)",
+                                  }}
+                                />
+                                <span
+                                  style={{
+                                    fontFamily: "Nexa",
+                                    fontWeight: "600",
+                                  }}
+                                >
+                                  View
+                                </span>
+                              </div>
+                            </td>
+
+                            {/* Action column using refundBtn style */}
+                            <td
+                              style={{
+                                borderTopRightRadius: "24px",
+                                borderBottomRightRadius: "24px",
+                              }}
+                            >
+                              <div
+                                className="d-flex align-items-center justify-content-center"
+                                style={{
+                                  gap: "25px", // spacing between icons
+                                  padding: "5px 0",
+                                }}
+                              >
+                                {/* Profile Icon */}
+                                <div
+                                  onClick={() => setDriverPopup(v)}
+                                  style={{
+                                    cursor: "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <img
+                                    src="/imagefolder/Profile.png" /* You can replace with your green profile icon */
+                                    style={{
+                                      height: "35px",
+                                      width: "40px",
+                                    }}
+                                  />
+                                </div>
+
+                                {/* Delete Icon */}
+                                <div
+                                  onClick={() => setDeletePopup(v)}
+                                  style={{
+                                    cursor: "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <img
+                                    src="/imagefolder/delete.png" /* replace with your delete icon */
+                                    style={{
+                                      height: "35px",
+                                      width: "40px",
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+
+                          {/* Gap between rows like reference */}
+                          <div
+                            className={
+                              i === availabilityList.length - 1 ? "" : "pb-3"
+                            }
+                          ></div>
+                        </React.Fragment>
+                      ))}
+                </tbody>
+              </table>
+
+              {/* No Records */}
+              {availabilityList?.length === 0 && !showSkelton && (
+                <NoRecordFound theme="light" />
+              )}
+            </div>
+          </div>
+        </div>
+        {driverPopup && (
+          <>
+            <div className="modal fade show d-flex align-items-center justify-content-center avDriverModal">
+              <div className="modal-dialog">
+                <div className="modal-content avDriverPopup">
+                  <div className="avDriverHeader">
+                    <h5>Driver Details</h5>
+                  </div>
+
+                  <div className="avDriverBody">
+                    <div className="avDriverImgBox">
+                      <img
+                        className="avDriverImg"
+                        src={Image_Base_Url + driverPopup.driver_details?.image}
+                        alt="driver"
+                      />
+                      <span className="avDriverId">
+                        Driver ID :- {driverPopup.driver_details?.unique_id}
+                      </span>
+                    </div>
+
+                    <h4 className="avDriverName">
+                      {driverPopup.driver_details?.first_name}{" "}
+                      {driverPopup.driver_details?.last_name}
+                    </h4>
+
+                    <p className="avDriverInfoLabel">Email ID</p>
+                    <p className="avDriverInfoValue">
+                      {driverPopup.driver_details?.email}
+                    </p>
+
+                    <p className="avDriverInfoLabel mt-3">Phone no.</p>
+                    <p className="avDriverInfoValue">
+                      🇮🇳 {driverPopup.driver_details?.contact}
+                    </p>
+
+                    <button
+                      className="avDriverCloseBtn"
+                      onClick={() => setDriverPopup(null)}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-backdrop fade show"></div>
+          </>
+        )}
+
+        {shiftPopup && (
+          <>
+            <div className="modal fade show d-flex align-items-center justify-content-center avShiftModal">
+              <div className="modal-dialog">
+                <div className="modal-content avShiftPopup">
+                  <div className="avShiftHeader">
+                    <h5>Shift Availability</h5>
+                  </div>
+
+                  <div className="avShiftBody">
+                    <div className="avShiftTopInfo">
+                      <p>
+                        Driver Name :-{" "}
+                        <b>{shiftPopup.driver_details?.first_name}</b>
+                      </p>
+                      <p>
+                        Source City :- <b>{shiftPopup.start_city}</b>
+                      </p>
+                    </div>
+
+                    <div className="avShiftTags">
+                      <div className="avShiftVehicleTag">
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/128/89/89102.png"
+                          className="avShiftVehicleIcon"
+                          alt="car"
+                        />
+                        <span>{shiftPopup.driver_details?.vehicle_no}</span>
+                      </div>
+
+                      <div className="avShiftRangeTag">
+                        Range : {shiftPopup.distance_range} KM
+                      </div>
+                    </div>
+
+                    <div className="avShiftTableBox">
+                      <table className="avShiftTable">
+                        <thead>
+                          <tr>
+                            <th>Shift</th>
+                            {/* <th>Time</th> */}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {shiftPopup.shift_details?.map((s, index) => (
+                            <tr key={index}>
+                              <td>{s.name}</td>
+                              <td>
+                                {s.start_time} to {s.end_time}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="avShiftCloseBtn">
+                    <img
+                      src="/imagefolder/popUpCloseIcon.png"
+                      onClick={() => setShiftPopup(null)}
+                      style={{ cursor: "pointer", height: "45px" }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-backdrop fade show"></div>
+          </>
+        )}
+
+        {deletePopup && (
+          <>
+            <div className="modal fade show d-flex align-items-center justify-content-center avDeleteModal">
+              <div className="modal-dialog">
+                <div className="modal-content avDeletePopup">
+                  <div className="avDeleteHeader">
+                    <h5>Delete Driver’s Availability</h5>
+                  </div>
+
+                  <div className="avDeleteBody">
+                    <img
+                      src="/imagefolder/delete.png"
+                      className="avDeleteIcon"
+                    />
+
+                    <p className="avDeleteText">
+                      Are you sure you want to delete this driver’s
+                      availability?
+                      <br />
+                      This action cannot be undone.
+                    </p>
+
+                    <div className="avDeleteActions">
+                      <button
+                        className="avDeleteNoBtn"
+                        onClick={() => setDeletePopup(null)}
+                      >
+                        No
+                      </button>
+                      <button
+                        className="avDeleteYesBtn"
+                        onClick={() => {
+                          handleDelete(deletePopup.id);
+                          setDeletePopup(null);
+                        }}
+                      >
+                        Yes
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-backdrop fade show"></div>
+          </>
+        )}
+      </div>
+    </div>
+  );
   return (
     <div className="main_layout  bgBlack d-flex">
       {/* sidebar started */}
@@ -204,11 +709,9 @@ function AvailabilityConfirmedBooking() {
                               <td>
                                 <div>
                                   <div>
-                                    
-                                      {moment(v?.start_date).format(
-                                        "DD MMM, YYYY"
-                                      )}{" "}
-                                    
+                                    {moment(v?.start_date).format(
+                                      "DD MMM, YYYY"
+                                    )}{" "}
                                   </div>
                                 </div>
                               </td>
@@ -367,7 +870,6 @@ function AvailabilityConfirmedBooking() {
                         </div>
                       );
                     })}
-                    
                   </div>
                 </div>
                 <div className="d-flex justify-content-center mt-4">

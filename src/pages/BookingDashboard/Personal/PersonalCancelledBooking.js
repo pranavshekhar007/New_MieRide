@@ -384,6 +384,10 @@ import Pagination from "../../../components/Pagination";
 import { Image_Base_Url } from "../../../utils/api_base_url_configration";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import NewSidebar from "../../../components/NewSidebar";
+import CustomTopNav from "../../../components/CustomTopNav";
+import SecondaryTopNav from "../../../components/SecondaryTopNav";
+import CustomPagination from "../../../components/CustomPazination";
 
 function PersonalCancelledBooking() {
   const { setGlobalState, globalState } = useGlobalState();
@@ -424,7 +428,6 @@ function PersonalCancelledBooking() {
     {
       name: "Unaccepted",
       path: "/personal-unaccepted-booking",
-      
     },
     {
       name: "Missed",
@@ -454,6 +457,76 @@ function PersonalCancelledBooking() {
         return v.category == "personal_booking_canceled" && v?.is_read == 0;
       })?.length,
     },
+  ];
+  const navItems = [
+    [
+      {
+        name: "Sharing Ride",
+        path: "/sharing-group-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "new_booking" ||
+              v?.category == "new_route_created" ||
+              v?.category == "booking_accepted" ||
+              v?.category == "booking_rejected" ||
+              v?.category == "booking_missed" ||
+              v?.category == "booking_ride_started" ||
+              v?.category == "booking_arrived" ||
+              v?.category == "booking_pickup_started" ||
+              v?.category == "booking_drop_started" ||
+              v?.category == "booking_completed" ||
+              v?.category == "booking_canceled" ||
+              v?.category == "booking_ride_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Personal Ride",
+        path: "/personal-later-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "personal_new_booking" ||
+              v?.category == "personal_booking_accepted" ||
+              v?.category == "personal_booking_ride_canceled" ||
+              v?.category == "personal_booking_missed" ||
+              v?.category == "personal_booking_ride_started" ||
+              v?.category == "personal_booking_completed" ||
+              v?.category == "personal_booking_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Family Ride",
+        path: "/family-ride",
+      },
+    ],
+    [
+      {
+        name: "Driver's Availability",
+        path: "/availability-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_availability" && v?.is_read == 0;
+        })?.length,
+      },
+      {
+        name: "Driver's Route",
+        path: "/route-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_share_route" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
+    [
+      {
+        name: "Out Of Area",
+        path: "/out-of-area",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "out_of_area" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
   ];
   const [list, setList] = useState([]);
   const [showSkelton, setShowSkelton] = useState(false);
@@ -672,6 +745,426 @@ function PersonalCancelledBooking() {
       pdf.save(`RefundDetails_${refundDetailsPopup?.id}.pdf`);
     });
   };
+
+  return (
+    <div className="mainBody">
+      <NewSidebar selectedItem="Booking Dashboard" />
+      <div className="contentLayout">
+        <div className="bgWhite borderRadius30 p-4 minHeight100vh">
+          <div className="sticky-top bgWhite">
+            <CustomTopNav navItems={navItems} selectedNav="Personal Ride" />
+            <SecondaryTopNav
+              navItems={tableNav}
+              selectedNav="Cancelled"
+              navBg="#E5E5E5"
+              navColor="#1C1C1C"
+              selectedNavBg="#353535"
+              selectedNavColor="#fff"
+            />
+          </div>
+          <div className="tableOuterContainer bgDark mt-4">
+            <div
+            >
+              <div>
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th
+                        scope="col"
+                        style={{ borderRadius: "24px 0px 0px 24px" }}
+                      >
+                        <div className="d-flex justify-content-center ms-2">
+                          <span className="mx-2">Sr. No</span>
+                        </div>
+                      </th>
+                      <th scope="col">Booking ID</th>
+                      <th scope="col">Username</th>
+                      <th scope="col">Pickup city</th>
+                      <th scope="col">Drop-off city</th>
+
+                      <th scope="col">Booking Date & Time</th>
+
+                      <th scope="col">Total Amount</th>
+
+                      <th scope="col">Cancel By</th>
+                      <th scope="col">Action</th>
+
+                      <th
+                        scope="col"
+                        style={{ borderRadius: "0px 24px 24px 0px" }}
+                      >
+                        <span className="me-3">Refund</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <div className="pt-3 pb-2 "></div>
+                  <div></div>
+                  {showSkelton ? (
+                    [1, 2, 3, 4, 5, 6, 7, 8, 9]?.map((v, i) => {
+                      return (
+                        <tr key={i}>
+                          <td>
+                            <Skeleton width={50} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tbody className="bg-light ">
+                      {list?.map((v, i) => {
+                        return (
+                          <tr className="">
+                            <td
+                              scope="row"
+                              style={{
+                                borderTopLeftRadius: i == 0 ? "20px" : "0px",
+                                borderBottomLeftRadius:
+                                  i + 1 == list?.length ? "20px" : "0px",
+                              }}
+                            >
+                              {i + 1 + (pageData?.current_page - 1) * 10}
+                            </td>
+                            <td>{v?.id}</td>
+                            <td>{v?.user_details?.first_name}</td>
+                            <td>
+                              {v?.source
+                                ? `${v.source.substring(0, 15)}${
+                                    v.source.length > 15 ? "..." : ""
+                                  }`
+                                : ""}
+                            </td>
+                            <td>
+                              {v?.destination
+                                ? `${v.destination.substring(0, 15)}${
+                                    v.destination.length > 15 ? "..." : ""
+                                  }`
+                                : ""}
+                            </td>
+
+                            <td>
+                              {moment(v?.booking_date).format("MMM DD YYYY")} (
+                              {moment(v?.booking_time, "HH:mm").format(
+                                "hh:mm A"
+                              )}
+                              )
+                            </td>
+                            <td>${v?.total_trip_cost}</td>
+                            <td>{v?.cancel_by}</td>
+
+                            <td style={{ color: "#3B82F6" }}>
+                              <span
+                                style={{
+                                  textDecoration: "underline",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => setRefundDetailsPopup(v)}
+                              >
+                                View Full Details
+                              </span>
+                            </td>
+
+                            <td
+                              style={{
+                                borderTopRightRadius: i == 0 ? "20px" : "0px",
+                                borderBottomRightRadius:
+                                  i + 1 == list?.length ? "20px" : "0px",
+                                wordWrap: "break-word",
+                                whiteSpace: "normal",
+                              }}
+                            >
+                              <img
+                                onClick={() => alert("Coming Soon")}
+                                style={{ height: "20px" }}
+                                src="/icons/refundIcon.png"
+                              />
+                            </td>
+                          </tr>
+
+                          // <div className="mb-2"></div>
+                        );
+                      })}
+                    </tbody>
+                  )}
+                </table>
+                {list?.length == 0 && !showSkelton && (
+                  <NoRecordFound theme="light" />
+                )}
+              </div>
+            </div>
+            <CustomPagination
+              current_page={pageData?.current_page}
+              onPerPageChange={onPerPageChange}
+              last_page={pageData?.total_pages}
+              per_page={payload?.per_page}
+              onPageChange={onPageChange}
+            />
+          </div>
+        </div>
+        {popupDetails?.id && (
+          <div
+            className="modal fade show d-flex align-items-center manualSetPopup  justify-content-center "
+            tabIndex="-1"
+          >
+            <div className="modal-dialog">
+              <div className="modal-content completedPopup">
+                <div className="modal-body">
+                  <div className="completedPopupDriverDetails">
+                    <div className="row">
+                      <div className="col-5">
+                        <div className="mb-3">
+                          <img
+                            src={
+                              Image_Base_Url +
+                              popupDetails?.driverDetails?.image
+                            }
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <p>Driver Name</p>
+                          <h5>
+                            {popupDetails?.driverDetails?.first_name +
+                              " " +
+                              popupDetails?.driverDetails?.last_name}
+                          </h5>
+                        </div>
+                        <div className="">
+                          <p>Car Color</p>
+                          <h5>{popupDetails?.driverDetails?.vehicle_colour}</h5>
+                        </div>
+                      </div>
+                      <div className="col-7 mt-auto">
+                        <div className="mb-3">
+                          <p>Car Model</p>
+                          <h5>{popupDetails?.driverDetails?.vehicle_name}</h5>
+                        </div>
+                        <div className="mb-3">
+                          <p>Car Number</p>
+                          <h5>{popupDetails?.driverDetails?.vehicle_no}</h5>
+                        </div>
+                        <div className="">
+                          <p>Driver Review</p>
+                          {/* {renderStarFunc(popupDetails?.driver_rating)} */}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-center mt-5">
+                    <img
+                      src="https://cdn-icons-png.flaticon.com/128/660/660252.png"
+                      onClick={() => setPopupdetails(null)}
+                      style={{ height: "50px" }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {popupDetails?.id && <div className="modal-backdrop fade show"></div>}
+        {refundDetailsPopup?.id && (
+          <div
+            className="modal fade show d-flex align-items-center manualSetPopup  justify-content-center "
+            tabIndex="-1"
+          >
+            <div className="modal-dialog">
+              <div className="modal-content refundDetailsPopup">
+                <div className="modal-body p-0">
+                  <div id="refundDetailsContent">
+                    <div className="refundHeading">Cancel Recipt</div>
+                    <div className="cancelRefundBody">
+                      <div className="d-flex justify-content-between">
+                        <div>
+                          <div>
+                            <span>Date :- </span>
+                            <b>
+                              {" "}
+                              {moment(refundDetailsPopup?.booking_date).format(
+                                "DD MMM YYYY"
+                              )}
+                            </b>
+                          </div>
+                          <div>
+                            <span>Booking ID :- </span>
+                            <b>{refundDetailsPopup?.id}</b>
+                          </div>
+                          <div>
+                            <span>Cancel By :- </span>
+                            <b>{refundDetailsPopup?.cancel_by}</b>
+                          </div>
+                          <div>
+                            <span>Username :- </span>
+                            <b>
+                              {refundDetailsPopup?.user_details?.first_name +
+                                " " +
+                                refundDetailsPopup?.user_details?.last_name}
+                            </b>
+                          </div>
+                          <div>
+                            <span>Booking Placed :- </span>
+                            <b>
+                              {" "}
+                              {moment(refundDetailsPopup?.confirm_time).format(
+                                "DD MMM YYYY"
+                              )}
+                            </b>
+                          </div>
+                          <div>
+                            <span>Pickup Address :- </span>
+                            <b>{refundDetailsPopup?.source}</b>
+                          </div>
+                          <div>
+                            <span>Drop Address :- </span>
+                            <b>{refundDetailsPopup?.destination}</b>
+                          </div>
+                          <div>
+                            <span>Cancelled At:-</span>
+                            <b>
+                              {" "}
+                              {moment(refundDetailsPopup?.cancel_time).format(
+                                "DD MMM YYYY"
+                              )}
+                            </b>
+                          </div>
+                          <div>
+                            <span>Cancel Reason:-</span>
+                            <b>{refundDetailsPopup?.reason}</b>
+                          </div>
+                        </div>
+                        <div>
+                          <img src="/icons/brandIconForCancel.png" />
+                        </div>
+                      </div>
+                      <div className="mt-4">
+                        <h5>Fare Summary</h5>
+                        <div className="refundDetailsBox mt-2">
+                          <div className="row d-flex align-items-center py-1">
+                            <i className="fa fa-circle col-2" />
+                            <p className="col-8">Cancel Fee :-</p>
+                            <h6 className="col-2">
+                              ${" "}
+                              {refundDetailsPopup?.total_trip_cost -
+                                refundDetailsPopup?.refund_amount}
+                            </h6>
+                          </div>
+                          <div className="row d-flex align-items-center py-1">
+                            <i className="fa fa-circle col-2" />
+                            <p className="col-8">User Refund :-</p>
+                            <h6 className="col-2">
+                              $ {refundDetailsPopup?.refund_amount}
+                            </h6>
+                          </div>
+                          <div className="row d-flex align-items-center py-1">
+                            <i className="fa fa-circle col-2" />
+                            <p className="col-8">Admin Earned :-</p>
+                            <h6 className="col-2">
+                              $ {refundDetailsPopup?.admin_commission}
+                            </h6>
+                          </div>
+                          <div className="row d-flex align-items-center py-1">
+                            <i className="fa fa-circle col-2" />
+                            <p className="col-8">Driver Earned :-</p>
+                            <h6 className="col-2">
+                              $ {refundDetailsPopup?.driver_earning}
+                            </h6>
+                          </div>
+                          <div className="row d-flex align-items-center py-1">
+                            <i className="fa fa-circle col-2" />
+                            <p className="col-8">Surge Amount :-</p>
+                            <h6 className="col-2">
+                              $ {refundDetailsPopup?.extra_charge}
+                            </h6>
+                          </div>
+                          <div
+                            className="row d-flex align-items-center bg-dark text-light py-1 mx-0"
+                            style={{ borderRadius: "0px 0px 15px 15px" }}
+                          >
+                            <i className=" col-2" />
+                            <p className="col-8" style={{ color: " #D0FF13" }}>
+                              Total Amount
+                            </p>
+                            <h6 className="col-2" style={{ color: " #D0FF13" }}>
+                              $ {refundDetailsPopup?.total_trip_cost}
+                            </h6>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-3 note">
+                        Note: <br />
+                        Cancellation charges are applied as per our
+                        cancellation policy.
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mb-4 mt-2 d-flex justify-content-end cancelRefundButton px-4">
+                    <button
+                      className="mx-3"
+                      onClick={() => setRefundDetailsPopup(null)}
+                    >
+                      Close
+                    </button>
+                    <button
+                      style={{ background: "#1C1C1E", color: "white" }}
+                      onClick={handleDownload}
+                    >
+                      Download
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {refundDetailsPopup?.id && (
+          <div className="modal-backdrop fade show"></div>
+        )}
+      </div>
+    </div>
+  );
   return (
     <div className="main_layout  bgBlack d-flex">
       {/* sidebar started */}

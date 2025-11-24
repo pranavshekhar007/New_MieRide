@@ -7,7 +7,7 @@ import {
   getUnacceptedPersonalListServ,
   assignPersonalDriverServ,
   manualPersonalDriverServ,
-  cancelPersonalServ
+  cancelPersonalServ,
 } from "../../../services/personalBookingServices";
 import { updateNotificationStatusServ } from "../../../services/notification.services";
 import Skeleton from "react-loading-skeleton";
@@ -19,6 +19,10 @@ import NoRecordFound from "../../../components/NoRecordFound";
 import Ably from "ably";
 import { getNavItems } from "../../../utils/TopNavItemData/bookingDashboard";
 import Pagination from "../../../components/Pagination";
+import NewSidebar from "../../../components/NewSidebar";
+import CustomTopNav from "../../../components/CustomTopNav";
+import SecondaryTopNav from "../../../components/SecondaryTopNav";
+import CustomPagination from "../../../components/CustomPazination";
 function PersonalUnacceptedBooking() {
   const { setGlobalState, globalState } = useGlobalState();
   const [payload, setPayload] = useState({
@@ -66,7 +70,6 @@ function PersonalUnacceptedBooking() {
     {
       name: "Unaccepted",
       path: "/personal-unaccepted-booking",
-      
     },
     {
       name: "Missed",
@@ -96,6 +99,77 @@ function PersonalUnacceptedBooking() {
         return v.category == "personal_booking_canceled" && v?.is_read == 0;
       })?.length,
     },
+  ];
+
+  const navItems = [
+    [
+      {
+        name: "Sharing Ride",
+        path: "/sharing-group-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "new_booking" ||
+              v?.category == "new_route_created" ||
+              v?.category == "booking_accepted" ||
+              v?.category == "booking_rejected" ||
+              v?.category == "booking_missed" ||
+              v?.category == "booking_ride_started" ||
+              v?.category == "booking_arrived" ||
+              v?.category == "booking_pickup_started" ||
+              v?.category == "booking_drop_started" ||
+              v?.category == "booking_completed" ||
+              v?.category == "booking_canceled" ||
+              v?.category == "booking_ride_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Personal Ride",
+        path: "/personal-later-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "personal_new_booking" ||
+              v?.category == "personal_booking_accepted" ||
+              v?.category == "personal_booking_ride_canceled" ||
+              v?.category == "personal_booking_missed" ||
+              v?.category == "personal_booking_ride_started" ||
+              v?.category == "personal_booking_completed" ||
+              v?.category == "personal_booking_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Family Ride",
+        path: "/family-ride",
+      },
+    ],
+    [
+      {
+        name: "Driver's Availability",
+        path: "/availability-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_availability" && v?.is_read == 0;
+        })?.length,
+      },
+      {
+        name: "Driver's Route",
+        path: "/route-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_share_route" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
+    [
+      {
+        name: "Out Of Area",
+        path: "/out-of-area",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "out_of_area" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
   ];
   const [list, setList] = useState([]);
   const [showSkelton, setShowSkelton] = useState(false);
@@ -226,45 +300,412 @@ function PersonalUnacceptedBooking() {
       let response = await assignPersonalDriverServ({ booking_id: id });
       if (response?.data?.statusCode == "200") {
         handleGetListFunc();
-        toast.success(response?.data?.message)
+        toast.success(response?.data?.message);
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
     setAssignLoader(false);
   };
- const [manualLoader, setManualLoader] = useState(false);
+  const [manualLoader, setManualLoader] = useState(false);
   const manualDriverFunc = async (id) => {
     setManualLoader(id);
     try {
       let response = await manualPersonalDriverServ({ booking_id: id });
       if (response?.data?.statusCode == "200") {
         handleGetListFunc();
-        toast.success(response?.data?.message)
+        toast.success(response?.data?.message);
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
     setManualLoader(false);
-  }; 
+  };
   const [cancelLoader, setCancelLoader] = useState(false);
   const cancelBookingFunc = async (id) => {
-     const confirmed = window.confirm("Are you sure you want to cancel the booking?");
-    if(confirmed){
- setCancelLoader(id);
-    try {
-      let response = await cancelPersonalServ({ booking_id: id });
-      if (response?.data?.statusCode == "200") {
-        handleGetListFunc();
-        toast.success(response?.data?.message)
+    const confirmed = window.confirm(
+      "Are you sure you want to cancel the booking?"
+    );
+    if (confirmed) {
+      setCancelLoader(id);
+      try {
+        let response = await cancelPersonalServ({ booking_id: id });
+        if (response?.data?.statusCode == "200") {
+          handleGetListFunc();
+          toast.success(response?.data?.message);
+        }
+      } catch (error) {
+        toast.error(error?.response?.data?.message);
       }
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
+      setCancelLoader(false);
     }
-    setCancelLoader(false);
-    }
-   
-  }; 
+  };
+
+  return (
+    <div className="mainBody">
+      <NewSidebar selectedItem="Booking Dashboard" />
+      <div className="contentLayout">
+        <div className="bgWhite borderRadius30 p-4 minHeight100vh">
+          <div className="sticky-top bgWhite">
+            <CustomTopNav navItems={navItems} selectedNav="Personal Ride" />
+            <SecondaryTopNav
+              navItems={tableNav}
+              selectedNav="Unaccepted"
+              navBg="#E5E5E5"
+              navColor="#1C1C1C"
+              selectedNavBg="#353535"
+              selectedNavColor="#fff"
+            />
+          </div>
+          <div className="tableMain">
+            <div
+              className="tableBody py-2 px-2 borderRadius30All"
+              style={{ background: "#363435", marginTop: "25px" }}
+            >
+              <div style={{ margin: "15px 10px 0px 10px" }}>
+                <table className="table bookingGroupTable mb-0">
+                  <thead>
+                    <tr style={{ background: "#D0FF13", color: "#000" }}>
+                      <th
+                        scope="col"
+                        style={{ borderRadius: "24px 0px 0px 24px" }}
+                      >
+                        <div className="d-flex justify-content-center ms-2">
+                          <span className="mx-2">Sr. No</span>
+                        </div>
+                      </th>
+
+                      <th scope="col">Booking ID</th>
+                      <th scope="col">Username</th>
+                      <th scope="col">Pick Address</th>
+                      <th scope="col">Drop Address</th>
+                      <th scope="col">Booking Date & Time</th>
+                      <th scope="col" style={{ width: "100px" }}>
+                        Time Choice
+                      </th>
+                      <th scope="col">Booking Placed</th>
+                      <th scope="col">Payment</th>
+
+                      <th
+                        scope="col"
+                        style={{ borderRadius: "0px 24px 24px 0px" }}
+                      >
+                        <span className="mx-2">Action</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <div className="pt-3 pb-2 "></div>
+                  {showSkelton
+                    ? [1, 2, 3, 4, 5, 6, 7, 8, 9]?.map((v, i) => {
+                        return (
+                          <tr key={i}>
+                            <td>
+                              <Skeleton width={50} />
+                            </td>
+                            <td>
+                              <Skeleton width={70} />
+                            </td>
+
+                            <td>
+                              <Skeleton width={70} />
+                            </td>
+                            <td>
+                              <Skeleton width={70} />
+                            </td>
+                            <td>
+                              <Skeleton width={70} />
+                            </td>
+                            <td>
+                              <Skeleton width={70} />
+                            </td>
+
+                            <td>
+                              <Skeleton width={70} />
+                            </td>
+                            <td>
+                              <Skeleton width={70} />
+                            </td>
+                            <td>
+                              <Skeleton width={70} />
+                            </td>
+                            <td>
+                              <Skeleton width={70} />
+                            </td>
+                          </tr>
+                        );
+                      })
+                    : list?.map((v, i) => {
+                        return (
+                          <>
+                            <tbody className="bg-light groupTab verticalCenter">
+                              <tr className=" ">
+                                <td
+                                  scope="row"
+                                  style={{
+                                    borderTopLeftRadius: "24px",
+                                    borderBottomLeftRadius: "24px",
+                                  }}
+                                >
+                                  {i + 1 + (pageData?.current_page - 1) * 10}
+                                </td>
+
+                                <td>{v?.id}</td>
+
+                                <td>
+                                  {v?.user_details?.first_name +
+                                    " " +
+                                    v?.user_details?.last_name}
+                                </td>
+                                <td>
+                                  {v?.source
+                                    ? `${v.source.substring(0, 15)}${
+                                        v.source.length > 15 ? "..." : ""
+                                      }`
+                                    : ""}
+                                </td>
+                                <td>
+                                  {v?.destination
+                                    ? `${v.destination.substring(0, 15)}${
+                                        v.destination.length > 15 ? "..." : ""
+                                      }`
+                                    : ""}
+                                </td>
+                                <td>
+                                  {moment(v?.booking_date).format(
+                                    "DD MMM, YYYY"
+                                  )}{" "}
+                                  (
+                                  {moment(v?.booking_time, "HH:mm").format(
+                                    "hh:mm A"
+                                  )}
+                                  )
+                                </td>
+
+                                <td>
+                                  {v?.time_choice == "pickupat"
+                                    ? "Pickup"
+                                    : " Dropoff"}
+                                </td>
+                                <td>
+                                  <div>
+                                    {moment(v?.created_at).format("DD/MM/YYYY")}
+                                  </div>
+                                  <div>
+                                    {moment(v?.created_at).format("hh:mm A")}
+                                  </div>
+                                </td>
+                                <td>
+                                  <div
+                                    onClick={() => setPaymentDetailsPopup(v)}
+                                  >
+                                    <img
+                                      src="/icons/eyeIcon.png"
+                                      style={{ height: "20px" }}
+                                    />
+                                  </div>
+                                </td>
+                                <td
+                                  style={{
+                                    borderTopRightRadius: "24px",
+                                    borderBottomRightRadius: "24px",
+                                  }}
+                                >
+                                  <div className="d-flex justify-content-center ">
+                                    <div style={{ marginTop: "0px" }}>
+                                      {/* <div
+                                      onClick={() =>
+                                        assignLoader == v?.id
+                                          ? {}
+                                          : assignDriverFunc(v?.id)
+                                      }
+                                      style={{
+                                        background: "#00A431",
+                                        border: "none",
+                                        width: "90px",
+                                        opacity:
+                                          assignLoader == v?.id ? "0.5" : "1",
+                                      }}
+                                      className="btn btn-primary shadow btnHeight25 d-flex justify-content-center align-items-center"
+                                    >
+                                      <span
+                                        style={{
+                                          marginLeft: "6px",
+                                          color: "#fff",
+                                          fontSize: "9px",
+                                        }}
+                                      >
+                                        {assignLoader == v?.id
+                                          ? "Assigning ..."
+                                          : "Assign"}{" "}
+                                      </span>
+                                    </div> */}
+
+                                      <div
+                                        onClick={() =>
+                                          manualLoader == v?.id
+                                            ? {}
+                                            : manualDriverFunc(v?.id)
+                                        }
+                                        style={{
+                                          background: "#353535",
+                                          border: "none",
+                                          width: "90px",
+                                          opacity:
+                                            manualLoader == v?.id ? "0.5" : "1",
+                                        }}
+                                        className="btn btn-primary shadow btnHeight25 d-flex justify-content-center align-items-center"
+                                      >
+                                        <span
+                                          style={{
+                                            marginLeft: "6px",
+                                            color: "#D0FF13",
+                                            fontSize: "9px",
+                                          }}
+                                        >
+                                          {manualLoader == v?.id
+                                            ? "Loading ..."
+                                            : "Manual"}{" "}
+                                        </span>
+                                      </div>
+
+                                      <div
+                                        onClick={() =>
+                                          cancelLoader == v?.id
+                                            ? {}
+                                            : cancelBookingFunc(v?.id)
+                                        }
+                                        style={{
+                                          background: "#353535",
+                                          border: "none",
+                                          width: "90px",
+                                          opacity:
+                                            cancelLoader == v?.id ? "0.5" : "1",
+                                        }}
+                                        className="btn btn-primary shadow btnHeight25 d-flex justify-content-center align-items-center"
+                                      >
+                                        <span
+                                          style={{
+                                            marginLeft: "6px",
+                                            color: "#D0FF13",
+                                            fontSize: "9px",
+                                          }}
+                                        >
+                                          {cancelLoader == v?.id
+                                            ? "Cancelling ..."
+                                            : "Cancel"}{" "}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                            <div className="mb-4"></div>
+                          </>
+                        );
+                      })}
+                </table>
+                {list?.length == 0 && !showSkelton && (
+                  <NoRecordFound theme="light" />
+                )}
+                
+              </div>
+              <CustomPagination
+            current_page={pageData?.current_page}
+            onPerPageChange={onPerPageChange}
+            last_page={pageData?.total_pages}
+            per_page={payload?.per_page}
+            onPageChange={onPageChange}
+          />
+            </div>
+          </div>
+
+          {paymentDetailsPopup && (
+            <div
+              className="modal fade show d-flex align-items-center manualSetPopup  justify-content-center "
+              tabIndex="-1"
+            >
+              <div className="modal-dialog">
+                <div
+                  className="modal-content"
+                  style={{
+                    borderRadius: "16px",
+                    background: "#f7f7f5",
+                    width: "364px",
+                  }}
+                >
+                  <div className="d-flex justify-content-between pt-4 pb-0 px-4">
+                    <p>
+                      <u>Payment Details</u>
+                    </p>
+                    <i
+                      className="fa fa-close text-secondary"
+                      onClick={() => {
+                        setPaymentDetailsPopup(null);
+                      }}
+                    ></i>
+                  </div>
+                  <hr className="mt-0" />
+                  <div className="modal-body" style={{ fontFamily: "poppins" }}>
+                    <div
+                      style={{
+                        wordWrap: "break-word",
+                        whiteSpace: "pre-wrap",
+                      }}
+                      className="d-flex justify-content-center w-100"
+                    >
+                      <div className="w-100 px-2">
+                        <div className="d-flex justify-content-between px-2 mb-1">
+                          <p style={{ fontWeight: "400" }}>Booking Amount</p>
+                          <span style={{ fontWeight: "500" }}>
+                            ${paymentDetailsPopup?.booking_amount}
+                          </span>
+                        </div>
+
+                        <div className="d-flex justify-content-between px-2 mb-1">
+                          <p>Driver Earn</p>
+                          <span style={{ fontWeight: "500" }}>
+                            ${paymentDetailsPopup?.driver_earning}
+                          </span>
+                        </div>
+                        <div className="d-flex justify-content-between px-2 mb-1">
+                          <p>Admin Fee</p>
+                          <span style={{ fontWeight: "500" }}>
+                            ${paymentDetailsPopup?.admin_commission}
+                          </span>
+                        </div>
+                        <div className="d-flex justify-content-between px-2 mb-1">
+                          <p>Surge Amount</p>
+                          <span style={{ fontWeight: "500" }}>
+                            ${paymentDetailsPopup?.extra_charge}
+                          </span>
+                        </div>
+                        <div
+                          className="my-3"
+                          style={{ borderTop: "1px solid #B2B2B2" }}
+                        ></div>
+                        <div
+                          className="d-flex justify-content-between px-2 mb-1 pt-3"
+                          style={{ fontWeight: "500" }}
+                        >
+                          <p>Total Payment</p>
+                          <span>${paymentDetailsPopup?.total_trip_cost}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-center"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {paymentDetailsPopup && (
+            <div className="modal-backdrop fade show"></div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
   return (
     <div className="main_layout  bgBlack d-flex">
       {/* sidebar started */}
@@ -397,7 +838,11 @@ function PersonalUnacceptedBooking() {
 
                               <td>{v?.id}</td>
 
-                              <td>{v?.user_details?.first_name + " "+ v?.user_details?.last_name}</td>
+                              <td>
+                                {v?.user_details?.first_name +
+                                  " " +
+                                  v?.user_details?.last_name}
+                              </td>
                               <td>
                                 {v?.source
                                   ? `${v.source.substring(0, 15)}${
@@ -413,7 +858,8 @@ function PersonalUnacceptedBooking() {
                                   : ""}
                               </td>
                               <td>
-                                {moment(v?.booking_date).format("DD MMM, YYYY")} (
+                                {moment(v?.booking_date).format("DD MMM, YYYY")}{" "}
+                                (
                                 {moment(v?.booking_time, "HH:mm").format(
                                   "hh:mm A"
                                 )}
@@ -499,7 +945,7 @@ function PersonalUnacceptedBooking() {
                                           fontSize: "9px",
                                         }}
                                       >
-                                       {manualLoader == v?.id
+                                        {manualLoader == v?.id
                                           ? "Loading ..."
                                           : "Manual"}{" "}
                                       </span>

@@ -748,6 +748,10 @@ import { getNavItems } from "../../../utils/TopNavItemData/bookingDashboard";
 import Pagination from "../../../components/Pagination";
 import { Image_Base_Url } from "../../../utils/api_base_url_configration";
 import { useNavigate } from "react-router-dom";
+import NewSidebar from "../../../components/NewSidebar";
+import CustomTopNav from "../../../components/CustomTopNav";
+import SecondaryTopNav from "../../../components/SecondaryTopNav";
+import CustomPagination from "../../../components/CustomPazination";
 function PersonalManualBooking() {
   const { setGlobalState, globalState } = useGlobalState();
   const navigate = useNavigate();
@@ -796,7 +800,6 @@ function PersonalManualBooking() {
     {
       name: "Unaccepted",
       path: "/personal-unaccepted-booking",
-      
     },
     {
       name: "Missed",
@@ -826,6 +829,76 @@ function PersonalManualBooking() {
         return v.category == "personal_booking_canceled" && v?.is_read == 0;
       })?.length,
     },
+  ];
+  const navItems = [
+    [
+      {
+        name: "Sharing Ride",
+        path: "/sharing-group-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "new_booking" ||
+              v?.category == "new_route_created" ||
+              v?.category == "booking_accepted" ||
+              v?.category == "booking_rejected" ||
+              v?.category == "booking_missed" ||
+              v?.category == "booking_ride_started" ||
+              v?.category == "booking_arrived" ||
+              v?.category == "booking_pickup_started" ||
+              v?.category == "booking_drop_started" ||
+              v?.category == "booking_completed" ||
+              v?.category == "booking_canceled" ||
+              v?.category == "booking_ride_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Personal Ride",
+        path: "/personal-later-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "personal_new_booking" ||
+              v?.category == "personal_booking_accepted" ||
+              v?.category == "personal_booking_ride_canceled" ||
+              v?.category == "personal_booking_missed" ||
+              v?.category == "personal_booking_ride_started" ||
+              v?.category == "personal_booking_completed" ||
+              v?.category == "personal_booking_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Family Ride",
+        path: "/family-ride",
+      },
+    ],
+    [
+      {
+        name: "Driver's Availability",
+        path: "/availability-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_availability" && v?.is_read == 0;
+        })?.length,
+      },
+      {
+        name: "Driver's Route",
+        path: "/route-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_share_route" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
+    [
+      {
+        name: "Out Of Area",
+        path: "/out-of-area",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "out_of_area" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
   ];
   const [list, setList] = useState([]);
   const [showSkelton, setShowSkelton] = useState(false);
@@ -924,6 +997,14 @@ function PersonalManualBooking() {
     "#b5c0d0",
     "#987d9a",
   ];
+  const formatRouteTime = (time) => {
+    if (!time) return "00 Hr 00 Mins";
+
+    const [hours, minutes] = time.split(":");
+
+    return `${hours} Hr ${minutes} Mins`;
+  };
+
   const updateNotificationStatusFunc = async (id) => {
     try {
       let response = await updateNotificationStatusServ({
@@ -947,6 +1028,418 @@ function PersonalManualBooking() {
       page_no: 1, // optionally reset to first page on per page change
     });
   };
+
+  return (
+    <div className="mainBody">
+      <NewSidebar selectedItem="Booking Dashboard" />
+      <div className="contentLayout">
+        <div className="bgWhite borderRadius30 p-4 minHeight100vh">
+          <div className="sticky-top bgWhite">
+            <CustomTopNav navItems={navItems} selectedNav="Personal Ride" />
+            <SecondaryTopNav
+              navItems={tableNav}
+              selectedNav="Manual"
+              navBg="#E5E5E5"
+              navColor="#1C1C1C"
+              selectedNavBg="#353535"
+              selectedNavColor="#fff"
+            />
+          </div>
+          <div className="tableOuterContainer bgDark mt-4">
+            {showSkelton
+              ? [1, 2, 3, 4, 5, 6, 7, 8, 9]?.map((v, i) => {
+                  return (
+                    <div
+                      className={"tableBody py-4 my-4 px-4 borderRadius50All"}
+                      style={{ background: "#363435" }}
+                    >
+                      <div className="row" style={{ borderRadius: "24px" }}>
+                        <div className="col-md-12">
+                          <div>
+                            <Skeleton height={440} width="100%" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              : list?.map((value, i) => {
+                  return (
+                    <div
+                      className="tableBody my-2 borderRadius30All"
+                      style={{ background: "#363435" }}
+                    >
+                      <div className="row">
+                        <div className="col-md-12">
+                          <div
+                            className="leftCardRoute d-flex align-items-center w-100"
+                            style={{
+                              background: i % 2 == 0 ? "#D0FF13" : "#fff",
+                              borderRadius: "20px",
+                              padding: "20px 25px",
+                              minHeight: "190px",
+                            }}
+                          >
+                            <div className="row w-100">
+                              {/* ------------------ 1: Booking ID + Date + Vehicle ------------------ */}
+                              <div className="col-3">
+                                {/* Booking ID */}
+                                <div
+                                  className="groupIdBtn d-flex justify-content-center align-items-center mb-3"
+                                  style={{
+                                    background: "#353535",
+                                    color: "#fff",
+                                    borderRadius: "6px",
+                                    padding: "8px 12px",
+                                    width: "fit-content",
+                                  }}
+                                >
+                                  <span>Booking ID: {value?.id}</span>
+                                </div>
+
+                                {/* Booking Date & Time */}
+                                <p
+                                  style={{
+                                    color: "#000",
+                                    marginBottom: "8px",
+                                    fontWeight: 600,
+                                    fontSize: ".8rem",
+                                  }}
+                                >
+                                  Booking Date & Time
+                                </p>
+                                <h3
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 700,
+                                    fontSize: "1.1rem",
+                                  }}
+                                >
+                                  {moment(value?.booking_date).format(
+                                    "DD MMM, YYYY"
+                                  )}{" "}
+                                  (
+                                  {moment(value?.booking_time, "HH:mm").format(
+                                    "hh:mm A"
+                                  )}
+                                  )
+                                </h3>
+
+                                {/* Vehicle Size */}
+                                <p
+                                  className="mt-3 mb-2"
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 600,
+                                    fontSize: ".8rem",
+                                  }}
+                                >
+                                  Vehicle Size
+                                </p>
+                                <h3
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 700,
+                                    fontSize: "1.1rem",
+                                  }}
+                                >
+                                  {value?.car_type === "six_seater"
+                                    ? "6-Seater"
+                                    : "4-Seater"}
+                                </h3>
+                              </div>
+
+                              {/* ------------------ 2: User Box ------------------ */}
+                              <div className="col-3">
+                                {/* User Box */}
+                                <div className="mb-3 text-center">
+                                  <div
+                                    className="userNameDiv"
+                                    style={{
+                                      width: "130px",
+                                      textAlign: "center",
+                                      background: "#353535",
+                                      color: "#fff",
+                                      borderRadius: "6px",
+                                      padding: "6px 8px",
+                                      margin: "0 auto",
+                                    }}
+                                  >
+                                    <p
+                                      className="mb-0 bgWhite text-dark radius3 p-1"
+                                      style={{
+                                        fontSize: "12px",
+                                        fontWeight: 600,
+                                      }}
+                                    >
+                                      ID: {value?.user_details?.unique_id}
+                                    </p>
+                                    <p
+                                      className="mb-0 text-white mt-1"
+                                      style={{
+                                        fontSize: "14px",
+                                        fontWeight: 600,
+                                      }}
+                                    >
+                                      {value?.user_details?.first_name}{" "}
+                                      {value?.user_details?.last_name}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* ------------------ 3: Source + Total Route + Payment ------------------ */}
+                              <div className="col-3">
+                                {/* Source */}
+                                <p
+                                  className="mb-2"
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 600,
+                                    fontSize: ".8rem",
+                                  }}
+                                >
+                                  Source
+                                </p>
+                                <h3
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 700,
+                                    fontSize: "1.1rem",
+                                  }}
+                                >
+                                  {value?.source?.length > 40
+                                    ? value?.source.substring(0, 37) + "..."
+                                    : value?.source}
+                                </h3>
+
+                                {/* Total Route Time */}
+                                <p
+                                  className="mt-3 mb-2"
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 600,
+                                    fontSize: ".8rem",
+                                  }}
+                                >
+                                  Total Route Time
+                                </p>
+                                <h3
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 700,
+                                    fontSize: "1.1rem",
+                                  }}
+                                >
+                                  {formatRouteTime(value?.total_trip_time)}
+                                </h3>
+
+                                {/* Payment Eye */}
+                                <p
+                                  className="mt-3 m-0"
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 600,
+                                    fontSize: ".8rem",
+                                  }}
+                                >
+                                  Payment
+                                </p>
+                                <img
+                                  onClick={() => setPaymentDetailsPopup(value)}
+                                  src="/icons/eyeIcon.png"
+                                  style={{ height: "34px", cursor: "pointer" }}
+                                />
+                              </div>
+
+                              {/* ------------------ 4: Destination + Time Choice + Button ------------------ */}
+                              <div className="col-3">
+                                {/* Destination */}
+                                <p
+                                  className="mb-2"
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 600,
+                                    fontSize: ".8rem",
+                                  }}
+                                >
+                                  Destination
+                                </p>
+                                <h3
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 700,
+                                    fontSize: "1.1rem",
+                                  }}
+                                >
+                                  {value?.destination?.length > 40
+                                    ? value?.destination.substring(0, 37) +
+                                      "..."
+                                    : value?.destination}
+                                </h3>
+
+                                {/* Time Choice → MOVE HERE */}
+                                <p
+                                  className="mt-3 mb-2"
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 600,
+                                    fontSize: ".8rem",
+                                  }}
+                                >
+                                  Time Choice
+                                </p>
+                                <h3
+                                  style={{
+                                    color: "#000",
+                                    fontWeight: 700,
+                                    fontSize: "1.1rem",
+                                  }}
+                                >
+                                  {value?.time_choice.includes("pickup")
+                                    ? "Pick-Up"
+                                    : "Drop-Off"}
+                                </h3>
+
+                                {/* Assign Button */}
+                                <button
+                                  className="sharingRouteButton w-100 mt-3"
+                                  onClick={() =>
+                                    navigate(
+                                      "/personal-select-driver-availability/" +
+                                        value?.id
+                                    )
+                                  }
+                                  style={{
+                                    height: "40px",
+                                    background: "#353535",
+                                    color: "#fff",
+                                    borderRadius: "10px",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  Assign Driver
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+            {list?.length == 0 && !showSkelton && (
+              <NoRecordFound theme="dark" />
+            )}
+          </div>
+          <CustomPagination
+            current_page={pageData?.current_page}
+            onPerPageChange={onPerPageChange}
+            last_page={pageData?.total_pages}
+            per_page={payload?.per_page}
+            onPageChange={onPageChange}
+          />
+          {paymentDetailsPopup && (
+            <div
+              className="modal fade show d-flex align-items-center manualSetPopup  justify-content-center "
+              tabIndex="-1"
+            >
+              <div className="modal-dialog">
+                <div className="modal-content paymentReceiptPopup">
+                  <div className="modal-body p-0">
+                    <div className="text-center mb-4">
+                      <h3 className="popupTitle">
+                        Payment Receipt – Persona Ride
+                      </h3>
+                    </div>
+
+                    <div className="px-3">
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>Booking</p>
+                        <h5>${paymentDetailsPopup?.total_trip_cost}</h5>
+                      </div>
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>HST (13%)</p>
+                        <h5>{"N/A"}</h5>
+                      </div>
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine totalLine">
+                        <p className="fw-bold">Total Amount</p>
+                        <h5 className="fw-bold">
+                          ${paymentDetailsPopup?.total_trip_cost}
+                        </h5>
+                      </div>
+
+                      <hr />
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>Driver Commission</p>
+                        <h5>${paymentDetailsPopup?.driver_earning || 0}</h5>
+                      </div>
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>Driver HST (13%)</p>
+                        <h5>{"N/A"}</h5>
+                      </div>
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>Admin Commission</p>
+                        <h5>${paymentDetailsPopup?.admin_commission || 0}</h5>
+                      </div>
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>Admin HST (13%)</p>
+                        <h5>{"N/A"}</h5>
+                      </div>
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine discountLine">
+                        <p>Bonus Amount</p>
+                        <h5>${paymentDetailsPopup?.tip_amount || 0}</h5>
+                      </div>
+                      <hr />
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine finalLine">
+                        <h4>Final Paid to Driver</h4>
+                        <h4>
+                          $
+                          {(
+                            Number(paymentDetailsPopup?.total_trip_cost || 0) +
+                            Number(paymentDetailsPopup?.tip_amount || 0)
+                          )}
+                          {/* <span className="hstText">
+                        +(HST $
+                        {(
+                          paymentDetailsPopup?.total_driver_earning * 0.13
+                        ).toFixed(2)}
+                        )
+                      </span> */}
+                        </h4>
+                      </div>
+
+                      <button className="payButton">Paid via Wallet Pay</button>
+
+                      <div className="d-flex justify-content-center">
+                        <img
+                          className=""
+                          src="/imagefolder/popUpCloseIcon.png"
+                          onClick={() => setPaymentDetailsPopup(null)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {paymentDetailsPopup && (
+            <div className="modal-backdrop fade show"></div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="main_layout  bgBlack d-flex">
       {/* sidebar started */}
@@ -1079,7 +1572,9 @@ function PersonalManualBooking() {
                                 <div className="mb-3">
                                   <p style={{ color: "#000" }}>Source</p>
                                   <h3 style={{ color: "#000" }}>
-                                    {value?.source?.length>30 ? value?.source?.substring(0, 25) + " ..." : value?.source}
+                                    {value?.source?.length > 30
+                                      ? value?.source?.substring(0, 25) + " ..."
+                                      : value?.source}
                                   </h3>
                                 </div>
                                 <div className="mb-0">
@@ -1103,14 +1598,22 @@ function PersonalManualBooking() {
                                 <div className="mb-3">
                                   <p style={{ color: "#000" }}>Destination</p>
                                   <h3 style={{ color: "#000" }}>
-                                     {value?.destination?.length>30 ? value?.destination?.substring(0, 25) + " ...": value?.destination}
+                                    {value?.destination?.length > 30
+                                      ? value?.destination?.substring(0, 25) +
+                                        " ..."
+                                      : value?.destination}
                                   </h3>
                                 </div>
                                 <div className="mb-0">
                                   <div className="col-12">
                                     <button
                                       className="sharingRouteButton w-100"
-                                     onClick={() => navigate("/personal-select-driver-availability/" + value?.id)}
+                                      onClick={() =>
+                                        navigate(
+                                          "/personal-select-driver-availability/" +
+                                            value?.id
+                                        )
+                                      }
                                       style={{ height: "45px" }}
                                     >
                                       <div className="d-flex justify-content-around align-items-center">

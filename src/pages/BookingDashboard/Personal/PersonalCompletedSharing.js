@@ -16,6 +16,10 @@ import "tippy.js/dist/tippy.css";
 import { updateNotificationStatusServ } from "../../../services/notification.services";
 import { getNavItems } from "../../../utils/TopNavItemData/bookingDashboard";
 import Pagination from "../../../components/Pagination";
+import NewSidebar from "../../../components/NewSidebar";
+import CustomTopNav from "../../../components/CustomTopNav";
+import SecondaryTopNav from "../../../components/SecondaryTopNav";
+import CustomPagination from "../../../components/CustomPazination";
 function PersonalCompletedSharing() {
   const { setGlobalState, globalState } = useGlobalState();
 
@@ -55,7 +59,6 @@ function PersonalCompletedSharing() {
     {
       name: "Unaccepted",
       path: "/personal-unaccepted-booking",
-      
     },
     {
       name: "Missed",
@@ -85,6 +88,76 @@ function PersonalCompletedSharing() {
         return v.category == "personal_booking_canceled" && v?.is_read == 0;
       })?.length,
     },
+  ];
+  const navItems = [
+    [
+      {
+        name: "Sharing Ride",
+        path: "/sharing-group-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "new_booking" ||
+              v?.category == "new_route_created" ||
+              v?.category == "booking_accepted" ||
+              v?.category == "booking_rejected" ||
+              v?.category == "booking_missed" ||
+              v?.category == "booking_ride_started" ||
+              v?.category == "booking_arrived" ||
+              v?.category == "booking_pickup_started" ||
+              v?.category == "booking_drop_started" ||
+              v?.category == "booking_completed" ||
+              v?.category == "booking_canceled" ||
+              v?.category == "booking_ride_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Personal Ride",
+        path: "/personal-later-booking",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return (
+            (v?.category == "personal_new_booking" ||
+              v?.category == "personal_booking_accepted" ||
+              v?.category == "personal_booking_ride_canceled" ||
+              v?.category == "personal_booking_missed" ||
+              v?.category == "personal_booking_ride_started" ||
+              v?.category == "personal_booking_completed" ||
+              v?.category == "personal_booking_canceled") &&
+            v?.is_read == 0
+          );
+        })?.length,
+      },
+      {
+        name: "Family Ride",
+        path: "/family-ride",
+      },
+    ],
+    [
+      {
+        name: "Driver's Availability",
+        path: "/availability-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_availability" && v?.is_read == 0;
+        })?.length,
+      },
+      {
+        name: "Driver's Route",
+        path: "/route-confirmed",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "driver_share_route" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
+    [
+      {
+        name: "Out Of Area",
+        path: "/out-of-area",
+        notificationLength: globalState?.notificationList?.filter((v) => {
+          return v.category == "out_of_area" && v?.is_read == 0;
+        })?.length,
+      },
+    ],
   ];
   const [list, setList] = useState([]);
   const [showSkelton, setShowSkelton] = useState(false);
@@ -268,6 +341,414 @@ function PersonalCompletedSharing() {
   };
 
   const [popupDetails, setPopupdetails] = useState();
+
+  return (
+    <div className="mainBody">
+      <NewSidebar selectedItem="Booking Dashboard" />
+      <div className="contentLayout">
+        <div className="bgWhite borderRadius30 p-4 minHeight100vh">
+          <div className="sticky-top bgWhite">
+            <CustomTopNav navItems={navItems} selectedNav="Personal Ride" />
+            <SecondaryTopNav
+              navItems={tableNav}
+              selectedNav="Completed"
+              navBg="#E5E5E5"
+              navColor="#1C1C1C"
+              selectedNavBg="#353535"
+              selectedNavColor="#fff"
+            />
+          </div>
+          <div className="tableOuterContainer bgDark mt-4">
+            <div
+          
+            >
+              <div>
+                <table className="table">
+                  <thead>
+                    <tr >
+                      <th
+                        scope="col"
+                        style={{ borderRadius: "24px 0px 0px 24px" }}
+                      >
+                        <div className="d-flex justify-content-center ms-2">
+                          <span className="mx-2">Sr. No</span>
+                        </div>
+                      </th>
+                      <th scope="col">Booking ID</th>
+                      <th scope="col">Driver Name</th>
+                      <th scope="col">Pickup city</th>
+                      <th scope="col">Drop-off city</th>
+
+                      <th scope="col">Booking Date & Time</th>
+                      <th scope="col">Time Choice</th>
+
+                      <th
+                        scope="col"
+                        style={{ borderRadius: "0px 24px 24px 0px" }}
+                      >
+                        <span className="me-3">Action</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <div className="pt-3 pb-2 "></div>
+                  <div></div>
+                  {showSkelton ? (
+                    [1, 2, 3, 4, 5, 6, 7, 8, 9]?.map((v, i) => {
+                      return (
+                        <tr key={i}>
+                          <td>
+                            <Skeleton width={50} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                          <td>
+                            <Skeleton width={100} />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tbody className="bg-light ">
+                      {list?.map((v, i) => {
+                        return (
+                          <tr className="">
+                            <td
+                              scope="row"
+                              style={{
+                                borderTopLeftRadius: i == 0 ? "20px" : "0px",
+                                borderBottomLeftRadius:
+                                  i + 1 == list?.length ? "20px" : "0px",
+                              }}
+                            >
+                              {i + 1 + (pageData?.current_page - 1) * 10}
+                            </td>
+                            <td>{v?.id}</td>
+                            <td>{v?.driver_details?.first_name}</td>
+                            <td>
+                              {v?.source
+                                ? `${v.source.substring(0, 15)}${
+                                    v.source.length > 15 ? "..." : ""
+                                  }`
+                                : ""}
+                            </td>
+                            <td>
+                              {v?.destination
+                                ? `${v.destination.substring(0, 15)}${
+                                    v.destination.length > 15 ? "..." : ""
+                                  }`
+                                : ""}
+                            </td>
+
+                            <td>
+                              {moment(v?.booking_date).format("DD MMM, YYYY")}(
+                              {moment(v?.booking_time, "HH:mm").format(
+                                "hh:mm A"
+                              )}
+                              )
+                            </td>
+
+                            <td>
+                              {v?.time_choice == "pickupat"
+                                ? "Pickup"
+                                : " Dropoff"}
+                            </td>
+                            <td
+                              style={{
+                                borderTopRightRadius: i == 0 ? "20px" : "0px",
+                                borderBottomRightRadius:
+                                  i + 1 == list?.length ? "20px" : "0px",
+                                wordWrap: "break-word",
+                                whiteSpace: "normal",
+                                color: "#3B82F6",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  textDecoration: "underline",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => setPopupdetails(v)}
+                              >
+                                View Full Details
+                              </span>
+                            </td>
+                          </tr>
+
+                          // <div className="mb-2"></div>
+                        );
+                      })}
+                    </tbody>
+                  )}
+                </table>
+                {list?.length == 0 && !showSkelton && (
+                  <NoRecordFound theme="light" />
+                )}
+              </div>
+            </div>
+            <CustomPagination
+              current_page={pageData?.current_page}
+              onPerPageChange={onPerPageChange}
+              last_page={pageData?.total_pages}
+              per_page={payload?.per_page}
+              onPageChange={onPageChange}
+            />
+          </div>
+        </div>
+        {popupDetails?.id && (
+        <div
+          className="modal fade show d-flex align-items-center manualSetPopup  justify-content-center "
+          tabIndex="-1"
+        >
+          <div className="modal-dialog">
+            <div className="modal-content completedPopup" style={{padding:"10px"}}>
+              <div className="modal-body">
+                <div className="row">
+                  <div className="col-md-6">
+                    <div
+                      className="leftCardRoute d-flex align-items-center w-100"
+                      style={{
+                        background: "#353535",
+                        height: "240px",
+                        borderRadius: "20px",
+                        padding: "20px",
+                        filter: "none",
+                      }}
+                    >
+                      <div className="w-100 ">
+                        <div
+                          className="personalAcceptedDriverBox p-2 d-flex align-items-center"
+                          style={{ background: "#fff" }}
+                        >
+                          <div>
+                            <img
+                              src={
+                                Image_Base_Url +
+                                popupDetails?.driver_details?.image
+                              }
+                            />
+                          </div>
+                          <div className="ms-3">
+                            <div
+                              className="driverIdBox d-flex justify-content-center mb-2"
+                              style={{ background: "#353535" }}
+                            >
+                              <span style={{ color: "#fff" }}>
+                                Driver ID :- {popupDetails?.driver_details?.id}
+                              </span>
+                            </div>
+                            <h5 style={{ color: "#1C1C1E" }}>
+                              {popupDetails?.driver_details?.first_name +
+                                " " +
+                                popupDetails?.driver_details?.last_name}
+                            </h5>
+                          </div>
+                        </div>
+                        <div className="row mt-3">
+                          <div className="col-6">
+                            <div className="">
+                              <p style={{ color: "#fff" }}>
+                                {popupDetails?.driver_details?.vehicle_name +
+                                  " (" +
+                                  popupDetails?.driver_details?.vehicle_colour +
+                                  ")"}
+                              </p>
+                              <h3 style={{ color: "#fff", textAlign: "left" }}>
+                                {popupDetails?.driver_details?.vehicle_no}
+                              </h3>
+                            </div>
+                          </div>
+                          <div className="col-6">
+                            <div className="">
+                              <p style={{ color: "#fff" }}>Driver Review</p>
+                              <h3 style={{ color: "#fff" }}>
+                                {renderStarFunc(
+                                  popupDetails?.driver_average_rating
+                                )}
+                              </h3>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div
+                      className="leftCardRoute d-flex align-items-center w-100"
+                      style={{
+                        background: "#353535",
+                        height: "240px",
+                        borderRadius: "20px",
+                        padding: "20px",
+                        filter: "none",
+                      }}
+                    >
+                      <div className="w-100 ">
+                        <div className="row ">
+                          <div className="col-6">
+                            <div className="">
+                              <p style={{ color: "#fff" }}>Booking Amount</p>
+                              <h3 style={{ color: "#fff", textAlign: "left" }}>
+                                ${popupDetails?.total_trip_cost}
+                              </h3>
+                            </div>
+                            <div className="my-3">
+                              <p style={{ color: "#fff" }}>Admin Fee</p>
+                              <h3 style={{ color: "#fff", textAlign: "left" }}>
+                                ${popupDetails?.admin_commission}
+                              </h3>
+                            </div>
+                            <div className="">
+                              <p style={{ color: "#fff" }}>Total Amount</p>
+                              <h3 style={{ color: "#fff", textAlign: "left" }}>
+                                ${popupDetails?.total_trip_cost}
+                              </h3>
+                            </div>
+                          </div>
+                          <div className="col-6">
+                            <div className="">
+                              <p style={{ color: "#fff" }}>Surge Amount</p>
+                              <h3 style={{ color: "#fff", textAlign: "left" }}>
+                                ${popupDetails?.extra_charge}
+                              </h3>
+                            </div>
+                            <div className="my-3">
+                              <p style={{ color: "#fff" }}>Driver Earn</p>
+                              <h3 style={{ color: "#fff", textAlign: "left" }}>
+                                ${popupDetails?.driver_earning}
+                              </h3>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className=" row m-0 p-0" style={{ borderRadius: "24px" }}>
+                    <div className="col-md-12 mt-4">
+                      <div
+                        className="leftCardRoute d-flex align-items-center w-100"
+                        style={{
+                          background: "#D0FF13",
+                          height: "160px",
+                          borderRadius: "20px",
+                          filter:"none"
+                        }}
+                      >
+                        <div className="w-100 ">
+                          <div className="row">
+                            <div className="col-3">
+                              <div className="row d-flex align-items-center ">
+                                <div
+                                  className="d-flex groupIdBtn  justify-content-center w-100  mb-3 align-items-center"
+                                  style={{
+                                    filter: "none",
+                                    background: "#353535",
+                                    color: "#fff",
+                                  }}
+                                >
+                                  <div className="d-flex justify-content-center w-100 px-4">
+                                    <div>Booking ID :- </div>
+                                    <div className="ms-1">
+                                      {popupDetails?.id}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="mt-2">
+                                <p style={{ color: "#000" }}>Username</p>
+                                <h3 style={{ color: "#000", textAlign:"left" }}>
+                                  {popupDetails?.user_details?.first_name +
+                                    " " +
+                                    popupDetails?.user_details?.last_name}
+                                </h3>
+                              </div>
+                                
+                              </div>
+                            </div>
+                           
+                            <div className="col-9 row">
+                              <div className="col-6">
+                              <div className="mb-3">
+                                <p style={{ color: "#000" }}>Source</p>
+                                <h3 style={{ color: "#000", textAlign:"left" }}>
+                                  {popupDetails?.source?.length >25 ? popupDetails?.source?.substring(0, 20)+"..." :popupDetails?.source }
+                                </h3>
+                              </div>
+                               <div className="">
+                                <p style={{ color: "#000" }}>Destination</p>
+                                <h3 style={{ color: "#000", textAlign:"left" }}>
+                                  {popupDetails?.destination?.length >25 ? popupDetails?.destination?.substring(0, 20)+"..." :popupDetails?.destination }
+                                </h3>
+                              </div>
+                              
+                            </div>
+                            <div className="col-6">
+                             <div className="mb-3">
+                                <p style={{ color: "#000" }}>
+                                  Booking Amount
+                                </p>
+                                <h3 style={{ color: "#000", textAlign:"left" }}>
+                                   ${popupDetails?.total_trip_cost}
+                                  
+                                </h3>
+                              </div>
+                               <div className="mb-0">
+                                <p style={{ color: "#000" , }}>
+                                  Booking Date & Time
+                                </p>
+                                <h3 style={{ color: "#000", textAlign:"left" }}>
+                                  {moment(popupDetails?.booking_date).format(
+                                    "DD MMM, YYYY"
+                                  )}{" "}
+                                  (
+                                  {moment(
+                                    popupDetails?.booking_time,
+                                    "HH:mm"
+                                  ).format("hh:mm A")}
+                                  )
+                                </h3>
+                              </div>
+                            </div>
+                              
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="d-flex justify-content-center mt-5">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/660/660252.png"
+                    onClick={() => setPopupdetails(null)}
+                    style={{ height: "50px" }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {popupDetails?.id && <div className="modal-backdrop fade show"></div>}
+      </div>
+    </div>
+  );
   return (
     <div className="main_layout  bgBlack d-flex">
       {/* sidebar started */}
@@ -489,7 +970,10 @@ function PersonalCompletedSharing() {
           tabIndex="-1"
         >
           <div className="modal-dialog">
-            <div className="modal-content completedPopup" style={{padding:"10px"}}>
+            <div
+              className="modal-content completedPopup"
+              style={{ padding: "10px" }}
+            >
               <div className="modal-body">
                 <div className="row">
                   <div className="col-md-6">
@@ -611,7 +1095,10 @@ function PersonalCompletedSharing() {
                       </div>
                     </div>
                   </div>
-                  <div className=" row m-0 p-0" style={{ borderRadius: "24px" }}>
+                  <div
+                    className=" row m-0 p-0"
+                    style={{ borderRadius: "24px" }}
+                  >
                     <div className="col-md-12 mt-4">
                       <div
                         className="leftCardRoute d-flex align-items-center w-100"
@@ -619,7 +1106,7 @@ function PersonalCompletedSharing() {
                           background: "#D0FF13",
                           height: "160px",
                           borderRadius: "20px",
-                          filter:"none"
+                          filter: "none",
                         }}
                       >
                         <div className="w-100 ">
@@ -642,61 +1129,75 @@ function PersonalCompletedSharing() {
                                   </div>
                                 </div>
                                 <div className="mt-2">
-                                <p style={{ color: "#000" }}>Username</p>
-                                <h3 style={{ color: "#000", textAlign:"left" }}>
-                                  {popupDetails?.user_details?.first_name +
-                                    " " +
-                                    popupDetails?.user_details?.last_name}
-                                </h3>
-                              </div>
-                                
+                                  <p style={{ color: "#000" }}>Username</p>
+                                  <h3
+                                    style={{ color: "#000", textAlign: "left" }}
+                                  >
+                                    {popupDetails?.user_details?.first_name +
+                                      " " +
+                                      popupDetails?.user_details?.last_name}
+                                  </h3>
+                                </div>
                               </div>
                             </div>
-                           
+
                             <div className="col-9 row">
                               <div className="col-6">
-                              <div className="mb-3">
-                                <p style={{ color: "#000" }}>Source</p>
-                                <h3 style={{ color: "#000", textAlign:"left" }}>
-                                  {popupDetails?.source?.length >25 ? popupDetails?.source?.substring(0, 20)+"..." :popupDetails?.source }
-                                </h3>
+                                <div className="mb-3">
+                                  <p style={{ color: "#000" }}>Source</p>
+                                  <h3
+                                    style={{ color: "#000", textAlign: "left" }}
+                                  >
+                                    {popupDetails?.source?.length > 25
+                                      ? popupDetails?.source?.substring(0, 20) +
+                                        "..."
+                                      : popupDetails?.source}
+                                  </h3>
+                                </div>
+                                <div className="">
+                                  <p style={{ color: "#000" }}>Destination</p>
+                                  <h3
+                                    style={{ color: "#000", textAlign: "left" }}
+                                  >
+                                    {popupDetails?.destination?.length > 25
+                                      ? popupDetails?.destination?.substring(
+                                          0,
+                                          20
+                                        ) + "..."
+                                      : popupDetails?.destination}
+                                  </h3>
+                                </div>
                               </div>
-                               <div className="">
-                                <p style={{ color: "#000" }}>Destination</p>
-                                <h3 style={{ color: "#000", textAlign:"left" }}>
-                                  {popupDetails?.destination?.length >25 ? popupDetails?.destination?.substring(0, 20)+"..." :popupDetails?.destination }
-                                </h3>
+                              <div className="col-6">
+                                <div className="mb-3">
+                                  <p style={{ color: "#000" }}>
+                                    Booking Amount
+                                  </p>
+                                  <h3
+                                    style={{ color: "#000", textAlign: "left" }}
+                                  >
+                                    ${popupDetails?.total_trip_cost}
+                                  </h3>
+                                </div>
+                                <div className="mb-0">
+                                  <p style={{ color: "#000" }}>
+                                    Booking Date & Time
+                                  </p>
+                                  <h3
+                                    style={{ color: "#000", textAlign: "left" }}
+                                  >
+                                    {moment(popupDetails?.booking_date).format(
+                                      "DD MMM, YYYY"
+                                    )}{" "}
+                                    (
+                                    {moment(
+                                      popupDetails?.booking_time,
+                                      "HH:mm"
+                                    ).format("hh:mm A")}
+                                    )
+                                  </h3>
+                                </div>
                               </div>
-                              
-                            </div>
-                            <div className="col-6">
-                             <div className="mb-3">
-                                <p style={{ color: "#000" }}>
-                                  Booking Amount
-                                </p>
-                                <h3 style={{ color: "#000", textAlign:"left" }}>
-                                   ${popupDetails?.total_trip_cost}
-                                  
-                                </h3>
-                              </div>
-                               <div className="mb-0">
-                                <p style={{ color: "#000" , }}>
-                                  Booking Date & Time
-                                </p>
-                                <h3 style={{ color: "#000", textAlign:"left" }}>
-                                  {moment(popupDetails?.booking_date).format(
-                                    "DD MMM, YYYY"
-                                  )}{" "}
-                                  (
-                                  {moment(
-                                    popupDetails?.booking_time,
-                                    "HH:mm"
-                                  ).format("hh:mm A")}
-                                  )
-                                </h3>
-                              </div>
-                            </div>
-                              
                             </div>
                           </div>
                         </div>

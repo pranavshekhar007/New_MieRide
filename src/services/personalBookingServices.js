@@ -237,7 +237,7 @@ export const selectDriverManuallyForPersonalServ = async (payload) => {
 
 export const schedulePersonalBookingServ = async (payload) => {
   try {
-    const response = await axios.post(BASE_URL + "schedule-personal-booking-for-assign",payload, getConfig());
+    const response = await axios.post(BASE_URL + "schedule-personal-booking-for-assign-new",payload, getConfig());
     return response;
   } catch (error) {
     // Handle error (e.g., log or throw an error)
