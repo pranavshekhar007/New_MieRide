@@ -440,7 +440,6 @@ function PersonalAceeptedBooking() {
     {
       name: "Unaccepted",
       path: "/personal-unaccepted-booking",
-      
     },
     {
       name: "Missed",
@@ -684,6 +683,19 @@ function PersonalAceeptedBooking() {
     );
   };
 
+  const handleViewMore = (id) => {
+    setList((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, isOpen: true } : item))
+    );
+  };
+
+  // View Less
+  const handleViewLess = (id) => {
+    setList((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, isOpen: false } : item))
+    );
+  };
+
   return (
     <div className="mainBody">
       <NewSidebar selectedItem="Booking Dashboard" />
@@ -701,314 +713,430 @@ function PersonalAceeptedBooking() {
             />
           </div>
           <div className="tableOuterContainer bgDark mt-4">
-          {showSkelton
-            ? [1, 2, 3, 4, 5, 6, 7, 8, 9]?.map((v, i) => {
-                return (
-                  <div
-                    className={"tableBody py-4 my-4 px-4 borderRadius50All"}
-                    style={{ background: "#363435" }}
-                  >
-                    <div className="row" style={{ borderRadius: "24px" }}>
-                      <div className="col-md-8">
-                        <div>
-                          <Skeleton height={440} width="100%" />
+            {showSkelton
+              ? [1, 2, 3, 4, 5, 6, 7, 8, 9]?.map((v, i) => {
+                  return (
+                    <div
+                      className={"tableBody py-4 my-4 px-4 borderRadius50All"}
+                      style={{ background: "#363435" }}
+                    >
+                      <div className="row" style={{ borderRadius: "24px" }}>
+                        <div className="col-md-8">
+                          <div>
+                            <Skeleton height={440} width="100%" />
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-md-4">
-                        <div>
-                          <Skeleton height={440} width="100%" />
+                        <div className="col-md-4">
+                          <div>
+                            <Skeleton height={440} width="100%" />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })
-            : list?.map((value, i) => {
-                return (
-                  <div
-                    className={"tableBody py-4 my-4 px-4 borderRadius30All"}
-                    style={{ background: "#363435" }}
-                  >
-                    <div className=" row " style={{ borderRadius: "24px" }}>
-                      <div className="col-md-8">
-                        <div
-                          className="leftCardRoute d-flex align-items-center w-100"
-                          style={{
-                            background: "#D0FF13",
-                            height: "300px",
-                            borderRadius: "20px",
-                          }}
-                        >
-                          <div className="w-100 ">
-                            <div className="row">
-                              <div className="col-5">
-                                <div className="row d-flex align-items-center ">
-                                  <div
-                                    className="d-flex groupIdBtn  justify-content-center w-100  mb-3 align-items-center"
-                                    style={{ filter: "none", color:"white", background:"#363435" }}
-                                  >
-                                    <div className="d-flex justify-content-center w-100 px-4">
-                                      <div>Booking ID :- </div>
-                                      <div className="ms-1">{value?.id}</div>
+                  );
+                })
+              : list?.map((value, i) => {
+                  if (!value?.isOpen) {
+                    return (
+                      <table
+                        className={
+                          "table " + (i + 1 != list?.length ? " mb-4" : " mb-0")
+                        }
+                      >
+                        <tbody className="bgWhite w-100 routeMinTBody">
+                          <tr>
+                            <td style={{ borderRadius: "15px 0px 0px 15px" }}>
+                              <div className="groupBtn ms-3">
+                                <p>Booking ID :- {value?.id}</p>
+                              </div>
+                            </td>
+                            <td>
+                              <div style={{ width: "180px" }}>
+                                <h5>Source City</h5>
+                                <h6>{value?.source}</h6>
+                              </div>
+                            </td>
+                            <td>
+                              <div style={{ width: "180px" }}>
+                                <h5>Destination City</h5>
+                                <h6>{value?.destination}</h6>
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                <h5>Booking Date</h5>
+                                <h6>
+                                  {moment(value?.first_pickup_date).format(
+                                    "DD MMM, YYYY"
+                                  )}
+                                </h6>
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                <h5>Time Choice</h5>
+                                <h6>
+                                  {value?.time_choice === "pickupat"
+                                    ? "Pickup"
+                                    : value?.time_choice === "dropoffby"
+                                    ? "Dropoff"
+                                    : "N/A"}
+                                </h6>
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                <h5>Vehicle Size</h5>
+                                <h6>{value?.driver_details?.vehicle_size}</h6>
+                              </div>
+                            </td>
+
+                            <td style={{ borderRadius: "0px 15px 15px 0px" }}>
+                              <div
+                                className="d-flex justify-content-end me-3"
+                                onClick={() => handleViewMore(value.id)}
+                                style={{ cursor: "pointer" }}
+                              >
+                                <span className="mx-2">View More</span>
+                                <img src="/imagefolder/downArrow.png" />
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    );
+                  } else {
+                    return (
+                      <div
+                        className="routeMain"
+                        style={{
+                          marginBottom:
+                            i + 1 != list?.length ? " 20px" : " 0px",
+                        }}
+                      >
+                        <div className="d-flex justify-content-between align-items-center routeTopNav">
+                          <div className="groupBtn">
+                            <p>Booking ID :- {value?.id}</p>
+                          </div>
+                          <div
+                            onClick={() => handleViewLess(value.id)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <span className="mx-2">View Less</span>
+                            <img src="/imagefolder/upArrow.png" />
+                          </div>
+                        </div>
+                        <div className="row mt-4">
+                          <div className="row col-7 m-0 p-0">
+                            <div>
+                              <div
+                                className="routeLeftCard mb-4"
+                                style={{
+                                  height: "210px",
+                                  padding: "14px 14px",
+                                }}
+                              >
+                                <div className="d-flex justify-content-between">
+                                  <div className="mb-3 text-center">
+                                    <div
+                                      className="userNameDiv"
+                                      style={{
+                                        width: "130px",
+                                        textAlign: "center",
+                                        background: "#353535",
+                                        color: "#fff",
+                                        borderRadius: "6px",
+                                        padding: "6px 8px",
+                                      }}
+                                    >
+                                      <p
+                                        className="mb-0 bgWhite text-dark radius3 p-1"
+                                        style={{
+                                          fontSize: "12px",
+                                          fontWeight: 600,
+                                        }}
+                                      >
+                                        ID: {value?.driver_details?.unique_id}
+                                      </p>
+                                      <p
+                                        className="mb-0 text-white mt-1"
+                                        style={{
+                                          fontSize: "14px",
+                                          fontWeight: 600,
+                                        }}
+                                      >
+                                        {value?.driver_details?.first_name}{" "}
+                                        {value?.driver_details?.last_name}
+                                      </p>
                                     </div>
                                   </div>
-                                  <div className="mb-3">
-                                    <p style={{ color: "#000" }}>Username</p>
-                                    <h3 style={{ color: "#000" }}>{value?.user_details?.first_name+" "+value?.user_details?.last_name}</h3>
+                                  <div className="mb-4">
+                                    <p>Time Choice</p>
+                                    <h5>
+                                      {value?.time_choice === "pickupat"
+                                        ? "Pickup"
+                                        : value?.time_choice === "dropoffby"
+                                        ? "Dropoff"
+                                        : "N/A"}
+                                    </h5>
                                   </div>
+
+                                  <div className="mb-4 pe-5">
+                                    <p>Source</p>
+                                    <h5>{value?.source || "N/A"}</h5>
+                                  </div>
+                                </div>
+
+                                <div className="d-flex justify-content-between">
                                   <div className="mb-3">
-                                    <p style={{ color: "#000" }}>
-                                      Booking Date & Time
-                                    </p>
-                                    <h3 style={{ color: "#000" }}>
+                                    <p>Booking Date & Time</p>
+                                    <h5>
                                       {moment(value?.booking_date).format(
-                                                                            "DD MMM, YYYY"
-                                                                          )} ({moment(
-                                                                            value?.booking_time,
-                                                                            "HH:mm"
-                                                                          ).format("hh:mm A")})
-                                    </h3>
+                                        "DD MMM, YYYY"
+                                      )}{" "}
+                                      (
+                                      {moment(
+                                        value?.booking_time,
+                                        "HH:mm"
+                                      ).format("hh:mm A")}
+                                      )
+                                    </h5>
                                   </div>
                                   <div className="mb-3">
-                                    <p style={{ color: "#000" }}>
-                                      Assigned Time
-                                    </p>
-                                    <h3 style={{ color: "#000" }}>
-                                       {moment(value?.assign_time).format(
-                                                                            "DD MMM, YYYY"
-                                                                          )} ({moment(
-                                                                            value?.assign_time,
-                                                                            "HH:mm"
-                                                                          ).format("hh:mm A")})
-                                    </h3>
+                                    <p>Destination</p>
+                                    <h5>{value?.destination || "N/A"}</h5>
                                   </div>
                                 </div>
-                              </div>
-                              <div className="col-7">
-                                <div className="mb-3">
-                                  <p style={{ color: "#000" }}>Source</p>
-                                  <h3 style={{ color: "#000" }}>
-                                    {value?.source?.length >30 ? value?.source?.substring(0, 25)+"..."  : value?.source }
-                                  </h3>
-                                </div>
-                                <div className="mb-3">
-                                  <p style={{ color: "#000" }}>Destination</p>
-                                  <h3 style={{ color: "#000" }}>
-                                    {value?.destination?.length >30 ? value?.destination?.substring(0, 25) +"..."  : value?.destination }
-                                    {/* {value?.destination} */}
-                                  </h3>
-                                </div>
-                                <div className="mb-3 row">
-                                  <div className=" col-6">
-                                    <p style={{ color: "#000" }}>Time Choice</p>
-                                    <h3 style={{ color: "#000" }}>
-                                      {value?.time_choice == "pickupat"
-                                        ? "Pick Up"
-                                        : "Drop Off"}
-                                    </h3>
+
+                                <div className="d-flex justify-content-between">
+                                  <div className=" col-3">
+                                    <p>Vehicle Size</p>
+                                    <h5>
+                                      {value?.driver_details?.vehicle_size}
+                                    </h5>
                                   </div>
-                                  <div className=" col-6">
-                                    <p style={{ color: "#000" }}>Payment</p>
+
+                                  <div
+                                    className="col-2"
+                                    style={{
+                                      textAlign: "center",
+                                    }}
+                                  >
+                                    <p>Payment</p>
                                     <img
+                                      src="/imagefolder/eyeIcon.png"
                                       onClick={() =>
                                         setPaymentDetailsPopup(value)
                                       }
-                                      src="/icons/eyeIcon.png"
-                                      style={{ height: "20px" }}
                                     />
                                   </div>
-                                </div>
 
-                                <div className="mb-3">
-                                  <p style={{ color: "#000" }}>Accept Time</p>
-                                  <h3 style={{ color: "#000" }}>
-                                     {moment(value?.assign_time).format(
-                                                                            "DD MMM, YYYY"
-                                                                          )} ({moment(
-                                                                            value?.assign_time,
-                                                                            "HH:mm"
-                                                                          ).format("hh:mm A")})
-                                  </h3>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="col-md-4">
-                        <div
-                          className="leftCardRoute d-flex align-items-center w-100"
-                          style={{
-                            background: "#fff",
-                            height: "300px",
-                            borderRadius: "20px",
-                            padding:"20px"
-                          }}
-                        >
-                          <div className="w-100 ">
-                            <div className="personalAcceptedDriverBox p-2 d-flex align-items-center">
-                              <div>
-                                <img
-                                  src={
-                                    Image_Base_Url +
-                                    value?.driver_details?.image
-                                  }
-                                
-                                />
-                              </div>
-                              <div className="ms-3">
-                                <div className="driverIdBox d-flex justify-content-center mb-2">
-                                  <span>Driver ID :- {value?.driver_details?.id}</span>
-                                  
-                                </div>
-                                <h5>
-                                  {value?.driver_details?.first_name +
-                                    " " +
-                                    value?.driver_details?.last_name}
-                                </h5>
-                              </div>
-                            </div>
-                            <div className="row my-3">
-                              <div className="col-6">
-                                <div className="">
-                                    <p style={{ color: "#000" }}>{value?.driver_details?.vehicle_name +" (" +(value?.driver_details?.vehicle_colour)+ ")"}</p>
-                                    <h3 style={{ color: "#000" }}>
-                                     {value?.driver_details?.vehicle_no}
-                                    </h3>
-                                  </div>
-                              </div>
-                              <div className="col-6">
-                                <div className="">
-                                    <p style={{ color: "#000" }}>Driver Review</p>
-                                    <h3 style={{ color: "#000" }}>
-                                     {renderStarFunc(value?.driver_average_rating)}
-                                    </h3>
-                                  </div>
-                              </div>
-                            </div>
-                             <div
-                                  className="callButton"
-                                  onClick={() => alert("Coming soon")}
-                                >
-                                  <img
-                                    src="https://cdn-icons-png.flaticon.com/128/597/597177.png"
+                                  <div
+                                    className=" col-4"
                                     style={{
-                                      height: "20px",
-                                      filter: "brightness(0) invert(1)",
-                                    }}
-                                  />
-                                  <span
-                                    style={{
-                                      color: "white",
-                                      fontSize: "14px",
-                                      fontFamily: "poppins",
+                                      textAlign: "center",
                                     }}
                                   >
-                                    Call Now
-                                  </span>
+                                    <p>Total Route Time</p>
+                                    <h5>
+                                      {moment
+                                        .duration(
+                                          value?.total_trip_time,
+                                          "minutes"
+                                        )
+                                        .hours()}{" "}
+                                      hr{" "}
+                                      {moment
+                                        .duration(
+                                          value?.total_trip_time,
+                                          "minutes"
+                                        )
+                                        .minutes()}{" "}
+                                      min
+                                    </h5>
+                                  </div>
+                                  {/* <button
+                                    onClick={() =>
+                                      alert("Cancel Assign Clicked")
+                                    }
+                                  >
+                                    Re-Assign
+                                  </button> */}
                                 </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            className="acceptedDriverCard col-5"
+                            style={{
+                              height: "210px",
+                            }}
+                          >
+                            <div className="row mb-5">
+                              <div className="col-5">
+                                <div className="d-flex  justify-content-between align-items-center">
+                                  <img
+                                    className="acceptedDriverIcon"
+                                    src={
+                                      Image_Base_Url +
+                                      value?.driver_details?.image
+                                    }
+                                  />
+                                  <div className="mx-2">
+                                    <div className="acceptedDriverId ">
+                                      ID :- {value?.driver_details?.id}
+                                    </div>
+                                    <h5>{value?.driver_details?.first_name}</h5>
+                                    <div className="ratingDiv">
+                                      (3.7){" "}
+                                      <img src="https://cdn-icons-png.flaticon.com/128/1828/1828884.png" />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                className="col-6 "
+                                style={{
+                                  marginLeft: "35px",
+                                }}
+                              >
+                                <h4>
+                                  {value?.driver_details?.vehicle_name} (
+                                  {value?.driver_details?.vehicle_colour})
+                                </h4>
+                                <div
+                                  className="whiteVechileNoDiv"
+                                  style={{
+                                    height: "47px",
+                                    width: "220px",
+                                    padding: "15px ",
+                                  }}
+                                >
+                                  {value?.driver_details?.vehicle_no}
+                                </div>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => alert("Coming soon")}
+                              className="callNowButton"
+                            >
+                              <img src="https://cdn-icons-png.flaticon.com/128/483/483947.png" />{" "}
+                              Call Now
+                            </button>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
-          {list?.length == 0 && !showSkelton && <NoRecordFound theme="dark" />}
-        </div>
-        <CustomPagination
+                    );
+                  }
+                })}
+            {list?.length == 0 && !showSkelton && (
+              <NoRecordFound theme="dark" />
+            )}
+          </div>
+          <CustomPagination
             current_page={pageData?.current_page}
             onPerPageChange={onPerPageChange}
             last_page={pageData?.total_pages}
             per_page={payload?.per_page}
             onPageChange={onPageChange}
           />
-        {paymentDetailsPopup && (
-          <div
-            className="modal fade show d-flex align-items-center manualSetPopup  justify-content-center "
-            tabIndex="-1"
-          >
-            <div className="modal-dialog">
-              <div
-                className="modal-content"
-                style={{
-                  borderRadius: "16px",
-                  background: "#f7f7f5",
-                  width: "364px",
-                }}
-              >
-                <div className="d-flex justify-content-between pt-4 pb-0 px-4">
-                  <p>
-                    <u>Payment Details</u>
-                  </p>
-                  <i
-                    className="fa fa-close text-secondary"
-                    onClick={() => {
-                      setPaymentDetailsPopup(null);
-                    }}
-                  ></i>
-                </div>
-                <hr className="mt-0" />
-                <div className="modal-body" style={{ fontFamily: "poppins" }}>
-                  <div
-                    style={{
-                      wordWrap: "break-word",
-                      whiteSpace: "pre-wrap",
-                    }}
-                    className="d-flex justify-content-center w-100"
-                  >
-                    <div className="w-100 px-2">
-                      <div className="d-flex justify-content-between px-2 mb-1">
-                        <p style={{ fontWeight: "400" }}>Booking Amount</p>
-                        <span style={{ fontWeight: "500" }}>
-                          ${paymentDetailsPopup?.total_trip_cost}
-                        </span>
+          {paymentDetailsPopup && (
+            <div
+              className="modal fade show d-flex align-items-center manualSetPopup  justify-content-center "
+              tabIndex="-1"
+            >
+              <div className="modal-dialog">
+                <div className="modal-content paymentReceiptPopup">
+                  <div className="modal-body p-0">
+                    <div className="text-center mb-4">
+                      <h3 className="popupTitle">
+                        Payment Receipt – Persona Ride
+                      </h3>
+                    </div>
+
+                    <div className="px-3">
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>Booking</p>
+                        <h5>${paymentDetailsPopup?.total_trip_cost}</h5>
                       </div>
 
-                      <div className="d-flex justify-content-between px-2 mb-1">
-                        <p>Driver Earn</p>
-                        <span style={{ fontWeight: "500" }}>
-                          ${paymentDetailsPopup?.driver_earning}
-                        </span>
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>HST (13%)</p>
+                        <h5>{"N/A"}</h5>
                       </div>
-                      <div className="d-flex justify-content-between px-2 mb-1">
-                        <p>Admin Fee</p>
-                        <span style={{ fontWeight: "500" }}>
-                          ${paymentDetailsPopup?.admin_commission}
-                        </span>
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine totalLine">
+                        <p className="fw-bold">Total Amount</p>
+                        <h5 className="fw-bold">
+                          ${paymentDetailsPopup?.total_trip_cost}
+                        </h5>
                       </div>
-                      <div className="d-flex justify-content-between px-2 mb-1">
-                        <p>Surge Amount</p>
-                        <span style={{ fontWeight: "500" }}>
-                          ${paymentDetailsPopup?.extra_charge}
-                        </span>
+
+                      <hr />
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>Driver Commission</p>
+                        <h5>${paymentDetailsPopup?.driver_earning || 0}</h5>
                       </div>
-                      <div
-                        className="my-3"
-                        style={{ borderTop: "1px solid #B2B2B2" }}
-                      ></div>
-                      <div
-                        className="d-flex justify-content-between px-2 mb-1 pt-3"
-                        style={{ fontWeight: "500" }}
-                      >
-                        <p>Total Payment</p>
-                        <span>${paymentDetailsPopup?.total_trip_cost}</span>
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>Driver HST (13%)</p>
+                        <h5>{"N/A"}</h5>
+                      </div>
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>Admin Commission</p>
+                        <h5>${paymentDetailsPopup?.admin_commission || 0}</h5>
+                      </div>
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine">
+                        <p>Admin HST (13%)</p>
+                        <h5>{"N/A"}</h5>
+                      </div>
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine discountLine">
+                        <p>Bonus Amount</p>
+                        <h5>${paymentDetailsPopup?.tip_amount || 0}</h5>
+                      </div>
+                      <hr />
+
+                      <div className="d-flex justify-content-between align-items-center mb-3 popupLine finalLine">
+                        <h4>Final Paid to Driver</h4>
+                        <h4>
+                          $
+                          {Number(paymentDetailsPopup?.total_trip_cost || 0) +
+                            Number(paymentDetailsPopup?.tip_amount || 0)}
+                          {/* <span className="hstText">
+                        +(HST $
+                        {(
+                          paymentDetailsPopup?.total_driver_earning * 0.13
+                        ).toFixed(2)}
+                        )
+                      </span> */}
+                        </h4>
+                      </div>
+
+                      <button className="payButton">Paid via Wallet Pay</button>
+
+                      <div className="d-flex justify-content-center">
+                        <img
+                          className=""
+                          src="/imagefolder/popUpCloseIcon.png"
+                          onClick={() => setPaymentDetailsPopup(null)}
+                        />
                       </div>
                     </div>
                   </div>
-                  <div className="d-flex justify-content-center"></div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-        {paymentDetailsPopup && (
-          <div className="modal-backdrop fade show"></div>
-        )}
+          )}
+          {paymentDetailsPopup && (
+            <div className="modal-backdrop fade show"></div>
+          )}
         </div>
       </div>
-      
     </div>
   );
 
@@ -1097,7 +1225,11 @@ function PersonalAceeptedBooking() {
                                 <div className="row d-flex align-items-center ">
                                   <div
                                     className="d-flex groupIdBtn  justify-content-center w-100  mb-3 align-items-center"
-                                    style={{ filter: "none", color:"white", background:"#363435" }}
+                                    style={{
+                                      filter: "none",
+                                      color: "white",
+                                      background: "#363435",
+                                    }}
                                   >
                                     <div className="d-flex justify-content-center w-100 px-4">
                                       <div>Booking ID :- </div>
@@ -1106,7 +1238,11 @@ function PersonalAceeptedBooking() {
                                   </div>
                                   <div className="mb-3">
                                     <p style={{ color: "#000" }}>Username</p>
-                                    <h3 style={{ color: "#000" }}>{value?.user_details?.first_name+" "+value?.user_details?.last_name}</h3>
+                                    <h3 style={{ color: "#000" }}>
+                                      {value?.user_details?.first_name +
+                                        " " +
+                                        value?.user_details?.last_name}
+                                    </h3>
                                   </div>
                                   <div className="mb-3">
                                     <p style={{ color: "#000" }}>
@@ -1114,11 +1250,14 @@ function PersonalAceeptedBooking() {
                                     </p>
                                     <h3 style={{ color: "#000" }}>
                                       {moment(value?.booking_date).format(
-                                                                            "DD MMM, YYYY"
-                                                                          )} ({moment(
-                                                                            value?.booking_time,
-                                                                            "HH:mm"
-                                                                          ).format("hh:mm A")})
+                                        "DD MMM, YYYY"
+                                      )}{" "}
+                                      (
+                                      {moment(
+                                        value?.booking_time,
+                                        "HH:mm"
+                                      ).format("hh:mm A")}
+                                      )
                                     </h3>
                                   </div>
                                   <div className="mb-3">
@@ -1126,12 +1265,15 @@ function PersonalAceeptedBooking() {
                                       Assigned Time
                                     </p>
                                     <h3 style={{ color: "#000" }}>
-                                       {moment(value?.assign_time).format(
-                                                                            "DD MMM, YYYY"
-                                                                          )} ({moment(
-                                                                            value?.assign_time,
-                                                                            "HH:mm"
-                                                                          ).format("hh:mm A")})
+                                      {moment(value?.assign_time).format(
+                                        "DD MMM, YYYY"
+                                      )}{" "}
+                                      (
+                                      {moment(
+                                        value?.assign_time,
+                                        "HH:mm"
+                                      ).format("hh:mm A")}
+                                      )
                                     </h3>
                                   </div>
                                 </div>
@@ -1140,13 +1282,18 @@ function PersonalAceeptedBooking() {
                                 <div className="mb-3">
                                   <p style={{ color: "#000" }}>Source</p>
                                   <h3 style={{ color: "#000" }}>
-                                    {value?.source?.length >30 ? value?.source?.substring(0, 25)+"..."  : value?.source }
+                                    {value?.source?.length > 30
+                                      ? value?.source?.substring(0, 25) + "..."
+                                      : value?.source}
                                   </h3>
                                 </div>
                                 <div className="mb-3">
                                   <p style={{ color: "#000" }}>Destination</p>
                                   <h3 style={{ color: "#000" }}>
-                                    {value?.destination?.length >30 ? value?.destination?.substring(0, 25) +"..."  : value?.destination }
+                                    {value?.destination?.length > 30
+                                      ? value?.destination?.substring(0, 25) +
+                                        "..."
+                                      : value?.destination}
                                     {/* {value?.destination} */}
                                   </h3>
                                 </div>
@@ -1174,12 +1321,14 @@ function PersonalAceeptedBooking() {
                                 <div className="mb-3">
                                   <p style={{ color: "#000" }}>Accept Time</p>
                                   <h3 style={{ color: "#000" }}>
-                                     {moment(value?.assign_time).format(
-                                                                            "DD MMM, YYYY"
-                                                                          )} ({moment(
-                                                                            value?.assign_time,
-                                                                            "HH:mm"
-                                                                          ).format("hh:mm A")})
+                                    {moment(value?.assign_time).format(
+                                      "DD MMM, YYYY"
+                                    )}{" "}
+                                    (
+                                    {moment(value?.assign_time, "HH:mm").format(
+                                      "hh:mm A"
+                                    )}
+                                    )
                                   </h3>
                                 </div>
                               </div>
@@ -1195,7 +1344,7 @@ function PersonalAceeptedBooking() {
                             background: "#fff",
                             height: "300px",
                             borderRadius: "20px",
-                            padding:"20px"
+                            padding: "20px",
                           }}
                         >
                           <div className="w-100 ">
@@ -1206,13 +1355,13 @@ function PersonalAceeptedBooking() {
                                     Image_Base_Url +
                                     value?.driver_details?.image
                                   }
-                                
                                 />
                               </div>
                               <div className="ms-3">
                                 <div className="driverIdBox d-flex justify-content-center mb-2">
-                                  <span>Driver ID :- {value?.driver_details?.id}</span>
-                                  
+                                  <span>
+                                    Driver ID :- {value?.driver_details?.id}
+                                  </span>
                                 </div>
                                 <h5>
                                   {value?.driver_details?.first_name +
@@ -1224,42 +1373,49 @@ function PersonalAceeptedBooking() {
                             <div className="row my-3">
                               <div className="col-6">
                                 <div className="">
-                                    <p style={{ color: "#000" }}>{value?.driver_details?.vehicle_name +" (" +(value?.driver_details?.vehicle_colour)+ ")"}</p>
-                                    <h3 style={{ color: "#000" }}>
-                                     {value?.driver_details?.vehicle_no}
-                                    </h3>
-                                  </div>
+                                  <p style={{ color: "#000" }}>
+                                    {value?.driver_details?.vehicle_name +
+                                      " (" +
+                                      value?.driver_details?.vehicle_colour +
+                                      ")"}
+                                  </p>
+                                  <h3 style={{ color: "#000" }}>
+                                    {value?.driver_details?.vehicle_no}
+                                  </h3>
+                                </div>
                               </div>
                               <div className="col-6">
                                 <div className="">
-                                    <p style={{ color: "#000" }}>Driver Review</p>
-                                    <h3 style={{ color: "#000" }}>
-                                     {renderStarFunc(value?.driver_average_rating)}
-                                    </h3>
-                                  </div>
+                                  <p style={{ color: "#000" }}>Driver Review</p>
+                                  <h3 style={{ color: "#000" }}>
+                                    {renderStarFunc(
+                                      value?.driver_average_rating
+                                    )}
+                                  </h3>
+                                </div>
                               </div>
                             </div>
-                             <div
-                                  className="callButton"
-                                  onClick={() => alert("Coming soon")}
-                                >
-                                  <img
-                                    src="https://cdn-icons-png.flaticon.com/128/597/597177.png"
-                                    style={{
-                                      height: "20px",
-                                      filter: "brightness(0) invert(1)",
-                                    }}
-                                  />
-                                  <span
-                                    style={{
-                                      color: "white",
-                                      fontSize: "14px",
-                                      fontFamily: "poppins",
-                                    }}
-                                  >
-                                    Call Now
-                                  </span>
-                                </div>
+                            <div
+                              className="callButton"
+                              onClick={() => alert("Coming soon")}
+                            >
+                              <img
+                                src="https://cdn-icons-png.flaticon.com/128/597/597177.png"
+                                style={{
+                                  height: "20px",
+                                  filter: "brightness(0) invert(1)",
+                                }}
+                              />
+                              <span
+                                style={{
+                                  color: "white",
+                                  fontSize: "14px",
+                                  fontFamily: "poppins",
+                                }}
+                              >
+                                Call Now
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>

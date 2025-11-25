@@ -1656,8 +1656,8 @@ body {
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-  border-radius: 6px;
-  padding: 3px 10px;
+  border-radius: 2px;
+  padding: 5px 10px 3px 10px;
   background: #d0ff13;
   text-align: center;
   margin-bottom: 4px;

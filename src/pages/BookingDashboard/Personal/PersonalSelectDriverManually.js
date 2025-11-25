@@ -549,6 +549,46 @@ function PersonalSelectDriverManually() {
   ];
   const [showSkelton, setShowSkelton] = useState(false);
   const [availabilityList, setAvailabilityList] = useState([]);
+
+  const hydrateUI = (data) => {
+    if (!data) return;
+  
+    const booking = data?.bookingDetails;
+  
+    // TIP restore
+    const tip = booking?.tip_amount ?? 0;
+    if (tip > 0) {
+      setIsExtraChargeEnabled(true);
+      setCustomAmount(tip);
+      setSelectedValue("XX");
+    }
+  
+    // Pickup time restore
+    if (booking?.increased_pickup_time > 0) {
+      setIsPickupTimeEnabled(true);
+      setPickupTime(booking.increased_pickup_time);
+    }
+  
+    // Schedule restore
+    const scheduled = booking?.personal_schedule_retries || [];
+    if (scheduled.length > 0) {
+      setIsScheduleEnabled(true);
+      setIsFinalScheduleDone(true);
+      setIsScheduleSaved(true);
+      setIsViewMode(true);
+  
+      setAttemptCount(Math.min(scheduled.length, 4));
+  
+      const formatted = scheduled.map((item, idx) => ({
+        attempt: idx + 1,
+        date: moment(item.run_at).format("DD MMM, YYYY"),
+        time: moment(item.run_at).format("hh:mm A"),
+      }));
+      setScheduleAttempts(formatted.slice(0, 4));
+    }
+  };
+  
+
     const handleGetDriverAvailibilityList = async () => {
       if (availabilityList.length == 0) {
         setShowSkelton(true);
@@ -572,44 +612,19 @@ function PersonalSelectDriverManually() {
       let response = await getAvailableDriverByBookingServ({
         booking_id: params.id,
       });
-      if (response?.data?.statusCode == "200") {
-        setDetails(response?.data?.data);
-        const tip = response?.data?.data?.bookingDetails?.tip_amount ?? 0;
-
-        if (tip > 0) {
-          setIsExtraChargeEnabled(true);
-          setCustomAmount(tip);
-          setSelectedValue("XX");
-        }
-
-        const scheduled =
-          response?.data?.data?.bookingDetails?.personal_schedule_retries || [];
-
-        if (scheduled.length > 0) {
-          // Enable schedule UI
-          setIsScheduleEnabled(true);
-          setIsFinalScheduleDone(true);
-          setIsScheduleSaved(true);
-          setIsViewMode(true);
-
-          const formatted = scheduled.map((item, idx) => ({
-            attempt: idx + 1,
-            date: moment(item.run_at).format("DD MMM, YYYY"),
-            time: moment(item.run_at).format("hh:mm A"),
-          }));
-
-          const safeCount = Math.min(scheduled.length, 4);
-
-          setAttemptCount(safeCount);
-          setScheduleAttempts(formatted.slice(0, 4));
-        }
-        setAllDriverIds(details?.availabliltyDrivers?.map((v) => v?.id) || []);
-        setGlobalAreAllIdsSelected(false);
-        setCounter(
-          response?.data?.data?.bookingDetails?.personal_schedule_retries
-            ?.length
-        );
+      if (response?.data?.statusCode === "200") {
+        const data = response.data.data;
+        setDetails(data);
+      
+        // Save globally so other tabs don't reload
+        setGlobalState(prev => ({
+          ...prev,
+          personalBookingDetails: data
+        }));
+      
+        hydrateUI(data);
       }
+      
     } catch (error) {}
     setShowSkeltonForDetails(false);
   };
@@ -634,9 +649,15 @@ function PersonalSelectDriverManually() {
     }
   };
   useEffect(() => {
-    getAvailableDriverByBooking();
-    handleGetUserListFunc();
-  }, []);
+    if (!globalState.personalBookingDetails) {
+      getAvailableDriverByBooking();
+    } else {
+      setDetails(globalState.personalBookingDetails);
+      hydrateUI(globalState.personalBookingDetails);
+    }
+  }, [globalState.personalBookingDetails]);
+  
+  
 
   useEffect(() => {
     handleGetUserListFunc();
@@ -730,78 +751,7 @@ function PersonalSelectDriverManually() {
       toast.error("Internal Server Error");
     }
   };
-  // const [isTipInputEdit, setIsTipInputEdit] = useState(false);
-  // const [isTimeInputEdit, setIsTimeInputEdit] = useState(false);
-  // const handleCounterFunc = (operation) => {
-  //   try {
-  //     if (operation == "add") {
-  //       if (counter < 5) {
-  //         setCounter(counter + 1);
-  //       } else {
-  //         alert("Maximum value is 5");
-  //       }
-  //     } else {
-  //       if (counter > 0) {
-  //         setCounter(counter - 1);
-  //       } else {
-  //         alert("Minimum value is 0");
-  //       }
-  //     }
-  //   } catch (error) {}
-  // };
-  // const [schedulePopup, setSchedulePopup] = useState({
-  //   show: false,
-  //   retry_times: [],
-  //   tip_amount: "",
-  // });
-  // const handleConfirm = async () => {
-  //   const retry_times = (schedulePopup.retry_times || []).map((v) => {
-  //     return `${v?.date || ""} ${v?.time || ""}:00`;
-  //   });
 
-  //   const payload = {
-  //     booking_id: params?.id,
-  //     retry_times: retry_times,
-  //   };
-
-  //   console.log("Final Payload ===>", payload);
-  //   try {
-  //     let response = await schedulePersonalBookingServ(payload);
-  //     if (response?.data?.statusCode == "200") {
-  //       toast.success(response?.data?.message);
-  //       setSchedulePopup({
-  //         show: false,
-  //         retry_times: [],
-  //         booking_id: "",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     toast.error(error?.response?.data?.message);
-  //   }
-  // };
-  // const addRetryTime = () => {
-  //   const updatedRetries = [
-  //     ...schedulePopup.retry_times,
-  //     { date: "", time: "" },
-  //   ];
-  //   setSchedulePopup({ ...schedulePopup, retry_times: updatedRetries });
-  // };
-  
-  // const handleRetryChange = (index, field, value) => {
-  //   const updatedRetries = [...schedulePopup.retry_times];
-  //   if (!updatedRetries[index]) {
-  //     updatedRetries[index] = { date: "", time: "" };
-  //   }
-  //   updatedRetries[index][field] = value;
-  //   setSchedulePopup({ ...schedulePopup, retry_times: updatedRetries });
-  // };
-
-  // const [showViewRecord, setShowViewRecord] = useState(false);
-
-  // // ---- New Route Popup States ----
-  // const [routePopupDetails, setRoutePopupDetails] = useState(null);
-  // const [routePopupLoader, setRoutePopupLoader] = useState(false);
- 
  
   const toggleDropdown = () => setIsOpen(!isOpen);
 

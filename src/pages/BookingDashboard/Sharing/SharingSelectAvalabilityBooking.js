@@ -7,7 +7,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useGlobalState } from "../../../GlobalProvider";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  getRouteByGroupIdServ, 
+  getRouteByGroupIdServ,
   selectDriverManuallyServ,
 } from "../../../services/bookingDashboard.services";
 import { toast } from "react-toastify";
@@ -134,58 +134,74 @@ function SharingSelectAvalabilityDriverBooking() {
   const [details, setDetails] = useState();
   const [allDriverIds, setAllDriverIds] = useState([]);
   const [showSkelton, setShowSkelton] = useState(false);
+
+
+  const hydrateUI = (data) => {
+    if (!data) return;
+  
+    // TIP amount restoring
+    const tip = data?.routeDetails?.tip_amount ?? 0;
+    if (tip > 0) {
+      setIsExtraChargeEnabled(true);
+      setCustomAmount(tip);
+      setSelectedValue("XX");
+    }
+  
+    // Schedule restoring
+    const scheduled = data?.scheduledAssignments || [];
+    if (scheduled.length > 0) {
+      setIsScheduleEnabled(true);
+      setIsFinalScheduleDone(true);
+      setIsScheduleSaved(true);
+      setIsViewMode(true);
+  
+      const formatted = scheduled.map((item, idx) => ({
+        attempt: idx + 1,
+        date: moment(item.run_at).format("DD MMM, YYYY"),
+        time: moment(item.run_at).format("hh:mm A"),
+      }));
+  
+      setAttemptCount(Math.min(scheduled.length, 4));
+      setScheduleAttempts(formatted.slice(0, 4));
+    }
+  
+    // Booking Route ID
+    setFormData((prev) => ({
+      ...prev,
+      booking_route_id: data?.routeDetails?.id,
+    }));
+  };
+  
+
+
   const getBookingDetailsFunc = async () => {
     setShowSkeltonForDetails(true);
     try {
       let response = await getRouteByGroupIdServ({ group_id: params.id });
       if (response?.data?.statusCode == "200") {
-        setDetails(response?.data?.data);
-        const tip = response?.data?.data?.routeDetails?.tip_amount ?? 0;
-
-        if (tip > 0) {
-          setIsExtraChargeEnabled(true);
-          setCustomAmount(tip);
-          setSelectedValue("XX");
-        }
-        const scheduled = response?.data?.data?.scheduledAssignments || [];
-        if (scheduled.length > 0) {
-          setIsScheduleEnabled(true);
-          setIsFinalScheduleDone(true);
-          setIsScheduleSaved(true);
-          setIsViewMode(true);
-
-          // Attempt count = number of assignments
-
-          // Convert API attempts into popup format
-          const formatted = scheduled.map((item, idx) => ({
-            attempt: idx + 1,
-            date: moment(item.run_at).format("DD MMM, YYYY"),
-            time: moment(item.run_at).format("hh:mm A"),
-          }));
-
-          const safeCount = Math.min(scheduled.length, 4);
-
-          setAttemptCount(safeCount);
-          setScheduleAttempts(formatted.slice(0, 4));
-        }
-
-        setFormData({
-          driver_ids: [],
-          tip_amount: "",
-          booking_route_id: response?.data?.data?.routeDetails?.id,
-          increased_pickup_time: "",
-        });
-        setAllDriverIds(
-          details?.driverAvailabilities?.map((v) => v?.driver_details?.id) || []
-        );
-        setGlobalAreAllIdsSelected(false);
+        const data = response.data.data;
+        setDetails(data);
+      
+        setGlobalState((prev) => ({
+          ...prev,
+          sharingBookingDetails: data
+        }));
+      
+        hydrateUI(data);
       }
+      
     } catch (error) {}
     setShowSkeltonForDetails(false);
   };
-  useEffect(() => {
-    getBookingDetailsFunc();
-  }, []);
+ useEffect(() => {
+     if (!globalState.sharingBookingDetails) {
+         getBookingDetailsFunc();
+     } else {
+         setDetails(globalState.sharingBookingDetails);
+         hydrateUI(globalState.sharingBookingDetails);
+     }
+   }, [globalState.sharingBookingDetails]);
+  
   const [globalAreAllIdsSelected, setGlobalAreAllIdsSelected] = useState(false);
 
   const [pageData, setPageData] = useState({
@@ -841,7 +857,7 @@ function SharingSelectAvalabilityDriverBooking() {
           </div>
         </div>
       </div>
-    
+
       {routePopupDetails && (
         <div
           className="modal fade show d-flex align-items-center justify-content-center"
@@ -1099,430 +1115,6 @@ function SharingSelectAvalabilityDriverBooking() {
           <div className="modal-backdrop fade show"></div>
         </>
       )}
-    </div>
-  );
-  return (
-    <div className="main_layout  bgBlack d-flex">
-      {/* sidebar started */}
-      <Sidebar selectedItem="Booking Dashboard" />
-      {/* sidebar ended */}
-
-      {/* sectionLayout started */}
-      <section
-        className="section_layout "
-        style={{
-          marginLeft: globalState?.isFillSidebarWidth100 ? "260px" : "80px",
-        }}
-      >
-        <div className="row">
-          <div className="col-8">
-            <div className="row manualTopNav ">
-              <div className="col-3 ">
-                <div className="manualAmountBox">
-                  <p>Total Amount</p>
-                  <h3>
-                    $
-                    {details?.routeDetails?.total_trip_amount
-                      ? details?.routeDetails?.total_trip_amount
-                      : " ..."}
-                  </h3>
-                </div>
-              </div>
-              <div className="col-3">
-                <div
-                  className="manualAmountBox"
-                  style={{ background: "#00A431" }}
-                >
-                  <p>First Pickup Time</p>
-                  <h3>
-                    {details?.routeDetails?.first_pickup_time
-                      ? details?.routeDetails?.first_pickup_time
-                      : "..."}
-                  </h3>
-                </div>
-              </div>
-              <div className="col-6 my-auto">
-                <div className="d-flex align-items-center justify-content-between w-100 manualwhiteBtn mb-3">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={isTipInputEdit}
-                    onChange={(e) => setIsTipInputEdit(e.target.checked)}
-                  />
-                  <input
-                    style={{ border: "none", outline: "none" }}
-                    type="number"
-                    placeholder="Extra Charges"
-                    readOnly={!isTipInputEdit}
-                    value={formData?.tip_amount}
-                    onChange={(e) =>
-                      setFormData({ ...formData, tip_amount: e.target.value })
-                    }
-                  />
-                  <h6 className="mb-0 me-3">$</h6>
-                </div>
-                <div className="d-flex align-items-center justify-content-between w-100 manualwhiteBtn">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={isTimeInputEdit}
-                    onChange={(e) => setIsTimeInputEdit(e.target.checked)}
-                  />
-                  <input
-                    style={{ border: "none", outline: "none" }}
-                    type="number"
-                    placeholder="Increase Pickup Time"
-                    readOnly={!isTimeInputEdit}
-                    value={formData?.increased_pickup_time}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        increased_pickup_time: e.target.value,
-                      })
-                    }
-                  />
-                  <h6 className="mb-0 me-3">Min</h6>
-                </div>
-              </div>
-            </div>
-            <div className="mt-4"></div>
-            <TopNav
-              navItems={navItems}
-              navColor="#000"
-              navBg="#fff"
-              divideRowClass="col-xl-12 col-lg-12 col-md-12 col-12"
-              selectedItem="Availability"
-              sectedNavBg="#353535"
-              selectedNavColor="#fff"
-            />
-            <div className="row my-4">
-              <div className="col-6">
-                <div className="d-flex align-items-center manualInputDiv">
-                  <img src="https://cdn-icons-png.flaticon.com/128/54/54481.png" />
-                  <input placeholder="Search driver" />
-                </div>
-              </div>
-              <div className="col-6">
-                <div className="manualInputDiv">
-                  <select>
-                    <option>Select Vechile Type</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div
-              style={{
-                margin: "20px 0px",
-              }}
-            >
-              <table className="table manualTable mb-0">
-                <thead>
-                  <tr style={{ background: "#DDDDDD", color: "#000" }}>
-                    <th
-                      scope="col"
-                      style={{ borderRadius: "20px 0px 0px 20px" }}
-                    >
-                      <span>Sr. No</span>
-                    </th>
-                    <th scope="col">
-                      {" "}
-                      <span>Driver Details</span>{" "}
-                    </th>
-
-                    <th
-                      scope="col"
-                      style={{ borderRadius: "0px 20px 20px 0px" }}
-                    >
-                      <div className="d-flex align-items-center justify-content-center">
-                        <button
-                          className="btn btn-warning shadow"
-                          onClick={addAllDriverIds}
-                          style={{
-                            padding: "2.5px 4px",
-                            background: "#fff",
-                            border: "2px solid black",
-                            width: "25px",
-                            height: "25px",
-                            color: "#139F02",
-                            fontWeight: "600",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          {globalAreAllIdsSelected ? "✔" : " "}
-                        </button>
-                        <div className="ms-2">All</div>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <div className="py-2"></div>
-                <tbody>
-                  {showSkeltonForDetails
-                    ? [1, 2, 3, 4, 5]?.map((v, i) => {
-                        return (
-                          <tr className=" ">
-                            <td
-                              scope="row"
-                              style={{
-                                borderTopLeftRadius: "24px",
-                                borderBottomLeftRadius: "24px",
-                              }}
-                            >
-                              <Skeleton width={30} />
-                            </td>
-
-                            <td style={{ width: "300px" }}>
-                              <Skeleton width={100} />
-                            </td>
-
-                            <td
-                              style={{
-                                borderTopRightRadius: "24px",
-                                borderBottomRightRadius: "24px",
-                                overflow: "hidden",
-                              }}
-                            >
-                              <Skeleton width={100} />
-                            </td>
-                          </tr>
-                        );
-                      })
-                    : details?.driverAvailabilities?.map((v, i) => {
-                        return (
-                          <>
-                            <tr className=" ">
-                              <td
-                                scope="row"
-                                style={{
-                                  borderTopLeftRadius: "24px",
-                                  borderBottomLeftRadius: "24px",
-                                }}
-                              >
-                                {i + 1}
-                              </td>
-
-                              <td className="">
-                                <div className="d-flex justify-content-center ">
-                                  <div className="manualDriverBox d-flex py-3 justify-content-center align-items-center">
-                                    <div>
-                                      <img
-                                        src={
-                                          Image_Base_Url +
-                                          v?.driver_details?.image
-                                        }
-                                        className="me-3"
-                                      />
-                                    </div>
-                                    <div>
-                                      <p>Driver ID : {v?.driver_details?.id}</p>
-                                      <h4>{v?.driver_details?.first_name}</h4>
-                                      <div
-                                        className="d-flex align-items-center justify-content-center"
-                                        style={{
-                                          background: "#3B82F6",
-                                          borderRadius: "5px",
-                                          width: "100px",
-                                        }}
-                                      >
-                                        <img
-                                          className="me-2 carImg"
-                                          style={{
-                                            filter: "brightness(0) invert(1)",
-                                          }}
-                                          src="https://cdn-icons-png.flaticon.com/128/7571/7571054.png"
-                                        />{" "}
-                                        <div className="text-light">
-                                          {v?.driver_details?.vehicle_no}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td
-                                style={{
-                                  borderTopRightRadius: "24px",
-                                  borderBottomRightRadius: "24px",
-                                  overflow: "hidden",
-                                }}
-                              >
-                                <div
-                                  className="d-flex justify-content-center align-items-center"
-                                  style={{
-                                    borderRadius: "12px",
-                                    width: "100%",
-                                    height: "100%",
-                                  }}
-                                >
-                                  <button
-                                    className="btn btn-warning "
-                                    onClick={() =>
-                                      addDriverId(v?.driver_details?.id)
-                                    }
-                                    style={{
-                                      padding: "5px 8px",
-                                      background: "#fff",
-                                      width: "30px",
-                                      height: "30px",
-                                      color: "#139F02",
-                                      fontWeight: "600",
-                                      border: "2px solid black",
-                                    }}
-                                  >
-                                    {formData?.driver_ids?.includes(
-                                      v?.driver_details?.id
-                                    )
-                                      ? "✔"
-                                      : " "}
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          </>
-                        );
-                      })}
-                </tbody>
-              </table>
-            </div>
-            {details?.sharedRoutesDetails?.length == 0 && (
-              <NoRecordFound removeMarginTop={true} />
-            )}
-          </div>
-          <div className="col-4">
-            <div className="d-flex justify-content-between manualButtonGroup">
-              {formData?.driver_ids?.length > 0 ? (
-                <button onClick={handleSubmitDriverSelectFunc}>Submit</button>
-              ) : (
-                <button style={{ opacity: "0.5" }}>Submit</button>
-              )}
-              <button
-                className="text-light"
-                style={{ width: "40px", background: "#CC1200", border: "none" }}
-                onClick={() => navigate("/sharing-manual-booking")}
-              >
-                <h4 className="mb-0">
-                  <i className="fa fa-close"></i>{" "}
-                </h4>
-              </button>
-            </div>
-            <div className="manualEnrouteBox h-100">
-              {details?.routeDetails?.pickup_points &&
-                details?.routeDetails?.pickup_points?.map((v, i) => {
-                  return (
-                    <div
-                      className="halfTopCard"
-                      style={{
-                        top: `-${i * 50}px`,
-                        background: i % 2 != 0 ? "#000" : "#fff",
-                        borderRadius: i == 7 ? "31px" : "31px 31px 0px 0px",
-                        color: i % 2 != 0 ? " #fff" : "#000 ",
-                      }}
-                    >
-                      <div className="d-flex justify-content-between px-4">
-                        <div className="d-flex align-items-center w-100 row">
-                          <p className="col-1">{i + 1}.</p>
-                          <p className="col-2">{v?.booking_id}</p>
-
-                          <Tippy
-                            style={{ background: "red" }}
-                            content={
-                              <span
-                                style={{
-                                  color: "#139F01",
-                                  fontFamily: "poppins",
-                                  borderRadius: "6px",
-                                  padding: "2px 4px",
-                                }}
-                                className="col-3"
-                              >
-                                {v?.place_name}
-                              </span>
-                            }
-                            placement="top"
-                            theme="custom-tooltip"
-                          >
-                            <p className="col-9">
-                              {v?.place_name.substring(0, 25)}...
-                            </p>
-                          </Tippy>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              {details?.routeDetails?.dropoff_points &&
-                details?.routeDetails?.dropoff_points?.map((v, i) => {
-                  return (
-                    <div
-                      className="halfTopCard"
-                      style={{
-                        top: `-${
-                          i * 50 +
-                          details?.routeDetails?.pickup_points?.length * 50
-                        }px`,
-
-                        background:
-                          (details?.routeDetails?.pickup_points?.length + i) %
-                            2 !=
-                          0
-                            ? "#000"
-                            : "#fff",
-                        borderRadius:
-                          i == details?.routeDetails?.pickup_points?.length - 1
-                            ? "31px"
-                            : "31px 31px 0px 0px",
-                        color:
-                          (i + details?.routeDetails?.pickup_points.length) %
-                            2 !=
-                          0
-                            ? " #fff"
-                            : "#000 ",
-                      }}
-                    >
-                      <div className="d-flex justify-content-between px-4">
-                        <div className="d-flex align-items-center w-100 row">
-                          <p className="col-1">
-                            {details?.routeDetails?.pickup_points?.length +
-                              i +
-                              1}
-                            .
-                          </p>
-                          <p className="col-2">{v?.booking_id}</p>
-
-                          <Tippy
-                            style={{ background: "red" }}
-                            content={
-                              <span
-                                style={{
-                                  color: "#139F01",
-                                  fontFamily: "poppins",
-                                  borderRadius: "6px",
-                                  padding: "2px 4px",
-                                }}
-                                className="col-3"
-                              >
-                                {v?.place_name}
-                              </span>
-                            }
-                            placement="top"
-                            theme="custom-tooltip"
-                          >
-                            <p className="col-9">
-                              {v?.place_name.substring(0, 25)}...
-                            </p>
-                          </Tippy>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
-        </div>
-      </section>
-      {/* sectionLayout ended */}
     </div>
   );
 }

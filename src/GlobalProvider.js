@@ -9,7 +9,9 @@ export const GlobalStateProvider = ({ children }) => {
     permissions:null,
     isFillSidebarWidth100: true,
     base_url:"",
-    notificationList:0
+    notificationList:0,
+    sharingBookingDetails: null,
+    personalBookingDetails: null,
   });
   useEffect(() => {
     setGlobalState({

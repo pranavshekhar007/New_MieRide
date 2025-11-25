@@ -569,49 +569,61 @@ function PersonalSelectAllDriver() {
     handleGetDriverAvailibilityList();
   }, []);
 
+  const hydrateUI = (data) => {
+    if (!data) return;
+
+    const booking = data?.bookingDetails;
+
+    // TIP restore
+    const tip = booking?.tip_amount ?? 0;
+    if (tip > 0) {
+      setIsExtraChargeEnabled(true);
+      setCustomAmount(tip);
+      setSelectedValue("XX");
+    }
+
+    // Pickup time restore
+    if (booking?.increased_pickup_time > 0) {
+      setIsPickupTimeEnabled(true);
+      setPickupTime(booking.increased_pickup_time);
+    }
+
+    // Schedule restore
+    const scheduled = booking?.personal_schedule_retries || [];
+    if (scheduled.length > 0) {
+      setIsScheduleEnabled(true);
+      setIsFinalScheduleDone(true);
+      setIsScheduleSaved(true);
+      setIsViewMode(true);
+
+      setAttemptCount(Math.min(scheduled.length, 4));
+
+      const formatted = scheduled.map((item, idx) => ({
+        attempt: idx + 1,
+        date: moment(item.run_at).format("DD MMM, YYYY"),
+        time: moment(item.run_at).format("hh:mm A"),
+      }));
+      setScheduleAttempts(formatted.slice(0, 4));
+    }
+  };
+
   const getAvailableDriverByBooking = async () => {
     setShowSkeltonForDetails(true);
     try {
       let response = await getAvailableDriverByBookingServ({
         booking_id: params.id,
       });
-      if (response?.data?.statusCode == "200") {
-        setDetails(response?.data?.data);
-        const tip = response?.data?.data?.bookingDetails?.tip_amount ?? 0;
+      if (response?.data?.statusCode === "200") {
+        const data = response.data.data;
+        setDetails(data);
 
-        if (tip > 0) {
-          setIsExtraChargeEnabled(true);
-          setCustomAmount(tip);
-          setSelectedValue("XX");
-        }
+        // Save globally so other tabs don't reload
+        setGlobalState((prev) => ({
+          ...prev,
+          personalBookingDetails: data,
+        }));
 
-        const scheduled =
-          response?.data?.data?.bookingDetails?.personal_schedule_retries || [];
-
-        if (scheduled.length > 0) {
-          // Enable schedule UI
-          setIsScheduleEnabled(true);
-          setIsFinalScheduleDone(true);
-          setIsScheduleSaved(true);
-          setIsViewMode(true);
-
-          const formatted = scheduled.map((item, idx) => ({
-            attempt: idx + 1,
-            date: moment(item.run_at).format("DD MMM, YYYY"),
-            time: moment(item.run_at).format("hh:mm A"),
-          }));
-
-          const safeCount = Math.min(scheduled.length, 4);
-
-          setAttemptCount(safeCount);
-          setScheduleAttempts(formatted.slice(0, 4));
-        }
-        setAllDriverIds(details?.availabliltyDrivers?.map((v) => v?.id) || []);
-        setGlobalAreAllIdsSelected(false);
-        setCounter(
-          response?.data?.data?.bookingDetails?.personal_schedule_retries
-            ?.length
-        );
+        hydrateUI(data);
       }
     } catch (error) {}
     setShowSkeltonForDetails(false);
@@ -637,9 +649,14 @@ function PersonalSelectAllDriver() {
     }
   };
   useEffect(() => {
-    getAvailableDriverByBooking();
-    handleGetUserListFunc();
-  }, []);
+    if (!globalState.personalBookingDetails) {
+      getAvailableDriverByBooking();
+    } else {
+      setDetails(globalState.personalBookingDetails);
+      hydrateUI(globalState.personalBookingDetails);
+    }
+  }, [globalState.personalBookingDetails]);
+  
 
   useEffect(() => {
     handleGetUserListFunc();
@@ -876,74 +893,73 @@ function PersonalSelectAllDriver() {
   };
 
   const handleFinalScheduleSubmit = async () => {
-  if (!isScheduleSaved) {
-    toast.error("Please set schedule attempts first.");
-    return;
-  }
-
-  // ----------------- CALCULATE TIP AMOUNT -----------------
-  let finalTipAmount = 0;
-  const totalTripAmount =
-    parseFloat(details?.bookingDetails?.total_trip_cost) || 0;
-
-  if (isExtraChargeEnabled) {
-    if (selectedValue.endsWith("%")) {
-      const percent = parseFloat(selectedValue.replace("%", ""));
-      finalTipAmount = ((percent / 100) * totalTripAmount).toFixed(2);
-    } else if (customAmount) {
-      finalTipAmount = parseFloat(customAmount).toFixed(2);
+    if (!isScheduleSaved) {
+      toast.error("Please set schedule attempts first.");
+      return;
     }
-  } else {
-    finalTipAmount = 0;
-  }
 
-  // ----------------- CALCULATE INCREASED PICKUP TIME -----------------
-  let finalPickupTime = "";
-  if (isPickupTimeEnabled && pickupTime > 0) {
-    finalPickupTime = pickupTime;
-  }
+    // ----------------- CALCULATE TIP AMOUNT -----------------
+    let finalTipAmount = 0;
+    const totalTripAmount =
+      parseFloat(details?.bookingDetails?.total_trip_cost) || 0;
 
-  // ----------------- FORMAT RETRY TIMES -----------------
-  const retryTimesForAPI = scheduleAttempts.map((a) =>
-    moment(`${a.date} ${a.time}`, "DD MMM, YYYY hh:mm A").format(
-      "YYYY-MM-DD HH:mm:ss"
-    )
-  );
-
-  // ----------------- BUILD FORM DATA -----------------
-  const selectedFormData = new FormData();
-
-  selectedFormData.append("booking_id", params.id);
-  selectedFormData.append("tip_amount", finalTipAmount);             // FIXED
-  selectedFormData.append("increased_pickup_time", finalPickupTime); // FIXED
-
-  retryTimesForAPI.forEach((time, index) => {
-    selectedFormData.append(`retry_times[${index}]`, time);
-  });
-
-  formData.driver_ids.forEach((id, index) => {
-    selectedFormData.append(`driver_ids[${index}]`, id);
-  });
-
-  // ----------------- API CALL -----------------
-  try {
-    let response = await schedulePersonalBookingServ(selectedFormData);
-
-    if (response?.data?.statusCode === "200") {
-      toast.success("Attempts scheduled successfully!");
-      setIsFinalScheduleDone(true);
-      setIsScheduleSaved(true);
-      setIsViewMode(true);
-      navigate("/personal-manual-booking");
+    if (isExtraChargeEnabled) {
+      if (selectedValue.endsWith("%")) {
+        const percent = parseFloat(selectedValue.replace("%", ""));
+        finalTipAmount = ((percent / 100) * totalTripAmount).toFixed(2);
+      } else if (customAmount) {
+        finalTipAmount = parseFloat(customAmount).toFixed(2);
+      }
     } else {
-      toast.error(response?.data?.message || "Failed to schedule attempts");
+      finalTipAmount = 0;
     }
-  } catch (error) {
-    console.log(error);
-    toast.error("Internal Server Error");
-  }
-};
 
+    // ----------------- CALCULATE INCREASED PICKUP TIME -----------------
+    let finalPickupTime = "";
+    if (isPickupTimeEnabled && pickupTime > 0) {
+      finalPickupTime = pickupTime;
+    }
+
+    // ----------------- FORMAT RETRY TIMES -----------------
+    const retryTimesForAPI = scheduleAttempts.map((a) =>
+      moment(`${a.date} ${a.time}`, "DD MMM, YYYY hh:mm A").format(
+        "YYYY-MM-DD HH:mm:ss"
+      )
+    );
+
+    // ----------------- BUILD FORM DATA -----------------
+    const selectedFormData = new FormData();
+
+    selectedFormData.append("booking_id", params.id);
+    selectedFormData.append("tip_amount", finalTipAmount); // FIXED
+    selectedFormData.append("increased_pickup_time", finalPickupTime); // FIXED
+
+    retryTimesForAPI.forEach((time, index) => {
+      selectedFormData.append(`retry_times[${index}]`, time);
+    });
+
+    formData.driver_ids.forEach((id, index) => {
+      selectedFormData.append(`driver_ids[${index}]`, id);
+    });
+
+    // ----------------- API CALL -----------------
+    try {
+      let response = await schedulePersonalBookingServ(selectedFormData);
+
+      if (response?.data?.statusCode === "200") {
+        toast.success("Attempts scheduled successfully!");
+        setIsFinalScheduleDone(true);
+        setIsScheduleSaved(true);
+        setIsViewMode(true);
+        navigate("/personal-manual-booking");
+      } else {
+        toast.error(response?.data?.message || "Failed to schedule attempts");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Internal Server Error");
+    }
+  };
 
   return (
     <div className="mainBody">
@@ -1361,10 +1377,9 @@ function PersonalSelectAllDriver() {
                       })}
                 </table>
 
-                {availabilityList?.length === 0 &&
-                  !showSkeltonForDetails && (
-                    <NoRecordFound theme="light" marginTop="0px" />
-                  )}
+                {availabilityList?.length === 0 && !showSkeltonForDetails && (
+                  <NoRecordFound theme="light" marginTop="0px" />
+                )}
               </div>
             </div>
             <CustomPagination

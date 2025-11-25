@@ -64,7 +64,7 @@ function SharingSelectDriverBooking() {
       setIsSchedulePopupOpen(true);
       return;
     }
-    
+
     let temp = [];
     let now = moment();
     const limit = Math.min(attemptCount, 4);
@@ -134,48 +134,60 @@ function SharingSelectDriverBooking() {
   const [showSkeltonForDetails, setShowSkeltonForDetails] = useState(false);
   const [details, setDetails] = useState();
   const [allDriverIds, setAllDriverIds] = useState([]);
+
+  const hydrateUI = (data) => {
+    if (!data) return;
+  
+    // TIP amount restoring
+    const tip = data?.routeDetails?.tip_amount ?? 0;
+    if (tip > 0) {
+      setIsExtraChargeEnabled(true);
+      setCustomAmount(tip);
+      setSelectedValue("XX");
+    }
+  
+    // Schedule restoring
+    const scheduled = data?.scheduledAssignments || [];
+    if (scheduled.length > 0) {
+      setIsScheduleEnabled(true);
+      setIsFinalScheduleDone(true);
+      setIsScheduleSaved(true);
+      setIsViewMode(true);
+  
+      const formatted = scheduled.map((item, idx) => ({
+        attempt: idx + 1,
+        date: moment(item.run_at).format("DD MMM, YYYY"),
+        time: moment(item.run_at).format("hh:mm A"),
+      }));
+  
+      setAttemptCount(Math.min(scheduled.length, 4));
+      setScheduleAttempts(formatted.slice(0, 4));
+    }
+  
+    // Booking Route ID
+    setFormData((prev) => ({
+      ...prev,
+      booking_route_id: data?.routeDetails?.id,
+    }));
+  };
+  
+
   const getBookingDetailsFunc = async () => {
     setShowSkeltonForDetails(true);
     try {
       let response = await getRouteByGroupIdServ({ group_id: params.id });
       if (response?.data?.statusCode == "200") {
-        setDetails(response?.data?.data);
-
-        const tip = response?.data?.data?.routeDetails?.tip_amount ?? 0;
-
-        if (tip > 0) {
-          setIsExtraChargeEnabled(true);
-          setCustomAmount(tip);
-          setSelectedValue("XX");
-        }
-        const scheduled = response?.data?.data?.scheduledAssignments || [];
-        if (scheduled.length > 0) {
-          setIsScheduleEnabled(true);
-          setIsFinalScheduleDone(true);
-          setIsScheduleSaved(true);
-          setIsViewMode(true);
-
-          // Convert API attempts into popup format
-          const formatted = scheduled.map((item, idx) => ({
-            attempt: idx + 1,
-            date: moment(item.run_at).format("DD MMM, YYYY"),
-            time: moment(item.run_at).format("hh:mm A"),
-          }));
-          const safeCount = Math.min(scheduled.length, 4);
-
-          setAttemptCount(safeCount);
-          setScheduleAttempts(formatted.slice(0, 4));
-        }
-
-        setFormData({
-          driver_ids: [],
-          tip_amount: "",
-          booking_route_id: response?.data?.data?.routeDetails?.id,
-          increased_pickup_time: "",
-        });
-        // setAllDriverIds(details?.driverAvailabilities?.map((v) => v?.driver_details?.id) || []);
-        setGlobalAreAllIdsSelected(false);
+        const data = response.data.data;
+        setDetails(data);
+      
+        setGlobalState((prev) => ({
+          ...prev,
+          sharingBookingDetails: data
+        }));
+      
+        hydrateUI(data);  // <-- ADD THIS
       }
+      
     } catch (error) {}
     setShowSkeltonForDetails(false);
   };
@@ -203,8 +215,15 @@ function SharingSelectDriverBooking() {
     } catch (error) {}
   };
   useEffect(() => {
-    getBookingDetailsFunc();
-  }, []);
+    if (!globalState.sharingBookingDetails) {
+        getBookingDetailsFunc();
+    } else {
+        setDetails(globalState.sharingBookingDetails);
+        hydrateUI(globalState.sharingBookingDetails);
+    }
+  }, [globalState.sharingBookingDetails]);
+  
+  
 
   useEffect(() => {
     handleGetUserListFunc();

@@ -59,56 +59,75 @@ function PersonalSelectDriverRoute() {
   const [showSkeltonForDetails, setShowSkeltonForDetails] = useState(false);
   const [details, setDetails] = useState();
   const [allDriverIds, setAllDriverIds] = useState([]);
+
+  const hydrateUI = (data) => {
+      if (!data) return;
+    
+      const booking = data?.bookingDetails;
+    
+      // TIP restore
+      const tip = booking?.tip_amount ?? 0;
+      if (tip > 0) {
+        setIsExtraChargeEnabled(true);
+        setCustomAmount(tip);
+        setSelectedValue("XX");
+      }
+    
+      // Pickup time restore
+      if (booking?.increased_pickup_time > 0) {
+        setIsPickupTimeEnabled(true);
+        setPickupTime(booking.increased_pickup_time);
+      }
+    
+      // Schedule restore
+      const scheduled = booking?.personal_schedule_retries || [];
+      if (scheduled.length > 0) {
+        setIsScheduleEnabled(true);
+        setIsFinalScheduleDone(true);
+        setIsScheduleSaved(true);
+        setIsViewMode(true);
+    
+        setAttemptCount(Math.min(scheduled.length, 4));
+    
+        const formatted = scheduled.map((item, idx) => ({
+          attempt: idx + 1,
+          date: moment(item.run_at).format("DD MMM, YYYY"),
+          time: moment(item.run_at).format("hh:mm A"),
+        }));
+        setScheduleAttempts(formatted.slice(0, 4));
+      }
+    };
+
   const getAvailableDriverByBooking = async () => {
     setShowSkeltonForDetails(true);
     try {
       let response = await getAvailableDriverByBookingServ({
         booking_id: params.id,
       });
-      if (response?.data?.statusCode == "200") {
-        setDetails(response?.data?.data);
-        const tip = response?.data?.data?.bookingDetails?.tip_amount ?? 0;
-
-        if (tip > 0) {
-          setIsExtraChargeEnabled(true);
-          setCustomAmount(tip);
-          setSelectedValue("XX");
-        }
-
-        const scheduled =
-          response?.data?.data?.bookingDetails?.personal_schedule_retries || [];
-
-        if (scheduled.length > 0) {
-          // Enable schedule UI
-          setIsScheduleEnabled(true);
-          setIsFinalScheduleDone(true);
-          setIsScheduleSaved(true);
-          setIsViewMode(true);
-
-          const formatted = scheduled.map((item, idx) => ({
-            attempt: idx + 1,
-            date: moment(item.run_at).format("DD MMM, YYYY"),
-            time: moment(item.run_at).format("hh:mm A"),
-          }));
-
-          const safeCount = Math.min(scheduled.length, 4);
-
-          setAttemptCount(safeCount);
-          setScheduleAttempts(formatted.slice(0, 4));
-        }
-        setAllDriverIds(details?.shareRouteDrivers?.map((v) => v?.id) || []);
-        setGlobalAreAllIdsSelected(false);
-        setCounter(
-          response?.data?.data?.bookingDetails?.personal_schedule_retries
-            ?.length
-        );
+      if (response?.data?.statusCode === "200") {
+        const data = response.data.data;
+        setDetails(data);
+      
+        // Save globally so other tabs don't reload
+        setGlobalState(prev => ({
+          ...prev,
+          personalBookingDetails: data
+        }));
+      
+        hydrateUI(data);
       }
     } catch (error) {}
     setShowSkeltonForDetails(false);
   };
   useEffect(() => {
-    getAvailableDriverByBooking();
-  }, []);
+    if (!globalState.personalBookingDetails) {
+      getAvailableDriverByBooking();
+    } else {
+      setDetails(globalState.personalBookingDetails);
+      hydrateUI(globalState.personalBookingDetails);
+    }
+  }, [globalState.personalBookingDetails]);
+  
   const [globalAreAllIdsSelected, setGlobalAreAllIdsSelected] = useState(false);
 
   const addAllDriverIds = () => {
