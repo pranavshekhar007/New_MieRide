@@ -745,7 +745,7 @@ function PersonalCancelledBooking() {
       pdf.save(`RefundDetails_${refundDetailsPopup?.id}.pdf`);
     });
   };
-
+  const [cancelReceiptPopup, setcancelReceiptPopup] = useState();
   return (
     <div className="mainBody">
       <NewSidebar selectedItem="Booking Dashboard" />
@@ -763,8 +763,7 @@ function PersonalCancelledBooking() {
             />
           </div>
           <div className="tableOuterContainer bgDark mt-4">
-            <div
-            >
+            <div>
               <div>
                 <table className="table">
                   <thead>
@@ -783,11 +782,11 @@ function PersonalCancelledBooking() {
                       <th scope="col">Drop-off city</th>
 
                       <th scope="col">Booking Date & Time</th>
-
+                      <th scope="col">Category</th>
                       <th scope="col">Total Amount</th>
 
                       <th scope="col">Cancel By</th>
-                      <th scope="col">Action</th>
+                      <th scope="col">Cancel Receipt</th>
 
                       <th
                         scope="col"
@@ -869,21 +868,41 @@ function PersonalCancelledBooking() {
                               {i + 1 + (pageData?.current_page - 1) * 10}
                             </td>
                             <td>{v?.id}</td>
-                            <td>{v?.user_details?.first_name}</td>
                             <td>
-                              {v?.source
-                                ? `${v.source.substring(0, 15)}${
-                                    v.source.length > 15 ? "..." : ""
-                                  }`
-                                : ""}
+                              <div
+                                className="userNameDiv"
+                                style={{
+                                  width: "130px",
+                                  textAlign: "center",
+                                  background: "#353535",
+                                  color: "#fff",
+                                  borderRadius: "6px",
+                                  padding: "6px 8px",
+                                }}
+                              >
+                                <p
+                                  className="mb-0 bgWhite text-dark radius3 p-1"
+                                  style={{
+                                    fontSize: "12px",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  ID: {v?.user_details?.unique_id}
+                                </p>
+                                <p
+                                  className="mb-0 text-white mt-1"
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  {v?.user_details?.first_name}{" "}
+                                  {v?.user_details?.last_name}
+                                </p>
+                              </div>
                             </td>
-                            <td>
-                              {v?.destination
-                                ? `${v.destination.substring(0, 15)}${
-                                    v.destination.length > 15 ? "..." : ""
-                                  }`
-                                : ""}
-                            </td>
+                            <td>{v?.source}</td>
+                            <td>{v?.destination}</td>
 
                             <td>
                               {moment(v?.booking_date).format("MMM DD YYYY")} (
@@ -892,19 +911,45 @@ function PersonalCancelledBooking() {
                               )}
                               )
                             </td>
+                            <td>
+                              <span
+                                className={`timeBadge ${
+                                  v?.time_prefrence === "pickupat"
+                                    ? "instant"
+                                    : "later"
+                                }`}
+                              >
+                                {v?.time_prefrence === "pickupat"
+                                  ? "Instant"
+                                  : "Later"}
+                              </span>
+                            </td>
                             <td>${v?.total_trip_cost}</td>
-                            <td>{v?.cancel_by}</td>
-
-                            <td style={{ color: "#3B82F6" }}>
+                            <td>
                               <span
                                 style={{
-                                  textDecoration: "underline",
-                                  cursor: "pointer",
+                                  width: "70px",
+                                  height: "30px",
+                                  background: "#D0FF13",
+                                  padding: "10px 14px 8px 14px",
+                                  borderRadius: "5px",
+                                  fontWeight: 600,
+                                  fontSize: "12px",
+                                  color: "#000",
+                                  display: "inline-block",
                                 }}
-                                onClick={() => setRefundDetailsPopup(v)}
                               >
-                                View Full Details
+                                {v?.cancel_by || "—"}
                               </span>
+                            </td>
+
+                            <td style={{ color: "#3B82F6" }}>
+                              <div onClick={() => setcancelReceiptPopup(v)}>
+                                <img
+                                  src="/imagefolder/eyeIcon.png"
+                                  style={{ height: "25px" }}
+                                />
+                              </div>
                             </td>
 
                             <td
@@ -917,7 +962,7 @@ function PersonalCancelledBooking() {
                               }}
                             >
                               <img
-                                onClick={() => alert("Coming Soon")}
+                                onClick={() => setRefundDetailsPopup(v)}
                                 style={{ height: "20px" }}
                                 src="/icons/refundIcon.png"
                               />
@@ -944,6 +989,7 @@ function PersonalCancelledBooking() {
             />
           </div>
         </div>
+
         {popupDetails?.id && (
           <div
             className="modal fade show d-flex align-items-center manualSetPopup  justify-content-center "
@@ -1007,151 +1053,52 @@ function PersonalCancelledBooking() {
         )}
         {popupDetails?.id && <div className="modal-backdrop fade show"></div>}
         {refundDetailsPopup?.id && (
-          <div
-            className="modal fade show d-flex align-items-center manualSetPopup  justify-content-center "
-            tabIndex="-1"
-          >
+          <div className="modal fade show refundPopupWrapper d-flex align-items-center justify-content-center">
             <div className="modal-dialog">
-              <div className="modal-content refundDetailsPopup">
-                <div className="modal-body p-0">
-                  <div id="refundDetailsContent">
-                    <div className="refundHeading">Cancel Recipt</div>
-                    <div className="cancelRefundBody">
-                      <div className="d-flex justify-content-between">
-                        <div>
-                          <div>
-                            <span>Date :- </span>
-                            <b>
-                              {" "}
-                              {moment(refundDetailsPopup?.booking_date).format(
-                                "DD MMM YYYY"
-                              )}
-                            </b>
-                          </div>
-                          <div>
-                            <span>Booking ID :- </span>
-                            <b>{refundDetailsPopup?.id}</b>
-                          </div>
-                          <div>
-                            <span>Cancel By :- </span>
-                            <b>{refundDetailsPopup?.cancel_by}</b>
-                          </div>
-                          <div>
-                            <span>Username :- </span>
-                            <b>
-                              {refundDetailsPopup?.user_details?.first_name +
-                                " " +
-                                refundDetailsPopup?.user_details?.last_name}
-                            </b>
-                          </div>
-                          <div>
-                            <span>Booking Placed :- </span>
-                            <b>
-                              {" "}
-                              {moment(refundDetailsPopup?.confirm_time).format(
-                                "DD MMM YYYY"
-                              )}
-                            </b>
-                          </div>
-                          <div>
-                            <span>Pickup Address :- </span>
-                            <b>{refundDetailsPopup?.source}</b>
-                          </div>
-                          <div>
-                            <span>Drop Address :- </span>
-                            <b>{refundDetailsPopup?.destination}</b>
-                          </div>
-                          <div>
-                            <span>Cancelled At:-</span>
-                            <b>
-                              {" "}
-                              {moment(refundDetailsPopup?.cancel_time).format(
-                                "DD MMM YYYY"
-                              )}
-                            </b>
-                          </div>
-                          <div>
-                            <span>Cancel Reason:-</span>
-                            <b>{refundDetailsPopup?.reason}</b>
-                          </div>
-                        </div>
-                        <div>
-                          <img src="/icons/brandIconForCancel.png" />
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <h5>Fare Summary</h5>
-                        <div className="refundDetailsBox mt-2">
-                          <div className="row d-flex align-items-center py-1">
-                            <i className="fa fa-circle col-2" />
-                            <p className="col-8">Cancel Fee :-</p>
-                            <h6 className="col-2">
-                              ${" "}
-                              {refundDetailsPopup?.total_trip_cost -
-                                refundDetailsPopup?.refund_amount}
-                            </h6>
-                          </div>
-                          <div className="row d-flex align-items-center py-1">
-                            <i className="fa fa-circle col-2" />
-                            <p className="col-8">User Refund :-</p>
-                            <h6 className="col-2">
-                              $ {refundDetailsPopup?.refund_amount}
-                            </h6>
-                          </div>
-                          <div className="row d-flex align-items-center py-1">
-                            <i className="fa fa-circle col-2" />
-                            <p className="col-8">Admin Earned :-</p>
-                            <h6 className="col-2">
-                              $ {refundDetailsPopup?.admin_commission}
-                            </h6>
-                          </div>
-                          <div className="row d-flex align-items-center py-1">
-                            <i className="fa fa-circle col-2" />
-                            <p className="col-8">Driver Earned :-</p>
-                            <h6 className="col-2">
-                              $ {refundDetailsPopup?.driver_earning}
-                            </h6>
-                          </div>
-                          <div className="row d-flex align-items-center py-1">
-                            <i className="fa fa-circle col-2" />
-                            <p className="col-8">Surge Amount :-</p>
-                            <h6 className="col-2">
-                              $ {refundDetailsPopup?.extra_charge}
-                            </h6>
-                          </div>
-                          <div
-                            className="row d-flex align-items-center bg-dark text-light py-1 mx-0"
-                            style={{ borderRadius: "0px 0px 15px 15px" }}
-                          >
-                            <i className=" col-2" />
-                            <p className="col-8" style={{ color: " #D0FF13" }}>
-                              Total Amount
-                            </p>
-                            <h6 className="col-2" style={{ color: " #D0FF13" }}>
-                              $ {refundDetailsPopup?.total_trip_cost}
-                            </h6>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="mt-3 note">
-                        Note: <br />
-                        Cancellation charges are applied as per our
-                        cancellation policy.
-                      </div>
-                    </div>
+              <div className="modal-content refundPopupCard">
+                <div className="modal-body refundPopupBody">
+                  {/* Heading */}
+                  <h2 className="refundTitle">Refund Cancellation</h2>
+
+                  {/* Amount Charged Box */}
+                  <div className="chargedBox d-flex justify-content-between align-items-center">
+                    <p className="m-0">Amount charged :-</p>
+                    <h3 className="m-0">
+                      ${refundDetailsPopup?.total_trip_cost}
+                    </h3>
                   </div>
-                  <div className="mb-4 mt-2 d-flex justify-content-end cancelRefundButton px-4">
+
+                  {/* Refund Input */}
+                  <div className="refundForm mt-4">
+                    <label>Refund Amount</label>
+                    <input
+                      type="number"
+                      className="refundInput"
+                      placeholder="Enter Refund Amount"
+                    />
+
+                    <select className="refundSelect">
+                      <option>Select Refund Reason</option>
+                      <option value="User Request">User Request</option>
+                      <option value="System Issue">System Issue</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="refundActions mt-4 d-flex justify-content-between">
                     <button
-                      className="mx-3"
+                      className="refundCancelBtn"
                       onClick={() => setRefundDetailsPopup(null)}
                     >
-                      Close
+                      Cancel
                     </button>
+
                     <button
-                      style={{ background: "#1C1C1E", color: "white" }}
-                      onClick={handleDownload}
+                      className="refundSubmitBtn"
+                      onClick={() => alert("Process Refund")}
                     >
-                      Download
+                      Refund
                     </button>
                   </div>
                 </div>
@@ -1160,6 +1107,226 @@ function PersonalCancelledBooking() {
           </div>
         )}
         {refundDetailsPopup?.id && (
+          <div className="modal-backdrop fade show"></div>
+        )}
+
+        {cancelReceiptPopup?.id && (
+          <div
+            className="modal fade show d-flex align-items-center   justify-content-center "
+            tabIndex="-1"
+          >
+            <div className="modal-dialog">
+              <div className="modal-content cancelReceiptPopup">
+                <div className="modal-body p-0">
+                  <div id="refundDetailsContent">
+                    <div className="refundHeading">Cancel Recipt</div>
+                    <div className="cancelRefundBody">
+                      <div className="d-flex justify-content-between">
+                        <div>
+                          <button>
+                            Booking ID :- {cancelReceiptPopup?.id}
+                          </button>
+                          <div className="">
+                            <span>Username :- </span>
+                            <b>
+                              {cancelReceiptPopup?.user_details?.first_name +
+                                " " +
+                                cancelReceiptPopup?.user_details?.last_name}
+                            </b>
+                          </div>
+                          <div>
+                            <span>Pickup :- </span>
+                            <b>{cancelReceiptPopup?.source}</b>
+                          </div>
+                          <div>
+                            <span>Drop Off :- </span>
+                            <b>{cancelReceiptPopup?.destination}</b>
+                          </div>
+                          <div>
+                            <span>Booking Date :- </span>
+                            <b>
+                              {moment(cancelReceiptPopup?.booking_date).format(
+                                "DD MMM YYYY"
+                              ) +
+                                " (" +
+                                moment(
+                                  cancelReceiptPopup?.booking_time,
+                                  "HH:mm"
+                                ).format("hh:mm A") +
+                                ")"}
+                            </b>
+                          </div>
+                          <div>
+                            <span>Booking Placed :- </span>
+                            <b>
+                              {" "}
+                              {moment(cancelReceiptPopup?.confirm_time).format(
+                                "DD MMM YYYY"
+                              )}
+                            </b>
+                          </div>
+                        </div>
+                        <div>
+                          <img src="/imagefolder/blackBrandlogo.png" />
+                        </div>
+                      </div>
+                      <div
+                        className="py-2 px-4 my-2"
+                        style={{ background: "#F7F7F7", borderRadius: "10px" }}
+                      >
+                        <div>
+                          <div>
+                            <span>Cancelled By:- </span>
+                            <b className="bgSuccess p-1 rounded">
+                              {cancelReceiptPopup?.cancel_by}{" "}
+                            </b>
+                            {/* <b className="bgDark textSuccess ms-2 p-1 rounded">{cancelReceiptPopup?.cancel_by} </b> */}
+                          </div>
+                        </div>
+                        <div>
+                          <span>Cancelled on:- </span>
+                          <b>
+                            {moment(cancelReceiptPopup?.cancel_time).format(
+                              "DD MMM YYYY"
+                            ) +
+                              " (" +
+                              moment(
+                                cancelReceiptPopup?.cancel_time,
+                                "HH:mm"
+                              ).format("hh:mm A") +
+                              ")"}
+                          </b>
+                        </div>
+                        <div>
+                          <span>Cancel Reason:- </span>
+                          <b>{cancelReceiptPopup?.reason || "Not provided"}</b>
+                        </div>
+                      </div>
+
+                      <div className="refundDetailsBox px-3 py-1">
+                        <div className="d-flex justify-content-between align-items-center px-4 py-1">
+                          <div className="d-flex align-items-center">
+                            <p>No. of Person</p>
+                          </div>
+                          <h5>
+                            {cancelReceiptPopup?.number_of_people || "N/A"}
+                          </h5>
+                        </div>
+                        <div className="d-flex justify-content-between align-items-center px-4 py-1">
+                          <div className="d-flex align-items-center">
+                            <p>Booking Amount per Person</p>
+                          </div>
+                          <h5>
+                            $
+                            {(cancelReceiptPopup?.total_trip_cost || 0) /
+                              (cancelReceiptPopup?.number_of_people || 1)}
+                          </h5>
+                        </div>
+                        <div className="d-flex justify-content-between align-items-center px-4 py-1">
+                          <div className="d-flex align-items-center">
+                            <p>HST (13%)</p>
+                          </div>
+                          <h5>{"N/A"}</h5>
+                        </div>
+                        <div
+                          className="d-flex justify-content-between align-items-center px-4 py-1"
+                          style={{ borderBottom: "0.5px solid #E5E5E5" }}
+                        >
+                          <div className="d-flex align-items-center">
+                            <p style={{ fontWeight: "700" }}>Total Amount</p>
+                          </div>
+                          <h5>${cancelReceiptPopup?.driver_earning}</h5>
+                        </div>
+
+                        <div className="d-flex justify-content-between align-items-center px-4 py-1 pt-2">
+                          <div className="d-flex align-items-center">
+                            <p>Driver Commission</p>
+                          </div>
+                          <h5>$ {cancelReceiptPopup?.driver_earning}</h5>
+                        </div>
+                        <div className="d-flex justify-content-between align-items-center px-4 py-1">
+                          <div className="d-flex align-items-center">
+                            <p>Driver HST (13%)</p>
+                          </div>
+                          <h5>$ {"N/A"}</h5>
+                        </div>
+                        <div className="d-flex justify-content-between align-items-center px-4 py-1 ">
+                          <div className="d-flex align-items-center">
+                            <p>Admin Commission</p>
+                          </div>
+                          <h5>$ {cancelReceiptPopup?.admin_commission}</h5>
+                        </div>
+                        <div
+                          className="d-flex justify-content-between align-items-center px-4 py-1"
+                          style={{ borderBottom: "0.5px solid #E5E5E5" }}
+                        >
+                          {" "}
+                          <div className="d-flex align-items-center">
+                            <p>Admin HST (12%)</p>
+                          </div>
+                          <h5>$ {cancelReceiptPopup?.refund_amount}</h5>
+                        </div>
+                        <div
+                          className="d-flex justify-content-between align-items-center px-4 py-1 pt-2"
+                          style={{ borderBottom: "0.5px solid #E5E5E5" }}
+                        >
+                          {" "}
+                          <div className="d-flex align-items-center">
+                            <p>Bonus Amount</p>
+                          </div>
+                          <h5>$ {cancelReceiptPopup?.refund_amount}</h5>
+                        </div>
+                        <div
+                          className="d-flex justify-content-between align-items-center px-4 py-1 pt-2"
+                          style={{ borderBottom: "0.5px solid #B2B2B2" }}
+                        >
+                          {" "}
+                          <div className="d-flex align-items-center">
+                            <p>Refund</p>
+                          </div>
+                          <h5>$ {cancelReceiptPopup?.refund_amount}</h5>
+                        </div>
+                        <div className="d-flex justify-content-between align-items-center px-4 py-1 pt-2">
+                          {" "}
+                          <div className="d-flex align-items-center">
+                            <p>Final Paid to Driver</p>
+                          </div>
+                          <h5>$ {cancelReceiptPopup?.refund_amount}</h5>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 note">
+                        <b> Note: </b>
+                        <br />
+                        Cancellation charges are applied as per our
+                        cancellation policy.
+                      </div>
+                    </div>
+                  </div>
+                  <div className=" d-flex justify-content-between cancelRefundButton px-4">
+                    <button
+                      className=" bgSuccess textDark "
+                      onClick={() => setcancelReceiptPopup(null)}
+                      style={{ border: "none" }}
+                    >
+                      Refund Issue
+                    </button>
+                    <div className="d-flex">
+                      <button
+                        className="mx-2 bgWhite textDark"
+                        onClick={() => setcancelReceiptPopup(null)}
+                      >
+                        Close
+                      </button>
+                      <button onClick={handleDownload}>Download</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {cancelReceiptPopup?.id && (
           <div className="modal-backdrop fade show"></div>
         )}
       </div>

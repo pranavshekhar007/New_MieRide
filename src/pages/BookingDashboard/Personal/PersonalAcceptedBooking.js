@@ -995,10 +995,8 @@ function PersonalAceeptedBooking() {
                                 </div>
                               </div>
                               <div
-                                className="col-6 "
-                                style={{
-                                  marginLeft: "35px",
-                                }}
+                                className="col-7 "
+                               
                               >
                                 <h4>
                                   {value?.driver_details?.vehicle_name} (
